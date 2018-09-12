@@ -5,5 +5,5 @@ Bachelor's degree diploma work
 
 1. Clone repo with submodules
 ```
-git clone https://github.com/dyumin/StudentsManager --recursive
+git clone https://github.com/dyumin/StudentsManager --recursive && cd StudentsManager/tools && ./prebuild
 ```
