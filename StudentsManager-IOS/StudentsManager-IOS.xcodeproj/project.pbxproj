@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		CC56F323214932A500C5ADBB /* shape_predictor_5_face_landmarks.dat in Resources */ = {isa = PBXBuildFile; fileRef = CC56F321214932A300C5ADBB /* shape_predictor_5_face_landmarks.dat */; };
 		CC56F324214932A500C5ADBB /* dlib_face_recognition_resnet_model_v1.dat in Resources */ = {isa = PBXBuildFile; fileRef = CC56F322214932A400C5ADBB /* dlib_face_recognition_resnet_model_v1.dat */; };
+		CC56F3282149346D00C5ADBB /* FacesExtractor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC56F3272149346D00C5ADBB /* FacesExtractor.mm */; };
+		CC56F32D21493C3200C5ADBB /* 3group.jpg in Resources */ = {isa = PBXBuildFile; fileRef = CC56F32C21493C3100C5ADBB /* 3group.jpg */; };
 		CCE99245214913D4003D518A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE99244214913D4003D518A /* AppDelegate.swift */; };
 		CCE99247214913D4003D518A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE99246214913D4003D518A /* ViewController.swift */; };
 		CCE9924A214913D4003D518A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCE99248214913D4003D518A /* Main.storyboard */; };
@@ -23,6 +25,9 @@
 /* Begin PBXFileReference section */
 		CC56F321214932A300C5ADBB /* shape_predictor_5_face_landmarks.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = shape_predictor_5_face_landmarks.dat; sourceTree = "<group>"; };
 		CC56F322214932A400C5ADBB /* dlib_face_recognition_resnet_model_v1.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = dlib_face_recognition_resnet_model_v1.dat; sourceTree = "<group>"; };
+		CC56F3262149346D00C5ADBB /* FacesExtractor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FacesExtractor.h; sourceTree = "<group>"; };
+		CC56F3272149346D00C5ADBB /* FacesExtractor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FacesExtractor.mm; sourceTree = "<group>"; };
+		CC56F32C21493C3100C5ADBB /* 3group.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 3group.jpg; sourceTree = "<group>"; };
 		CCE99241214913D4003D518A /* StudentsManager-IOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StudentsManager-IOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE99244214913D4003D518A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CCE99246214913D4003D518A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -53,6 +58,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CC56F3252149342E00C5ADBB /* FacesExtractor */ = {
+			isa = PBXGroup;
+			children = (
+				CC56F3262149346D00C5ADBB /* FacesExtractor.h */,
+				CC56F3272149346D00C5ADBB /* FacesExtractor.mm */,
+			);
+			path = FacesExtractor;
+			sourceTree = "<group>";
+		};
+		CC56F3292149388F00C5ADBB /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CC56F32C21493C3100C5ADBB /* 3group.jpg */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		CCE99238214913D4003D518A = {
 			isa = PBXGroup;
 			children = (
@@ -73,6 +95,8 @@
 		CCE99243214913D4003D518A /* StudentsManager-IOS */ = {
 			isa = PBXGroup;
 			children = (
+				CC56F3292149388F00C5ADBB /* Resources */,
+				CC56F3252149342E00C5ADBB /* FacesExtractor */,
 				CCE992662149233D003D518A /* Models */,
 				CCE99244214913D4003D518A /* AppDelegate.swift */,
 				CCE9926421491885003D518A /* DlibWrapper.h */,
@@ -167,6 +191,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCE9924F214913D5003D518A /* LaunchScreen.storyboard in Resources */,
+				CC56F32D21493C3200C5ADBB /* 3group.jpg in Resources */,
 				CC56F323214932A500C5ADBB /* shape_predictor_5_face_landmarks.dat in Resources */,
 				CC56F324214932A500C5ADBB /* dlib_face_recognition_resnet_model_v1.dat in Resources */,
 				CCE9924C214913D5003D518A /* Assets.xcassets in Resources */,
@@ -182,6 +207,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCE9926521491885003D518A /* DlibWrapper.mm in Sources */,
+				CC56F3282149346D00C5ADBB /* FacesExtractor.mm in Sources */,
 				CCE99247214913D4003D518A /* ViewController.swift in Sources */,
 				CCE99245214913D4003D518A /* AppDelegate.swift in Sources */,
 			);
@@ -332,6 +358,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = UCTQDPM624;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					DLIB_JPEG_SUPPORT,
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../submodules/dlib\"";
 				INFOPLIST_FILE = "StudentsManager-IOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -354,6 +384,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = UCTQDPM624;
+				GCC_PREPROCESSOR_DEFINITIONS = DLIB_JPEG_SUPPORT;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../submodules/dlib\"";
 				INFOPLIST_FILE = "StudentsManager-IOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
