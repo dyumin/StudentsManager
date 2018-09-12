@@ -5,5 +5,5 @@ Bachelor's degree diploma work
 
 1. Clone repo with submodules and generate Xcode project for dlib
 ```
-git clone https://github.com/dyumin/StudentsManager --recursive && cd StudentsManager/tools && ./prebuild
+git clone https://github.com/dyumin/StudentsManager --recursive && cd StudentsManager/tools && ./prebuild.sh
 ```
