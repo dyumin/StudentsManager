@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CC56F323214932A500C5ADBB /* shape_predictor_5_face_landmarks.dat in Resources */ = {isa = PBXBuildFile; fileRef = CC56F321214932A300C5ADBB /* shape_predictor_5_face_landmarks.dat */; };
+		CC56F324214932A500C5ADBB /* dlib_face_recognition_resnet_model_v1.dat in Resources */ = {isa = PBXBuildFile; fileRef = CC56F322214932A400C5ADBB /* dlib_face_recognition_resnet_model_v1.dat */; };
 		CCE99245214913D4003D518A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE99244214913D4003D518A /* AppDelegate.swift */; };
 		CCE99247214913D4003D518A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCE99246214913D4003D518A /* ViewController.swift */; };
 		CCE9924A214913D4003D518A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCE99248214913D4003D518A /* Main.storyboard */; };
@@ -19,6 +21,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CC56F321214932A300C5ADBB /* shape_predictor_5_face_landmarks.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = shape_predictor_5_face_landmarks.dat; sourceTree = "<group>"; };
+		CC56F322214932A400C5ADBB /* dlib_face_recognition_resnet_model_v1.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = dlib_face_recognition_resnet_model_v1.dat; sourceTree = "<group>"; };
 		CCE99241214913D4003D518A /* StudentsManager-IOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StudentsManager-IOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE99244214913D4003D518A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CCE99246214913D4003D518A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -69,6 +73,7 @@
 		CCE99243214913D4003D518A /* StudentsManager-IOS */ = {
 			isa = PBXGroup;
 			children = (
+				CCE992662149233D003D518A /* Models */,
 				CCE99244214913D4003D518A /* AppDelegate.swift */,
 				CCE9926421491885003D518A /* DlibWrapper.h */,
 				CCE9926321491885003D518A /* DlibWrapper.mm */,
@@ -91,6 +96,15 @@
 				CCE99257214913EC003D518A /* Accelerate.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CCE992662149233D003D518A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CC56F322214932A400C5ADBB /* dlib_face_recognition_resnet_model_v1.dat */,
+				CC56F321214932A300C5ADBB /* shape_predictor_5_face_landmarks.dat */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -153,6 +167,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCE9924F214913D5003D518A /* LaunchScreen.storyboard in Resources */,
+				CC56F323214932A500C5ADBB /* shape_predictor_5_face_landmarks.dat in Resources */,
+				CC56F324214932A500C5ADBB /* dlib_face_recognition_resnet_model_v1.dat in Resources */,
 				CCE9924C214913D5003D518A /* Assets.xcassets in Resources */,
 				CCE9924A214913D4003D518A /* Main.storyboard in Resources */,
 			);
