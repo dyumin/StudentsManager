@@ -14,8 +14,8 @@
 		CCE9924F214913D5003D518A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCE9924D214913D5003D518A /* LaunchScreen.storyboard */; };
 		CCE99258214913EC003D518A /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE99257214913EC003D518A /* Accelerate.framework */; };
 		CCE9925C214913F8003D518A /* libdlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE9925B214913F8003D518A /* libdlib.a */; };
-		CCE9926021491444003D518A /* DlibWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCE9925E21491444003D518A /* DlibWrapper.mm */; };
 		CCE992622149151A003D518A /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE992612149151A003D518A /* CoreMedia.framework */; };
+		CCE9926521491885003D518A /* DlibWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCE9926321491885003D518A /* DlibWrapper.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,9 +30,9 @@
 		CCE99259214913F5003D518A /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		CCE9925B214913F8003D518A /* libdlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libdlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE9925D21491443003D518A /* StudentsManager-IOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StudentsManager-IOS-Bridging-Header.h"; sourceTree = "<group>"; };
-		CCE9925E21491444003D518A /* DlibWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DlibWrapper.mm; path = "../../../../../Downloads/face-landmarking-ios-master/DisplayLiveSamples/DlibWrapper.mm"; sourceTree = "<group>"; };
-		CCE9925F21491444003D518A /* DlibWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlibWrapper.h; path = "../../../../../Downloads/face-landmarking-ios-master/DisplayLiveSamples/DlibWrapper.h"; sourceTree = "<group>"; };
 		CCE992612149151A003D518A /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		CCE9926321491885003D518A /* DlibWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DlibWrapper.mm; sourceTree = "<group>"; };
+		CCE9926421491885003D518A /* DlibWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DlibWrapper.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,9 +69,9 @@
 		CCE99243214913D4003D518A /* StudentsManager-IOS */ = {
 			isa = PBXGroup;
 			children = (
-				CCE9925F21491444003D518A /* DlibWrapper.h */,
-				CCE9925E21491444003D518A /* DlibWrapper.mm */,
 				CCE99244214913D4003D518A /* AppDelegate.swift */,
+				CCE9926421491885003D518A /* DlibWrapper.h */,
+				CCE9926321491885003D518A /* DlibWrapper.mm */,
 				CCE99246214913D4003D518A /* ViewController.swift */,
 				CCE99248214913D4003D518A /* Main.storyboard */,
 				CCE9924B214913D5003D518A /* Assets.xcassets */,
@@ -165,7 +165,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCE9926021491444003D518A /* DlibWrapper.mm in Sources */,
+				CCE9926521491885003D518A /* DlibWrapper.mm in Sources */,
 				CCE99247214913D4003D518A /* ViewController.swift in Sources */,
 				CCE99245214913D4003D518A /* AppDelegate.swift in Sources */,
 			);
