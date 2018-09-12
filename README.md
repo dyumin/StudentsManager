@@ -7,3 +7,4 @@ Bachelor's degree diploma work
 ```
 git clone https://github.com/dyumin/StudentsManager --recursive && cd StudentsManager/tools && ./prebuild.sh
 ```
+2. Go to dlib->PROJECT->Build Settings and change Supported Platforms to IOS (iphoneos)
