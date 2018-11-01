@@ -5,6 +5,8 @@
 
 set -x
 
+git submodule update --remote --merge
+
 ROOT_SOURCE="$PWD/.."
 ROOT_XCODE="$ROOT_SOURCE/StudentsManager-IOS"
 
@@ -16,6 +18,7 @@ if [ ! -d "$DLIB_DIR" ]; then
     mkdir -p "$DLIB_DIR"
         [ $? -eq 0 ] || exit 1
 
-    cd "$DLIB_DIR"
-    cmake -G Xcode "$DLIB_ROOT/dlib"
 fi
+
+cd "$DLIB_DIR"
+cmake -G Xcode "$DLIB_ROOT/dlib" -DCMAKE_XCODE_ATTRIBUTE_SUPPORTED_PLATFORMS="iphoneos iphonesimulator" -DCMAKE_XCODE_ATTRIBUTE_SDKROOT="iphoneos"
