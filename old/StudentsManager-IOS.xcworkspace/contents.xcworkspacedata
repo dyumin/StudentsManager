@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:StudentsManager-IOS/StudentsManager-IOS.xcodeproj">
+      location = "group:../third-party/dlib/dlib.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:third-party/dlib/dlib.xcodeproj">
+      location = "group:StudentsManager-IOS/StudentsManager-IOS.xcodeproj">
    </FileRef>
 </Workspace>
