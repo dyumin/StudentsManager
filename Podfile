@@ -9,5 +9,7 @@ target 'StudentsManager-IOS' do
 
   pod 'Firebase/Core'
   pod 'Firebase/Database'
+  
+  pod 'FirebaseUI'
 
 end
