@@ -85,7 +85,6 @@
 				5B85FB4EC13D71949C0A046F /* Pods-StudentsManager-IOS.debug.xcconfig */,
 				78F853A129F066A8B9238275 /* Pods-StudentsManager-IOS.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -362,6 +361,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = UCTQDPM624;
 				INFOPLIST_FILE = "StudentsManager-IOS/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -381,6 +381,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = UCTQDPM624;
 				INFOPLIST_FILE = "StudentsManager-IOS/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
