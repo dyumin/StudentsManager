@@ -8,13 +8,34 @@
 
 import UIKit
 
+import Firebase
+import FirebaseUI
+
+
+
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
+class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
+{
     var window: UIWindow?
-
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
+    {
+        FirebaseApp.configure()
+        
+        let authUI = FUIAuth.defaultAuthUI()!
+        
+        // You need to adopt a FUIAuthDelegate protocol to receive callback
+        authUI.delegate = self
+        
+        let providers: [FUIAuthProvider] = [
+            FUIGoogleAuth(),
+//            FUIFacebookAuth(),
+//            FUITwitterAuth(),
+//            FUIPhoneAuth(authUI:FUIAuth.defaultAuthUI()!),
+            ]
+        
+        authUI.providers = providers
+        
         // Override point for customization after application launch.
         return true
     }
@@ -40,7 +61,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool
+    {
+        let sourceApplication = options[UIApplication.OpenURLOptionsKey.sourceApplication] as! String?
+        if FUIAuth.defaultAuthUI()?.handleOpen(url, sourceApplication: sourceApplication) ?? false {
+            return true
+        }
+        // other URL handling goes here.
+        return false
+    }
 
 }
 
