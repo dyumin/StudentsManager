@@ -5,6 +5,9 @@
       location = "group:StudentsManager-IOS.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:third-party/dlib/dlib.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>
