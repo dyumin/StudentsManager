@@ -22,31 +22,12 @@
 		CCE9926521491885003D518A /* DlibWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = CCE9926321491885003D518A /* DlibWrapper.mm */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		CC5BB1F121F4FD8A0069B076 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC5BB1E921F4FD8A0069B076 /* dlib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 815F2497B7C54D83874AB46A;
-			remoteInfo = dlib;
-		};
-		CC5BB1FB21F4FDDD0069B076 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CC5BB1F321F4FDDD0069B076 /* dlib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 815F2497B7C54D83874AB46A;
-			remoteInfo = dlib;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		CC56F321214932A300C5ADBB /* shape_predictor_5_face_landmarks.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = shape_predictor_5_face_landmarks.dat; sourceTree = "<group>"; };
 		CC56F322214932A400C5ADBB /* dlib_face_recognition_resnet_model_v1.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = dlib_face_recognition_resnet_model_v1.dat; sourceTree = "<group>"; };
 		CC56F3262149346D00C5ADBB /* FacesExtractor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FacesExtractor.h; sourceTree = "<group>"; };
 		CC56F3272149346D00C5ADBB /* FacesExtractor.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FacesExtractor.mm; sourceTree = "<group>"; };
 		CC56F32C21493C3100C5ADBB /* 3group.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 3group.jpg; sourceTree = "<group>"; };
-		CC5BB1E921F4FD8A0069B076 /* dlib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = dlib.xcodeproj; path = "../../third-party/dlib/dlib.xcodeproj"; sourceTree = "<group>"; };
-		CC5BB1F321F4FDDD0069B076 /* dlib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = dlib.xcodeproj; path = "../../third-party/dlib/dlib.xcodeproj"; sourceTree = "<group>"; };
 		CCE99241214913D4003D518A /* StudentsManager-IOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StudentsManager-IOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCE99244214913D4003D518A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CCE99246214913D4003D518A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -94,27 +75,9 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		CC5BB1EA21F4FD8A0069B076 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CC5BB1F221F4FD8A0069B076 /* libdlib.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		CC5BB1F421F4FDDD0069B076 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CC5BB1FC21F4FDDD0069B076 /* libdlib.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		CCE99238214913D4003D518A = {
 			isa = PBXGroup;
 			children = (
-				CC5BB1E921F4FD8A0069B076 /* dlib.xcodeproj */,
-				CC5BB1F321F4FDDD0069B076 /* dlib.xcodeproj */,
 				CCE99243214913D4003D518A /* StudentsManager-IOS */,
 				CCE99242214913D4003D518A /* Products */,
 				CCE99256214913EC003D518A /* Frameworks */,
@@ -215,39 +178,12 @@
 			mainGroup = CCE99238214913D4003D518A;
 			productRefGroup = CCE99242214913D4003D518A /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = CC5BB1EA21F4FD8A0069B076 /* Products */;
-					ProjectRef = CC5BB1E921F4FD8A0069B076 /* dlib.xcodeproj */;
-				},
-				{
-					ProductGroup = CC5BB1F421F4FDDD0069B076 /* Products */;
-					ProjectRef = CC5BB1F321F4FDDD0069B076 /* dlib.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				CCE99240214913D4003D518A /* StudentsManager-IOS */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		CC5BB1F221F4FD8A0069B076 /* libdlib.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libdlib.a;
-			remoteRef = CC5BB1F121F4FD8A0069B076 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CC5BB1FC21F4FDDD0069B076 /* libdlib.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libdlib.a;
-			remoteRef = CC5BB1FB21F4FDDD0069B076 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		CCE9923F214913D4003D518A /* Resources */ = {
