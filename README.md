@@ -7,9 +7,9 @@ Bachelor's degree diploma work
 ```
 git clone https://github.com/dyumin/StudentsManager --recursive
 ```
-2. Update submodules and Generate Xcode project for dlib
+2. Install pods, update submodules and Generate Xcode project for dlib
 ```
-cd StudentsManager/tools && ./prebuild.sh
+cd StudentsManager && pod install && cd tools && ./prebuild.sh
 ```
 3. Open StudentsManager-IOS.xcworkspace
 4. Build StudentsManager-IOS
