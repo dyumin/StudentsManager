@@ -18,21 +18,7 @@ class ViewController: UIViewController
     {
         super.viewDidLoad()
         
-        unowned let wself = self
-        Auth.auth().addStateDidChangeListener { (auth, user) in
-            if (auth.currentUser != nil)
-            {
-                wself.performSegue(withIdentifier: "EntryPointSegue", sender: wself)
-            }
-            else
-            {
-                FUIAuth.defaultAuthUI()!.shouldHideCancelButton = true
-                
-                let authViewController = FUIAuth.defaultAuthUI()!.authViewController()
-                
-                wself.present(authViewController, animated: false, completion: nil)
-            }
-        }
+        
     }
     
     @IBAction func onPress(_ sender: Any)
@@ -119,7 +105,7 @@ class ViewController: UIViewController
         // Show the message.
         SwiftMessages.show(view: view)
         
-        try! FUIAuth.defaultAuthUI()!.signOut()
+        
     }
     
 }

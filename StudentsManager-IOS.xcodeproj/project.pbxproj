@@ -9,9 +9,9 @@
 /* Begin PBXBuildFile section */
 		715C3F0C1A146474727EFC8F /* Pods_StudentsManager_IOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3407E9EA48D7E97FC12F55F7 /* Pods_StudentsManager_IOS.framework */; };
 		CC2F29362207A0C100D83E12 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC2F29342207A0C100D83E12 /* Main.storyboard */; };
+		CC2F29382207A1CC00D83E12 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2F29372207A1CC00D83E12 /* Main.swift */; };
 		CC5BB20C21F502220069B076 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5BB20B21F502220069B076 /* AppDelegate.swift */; };
 		CC5BB20E21F502220069B076 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5BB20D21F502220069B076 /* ViewController.swift */; };
-		CC5BB21121F502230069B076 /* EntryPoint.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB20F21F502230069B076 /* EntryPoint.storyboard */; };
 		CC5BB21321F502250069B076 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB21221F502250069B076 /* Assets.xcassets */; };
 		CC5BB21621F502250069B076 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB21421F502250069B076 /* LaunchScreen.storyboard */; };
 		CC5BB22321F5177F0069B076 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB22221F5177F0069B076 /* GoogleService-Info.plist */; };
@@ -22,10 +22,10 @@
 		5B85FB4EC13D71949C0A046F /* Pods-StudentsManager-IOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StudentsManager-IOS.debug.xcconfig"; path = "Target Support Files/Pods-StudentsManager-IOS/Pods-StudentsManager-IOS.debug.xcconfig"; sourceTree = "<group>"; };
 		78F853A129F066A8B9238275 /* Pods-StudentsManager-IOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StudentsManager-IOS.release.xcconfig"; path = "Target Support Files/Pods-StudentsManager-IOS/Pods-StudentsManager-IOS.release.xcconfig"; sourceTree = "<group>"; };
 		CC2F29352207A0C100D83E12 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "StudentsManager-IOS/Base.lproj/Main.storyboard"; sourceTree = "<group>"; };
+		CC2F29372207A1CC00D83E12 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		CC5BB20821F502220069B076 /* StudentsManager-IOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StudentsManager-IOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC5BB20B21F502220069B076 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CC5BB20D21F502220069B076 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		CC5BB21021F502230069B076 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/EntryPoint.storyboard; sourceTree = "<group>"; };
 		CC5BB21221F502250069B076 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CC5BB21521F502250069B076 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CC5BB21721F502250069B076 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -74,9 +74,9 @@
 			isa = PBXGroup;
 			children = (
 				CC2F29342207A0C100D83E12 /* Main.storyboard */,
+				CC2F29372207A1CC00D83E12 /* Main.swift */,
 				CC5BB20B21F502220069B076 /* AppDelegate.swift */,
 				CC5BB20D21F502220069B076 /* ViewController.swift */,
-				CC5BB20F21F502230069B076 /* EntryPoint.storyboard */,
 				CC5BB21221F502250069B076 /* Assets.xcassets */,
 				CC5BB21421F502250069B076 /* LaunchScreen.storyboard */,
 				CC5BB21721F502250069B076 /* Info.plist */,
@@ -159,7 +159,6 @@
 				CC2F29362207A0C100D83E12 /* Main.storyboard in Resources */,
 				CC5BB22321F5177F0069B076 /* GoogleService-Info.plist in Resources */,
 				CC5BB21321F502250069B076 /* Assets.xcassets in Resources */,
-				CC5BB21121F502230069B076 /* EntryPoint.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,6 +256,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC2F29382207A1CC00D83E12 /* Main.swift in Sources */,
 				CC5BB20E21F502220069B076 /* ViewController.swift in Sources */,
 				CC5BB20C21F502220069B076 /* AppDelegate.swift in Sources */,
 			);
@@ -271,14 +271,6 @@
 				CC2F29352207A0C100D83E12 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		CC5BB20F21F502230069B076 /* EntryPoint.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CC5BB21021F502230069B076 /* Base */,
-			);
-			name = EntryPoint.storyboard;
 			sourceTree = "<group>";
 		};
 		CC5BB21421F502250069B076 /* LaunchScreen.storyboard */ = {

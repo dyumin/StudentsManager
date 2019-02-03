@@ -10,10 +10,11 @@ import UIKit
 
 import Firebase
 import FirebaseUI
+import SwiftMessages
 
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate
+class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
 {
     var window: UIWindow?
     
@@ -21,36 +22,86 @@ class AppDelegate: UIResponder, UIApplicationDelegate
     {
         FirebaseApp.configure()
         
-        let authUI = FUIAuth.defaultAuthUI()!
+        FUIAuth.defaultAuthUI()!.delegate = self
         
-        let providers: [FUIAuthProvider] = [ FUIGoogleAuth() ]
-        
-        authUI.providers = providers
+        Auth.auth().addStateDidChangeListener { [unowned self] (auth, user) in
+            
+            if (auth.currentUser != nil)
+            {
+                let rootController = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateInitialViewController()
+                self.window?.rootViewController = rootController
+                
+                self.showCurrentUserMessage()
+            }
+            else
+            {
+                let authUI = FUIAuth.defaultAuthUI()!
+                let providers: [FUIAuthProvider] = [ FUIGoogleAuth() ]
+                
+                authUI.providers = providers
+                authUI.shouldHideCancelButton = true
+                
+                let authViewController = authUI.authViewController()
+                
+                self.window?.rootViewController = authViewController
+            }
+        }
         
         return true
     }
 
-    func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+    
+    func authUI(_ authUI: FUIAuth, didSignInWith authDataResult: AuthDataResult?, error: Error?)
+    {
+        let successful = (error == nil);
+        
+        if (!successful)
+        {
+            let view = MessageView.viewFromNib(layout: .statusLine)
+            
+            // Theme message elements with the info style.
+            view.configureTheme(.error)
+            
+            // Add a drop shadow.
+            view.configureDropShadow()
+            
+            view.configureContent(body: "Failed to sign in, error: \(error.debugDescription)")
+            
+            // Increase the external margin around the card. In general, the effect of this setting
+            // depends on how the given layout is constrained to the layout margins.
+            view.layoutMarginAdditions = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+            
+            // Reduce the corner radius (applicable to layouts featuring rounded corners).
+            (view.backgroundView as? CornerRoundingView)?.cornerRadius = 20
+            
+            // Show the message.
+            SwiftMessages.show(view: view)
+        }
     }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    
+    func showCurrentUserMessage()
+    {
+        let view = MessageView.viewFromNib(layout: .statusLine)
+        
+        // Theme message elements with the info style.
+        view.configureTheme(.success)
+        
+        // Add a drop shadow.
+        view.configureDropShadow()
+        
+        view.configureContent(body: "User: \(Auth.auth().currentUser?.displayName ?? "Error Occured!")")
+        
+        // Increase the external margin around the card. In general, the effect of this setting
+        // depends on how the given layout is constrained to the layout margins.
+        view.layoutMarginAdditions = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        
+        // Reduce the corner radius (applicable to layouts featuring rounded corners).
+        (view.backgroundView as? CornerRoundingView)?.cornerRadius = 20
+        
+        // Show the message.
+        SwiftMessages.show(view: view)
     }
-
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    }
+ 
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool
     {
@@ -59,8 +110,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         {
             return true
         }
-        
-        
         
         // other URL handling goes here.
         return false
