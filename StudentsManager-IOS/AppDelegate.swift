@@ -12,9 +12,8 @@ import Firebase
 import FirebaseUI
 
 
-
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
+class AppDelegate: UIResponder, UIApplicationDelegate
 {
     var window: UIWindow?
     
@@ -24,19 +23,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
         
         let authUI = FUIAuth.defaultAuthUI()!
         
-        // You need to adopt a FUIAuthDelegate protocol to receive callback
-        authUI.delegate = self
-        
-        let providers: [FUIAuthProvider] = [
-            FUIGoogleAuth(),
-//            FUIFacebookAuth(),
-//            FUITwitterAuth(),
-//            FUIPhoneAuth(authUI:FUIAuth.defaultAuthUI()!),
-            ]
+        let providers: [FUIAuthProvider] = [ FUIGoogleAuth() ]
         
         authUI.providers = providers
         
-        // Override point for customization after application launch.
         return true
     }
 
@@ -65,9 +55,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool
     {
         let sourceApplication = options[UIApplication.OpenURLOptionsKey.sourceApplication] as! String?
-        if FUIAuth.defaultAuthUI()?.handleOpen(url, sourceApplication: sourceApplication) ?? false {
+        if FUIAuth.defaultAuthUI()?.handleOpen(url, sourceApplication: sourceApplication) ?? false
+        {
             return true
         }
+        
+        
+        
         // other URL handling goes here.
         return false
     }
