@@ -171,6 +171,11 @@ PODS:
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
   - Protobuf (3.6.1)
+  - RxAtomic (4.4.0)
+  - RxCocoa (4.4.0):
+    - RxSwift (~> 4.0)
+  - RxSwift (4.4.0):
+    - RxAtomic (~> 4.4)
   - SDWebImage (4.4.5):
     - SDWebImage/Core (= 4.4.5)
   - SDWebImage/Core (4.4.5)
@@ -180,8 +185,9 @@ PODS:
 
 DEPENDENCIES:
   - Firebase/Core
-  - Firebase/Database
   - FirebaseUI
+  - RxCocoa
+  - RxSwift
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -209,6 +215,9 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - Protobuf
+    - RxAtomic
+    - RxCocoa
+    - RxSwift
     - SDWebImage
     - TwitterCore
     - TwitterKit
@@ -238,10 +247,13 @@ SPEC CHECKSUMS:
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
+  RxAtomic: eacf60db868c96bfd63320e28619fe29c179656f
+  RxCocoa: df63ebf7b9a70d6b4eeea407ed5dd4efc8979749
+  RxSwift: 5976ecd04fc2fefd648827c23de5e11157faa973
   SDWebImage: ecc03494e973b93b80213649d32175f8d2d17d4d
   TwitterCore: 8cbc9ad34d91c63a0035ea05bfbfc0d7ca72a28c
   TwitterKit: 5e4f41d70b9abdb41df5467f52d7aa2c0fd26ebb
 
-PODFILE CHECKSUM: 373f08620f9ffd8bdda685cbf85919601791c2f0
+PODFILE CHECKSUM: ff202a3d9dcf2421a7a184d27ecddcc77ae9b3b6
 
 COCOAPODS: 1.6.0.beta.2
