@@ -12,4 +12,6 @@ target 'StudentsManager-IOS' do
   
   pod 'FirebaseUI'
 
+  #pod 'RxFirebase/Firestore'
+
 end
