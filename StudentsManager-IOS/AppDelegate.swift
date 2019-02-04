@@ -11,6 +11,7 @@ import UIKit
 import Firebase
 import FirebaseUI
 import SwiftMessages
+import GoogleSignIn
 
 
 @UIApplicationMain
@@ -21,6 +22,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
         FirebaseApp.configure()
+        
+        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
         
         FUIAuth.defaultAuthUI()!.delegate = self
         

@@ -6,8 +6,10 @@ target 'StudentsManager-IOS' do
 	use_frameworks!
 
 	# Pods for StudentsManager-IOS
-	
+
 	pod 'Firebase/Core'
+	pod 'Firebase/Performance'
+
 	pod 'FirebaseUI/Auth'
 	pod 'FirebaseUI/Google'
 
