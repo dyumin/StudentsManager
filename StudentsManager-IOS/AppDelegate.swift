@@ -10,8 +10,23 @@ import UIKit
 
 import Firebase
 import FirebaseUI
-import SwiftMessages
 import GoogleSignIn
+
+import SwiftMessages
+
+func UpdateFBUserRecord(_ auth : Auth)
+{
+    let db = Firestore.firestore()
+    
+    let userDB = db.document("users/\(auth.currentUser!.uid)")
+    
+    userDB.updateData(
+        ["displayName" : auth.currentUser?.displayName as Any
+        ,"email" : auth.currentUser?.email as Any
+//        ,"email" : auth.currentUser?.email as Any
+        ]
+    )
+}
 
 
 @UIApplicationMain
@@ -35,6 +50,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
                 self.window?.rootViewController = rootController
                 
                 self.showCurrentUserMessage()
+                
+                DispatchQueue.main.async(execute:
+                {
+                    UpdateFBUserRecord(auth)
+                })
             }
             else
             {

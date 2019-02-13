@@ -8,6 +8,7 @@ target 'StudentsManager-IOS' do
 	# Pods for StudentsManager-IOS
 
 	pod 'Firebase/Core'
+	pod 'Firebase/Firestore'
 	pod 'Firebase/Performance'
 
 	pod 'FirebaseUI/Auth'
