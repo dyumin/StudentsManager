@@ -20,7 +20,7 @@ func UpdateFBUserRecord(_ auth : Auth)
     
     let userDB = db.document("users/\(auth.currentUser!.uid)")
     
-    userDB.updateData(
+    userDB.updateData( // TODO: add Error case
         ["displayName" : auth.currentUser?.displayName as Any
         ,"email" : auth.currentUser?.email as Any
 //        ,"email" : auth.currentUser?.email as Any

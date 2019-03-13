@@ -10,8 +10,82 @@ import UIKit
 import Firebase
 import SwiftMessages
 
+
+
 class Main: UIViewController
 {
+    
+    @IBAction func testPressed(_ sender: Any)
+    {
+        let db = Firestore.firestore()
+        
+        let uid = Auth.auth().currentUser?.uid
+
+        let user = db.document("/users/\(uid!)")
+        
+        user.getDocument { (document, err) in
+            if let document = document, document.exists
+            {
+                let groupField = document.get("group")!
+                
+                let schedulesCol = db.collection("/schedules")
+                
+                schedulesCol.whereField("group", isEqualTo: groupField).getDocuments { (querySnapshot, err) in
+                    if let err = err
+                    {
+                        print(err)
+                        assert(false)
+                    }
+                    else if let querySnapshot = querySnapshot
+                    {
+                        assert(querySnapshot.count == 1)
+                        
+                        let scheduleCol = querySnapshot.documents.first!.reference.collection("schedule")
+                            .whereField("normalizedDay", isEqualTo: "monday").getDocuments { (querySnapshot, err) in
+                           
+                            assert(querySnapshot!.count == 1)
+                            
+                            print(querySnapshot!.documents.first!.data())
+                        
+                            
+                                
+                                let scheduleCol = querySnapshot!.documents.first!.reference.collection("schedule")
+                                    .whereField("normalizedDay", isEqualTo: "monday").getDocuments { (querySnapshot, err) in
+                                        
+                                        assert(querySnapshot!.count == 1)
+                                        
+                                        print(querySnapshot!.documents.first!.data())
+                                        
+                                        
+                                }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if let err = err
+                {
+                    print(err)
+                    
+                }
+                assert(false)
+            }
+        }
+        
+       
+        
+//
+        
+//        schedules.child("schedules")
+//            .queryOrderedByChild("value")
+//            .queryEqual(toValue: "def")
+//            .observeSingleEvent(of: .value, with: {(snapshot) in
+//                print(snapshot) })
+        
+    }
+    
+    
     
     override func viewDidLoad()
     {
@@ -20,16 +94,16 @@ class Main: UIViewController
         
         
 //        showMessage("AAAA")
-//        
+//
 //        let db = Firestore.firestore()
 //        
 //        // Create a reference to the cities collection
 //        let users = db.collection("users")
-//        
+//
 //        let uid = Auth.auth().currentUser?.uid
-//        
+//
 //        let user = users.document("\(uid)")
-//        
+//
 //        user.getDocument { (document, error) in
 //            if let document = document, document.exists {
 //                let dataDescription = document.data().map(String.init(describing:)) ?? "nil"

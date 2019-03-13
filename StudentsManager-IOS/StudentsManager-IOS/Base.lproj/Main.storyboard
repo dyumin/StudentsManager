@@ -26,6 +26,14 @@
                                     <action selector="onLogout:" destination="eG7-2Z-5TI" eventType="touchUpInside" id="2Nl-7x-tGf"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NXc-ut-Lrf">
+                                <rect key="frame" x="138" y="185" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Test"/>
+                                <connections>
+                                    <action selector="testPressed:" destination="eG7-2Z-5TI" eventType="touchUpInside" id="tdT-qa-s2i"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="m2L-ux-KSp"/>
