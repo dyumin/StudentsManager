@@ -15,6 +15,7 @@
 		CC5BB21321F502250069B076 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB21221F502250069B076 /* Assets.xcassets */; };
 		CC5BB21621F502250069B076 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB21421F502250069B076 /* LaunchScreen.storyboard */; };
 		CC5BB22321F5177F0069B076 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB22221F5177F0069B076 /* GoogleService-Info.plist */; };
+		CCA4272E2238DC8600CF2260 /* CurrentSession.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCA4272C2238DC8500CF2260 /* CurrentSession.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		CC5BB21521F502250069B076 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CC5BB21721F502250069B076 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC5BB22221F5177F0069B076 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CCA4272D2238DC8500CF2260 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "StudentsManager-IOS/Base.lproj/CurrentSession.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 		CC5BB20A21F502220069B076 /* StudentsManager-IOS */ = {
 			isa = PBXGroup;
 			children = (
+				CCA4272C2238DC8500CF2260 /* CurrentSession.storyboard */,
 				CC2F29342207A0C100D83E12 /* Main.storyboard */,
 				CC2F29372207A1CC00D83E12 /* Main.swift */,
 				CC5BB20B21F502220069B076 /* AppDelegate.swift */,
@@ -157,6 +160,7 @@
 			files = (
 				CC5BB21621F502250069B076 /* LaunchScreen.storyboard in Resources */,
 				CC2F29362207A0C100D83E12 /* Main.storyboard in Resources */,
+				CCA4272E2238DC8600CF2260 /* CurrentSession.storyboard in Resources */,
 				CC5BB22321F5177F0069B076 /* GoogleService-Info.plist in Resources */,
 				CC5BB21321F502250069B076 /* Assets.xcassets in Resources */,
 			);
@@ -289,6 +293,14 @@
 				CC5BB21521F502250069B076 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		CCA4272C2238DC8500CF2260 /* CurrentSession.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CCA4272D2238DC8500CF2260 /* Base */,
+			);
+			name = CurrentSession.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

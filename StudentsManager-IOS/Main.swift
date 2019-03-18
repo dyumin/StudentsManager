@@ -85,12 +85,15 @@ class Main: UIViewController
         
     }
     
-    
+    override func viewDidAppear(_ animated: Bool)
+    {
+        super.viewDidAppear(animated)
+        performSegue(withIdentifier: "showMainTabBar", sender: self)
+    }
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
         
         
 //        showMessage("AAAA")
