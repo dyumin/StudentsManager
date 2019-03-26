@@ -13,7 +13,11 @@ import RxCocoa
     import UIKit
 #elseif os(macOS)
     import Cocoa
-#endif 
+#endif
+
+func apiError(_ error: String) -> NSError {
+    return NSError(domain: "DefaultImageService", code: -1, userInfo: [NSLocalizedDescriptionKey: error])
+}
 
 protocol ImageService {
     func imageFromURL(_ url: URL, reachabilityService: ReachabilityService) -> Observable<DownloadableImage>

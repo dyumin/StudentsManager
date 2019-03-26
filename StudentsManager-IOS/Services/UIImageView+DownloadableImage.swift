@@ -27,11 +27,13 @@ extension Reactive where Base: UIImageView {
             case .content(let image):
                 (imageView as UIImageView).rx.image.on(.next(image))
             case .offlinePlaceholder:
-                let label = UILabel(frame: imageView.bounds)
-                label.textAlignment = .center
-                label.font = UIFont.systemFont(ofSize: 35)
-                label.text = "⚠️"
-                imageView.addSubview(label)
+//                let label = UILabel(frame: imageView.bounds)
+//                label.textAlignment = .center
+//                label.font = UIFont.systemFont(ofSize: 35)
+//                label.text = "⚠️"
+//                imageView.addSubview(label)
+                
+                (imageView as UIImageView).rx.image.on(.next(UIImage(named:"Avatar/EditAvatarIcon")))
             }
         }
     }
