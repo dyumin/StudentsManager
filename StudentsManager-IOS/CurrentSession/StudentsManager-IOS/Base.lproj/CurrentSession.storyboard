@@ -13,7 +13,7 @@
         <!--CurrentSession-->
         <scene sceneID="2nk-Ob-V0E">
             <objects>
-                <viewController id="s0r-CR-N1H" sceneMemberID="viewController">
+                <viewController id="s0r-CR-N1H" customClass="CurrentSession" customModule="StudentsManager_IOS" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="M8H-c6-GK0">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -24,24 +24,32 @@
                                     <barButtonItem title="Item" width="99" id="5Ut-4K-Z6O"/>
                                 </items>
                             </toolbar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="z5D-GL-CzV">
+                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="KoK-dE-gIS" firstAttribute="leading" secondItem="0kQ-Wp-j2T" secondAttribute="leading" id="43b-4R-D19"/>
+                            <constraint firstItem="z5D-GL-CzV" firstAttribute="top" secondItem="KoK-dE-gIS" secondAttribute="bottom" id="CMZ-8H-Jrq"/>
+                            <constraint firstItem="z5D-GL-CzV" firstAttribute="leading" secondItem="0kQ-Wp-j2T" secondAttribute="leading" id="DE7-zl-JKk"/>
+                            <constraint firstItem="0kQ-Wp-j2T" firstAttribute="bottom" secondItem="z5D-GL-CzV" secondAttribute="bottom" id="OOC-vZ-2Pw"/>
                             <constraint firstItem="KoK-dE-gIS" firstAttribute="top" secondItem="0kQ-Wp-j2T" secondAttribute="top" id="RbM-BC-rgX"/>
-                            <constraint firstAttribute="trailing" secondItem="KoK-dE-gIS" secondAttribute="trailing" id="dq2-aA-6Cx"/>
+                            <constraint firstItem="KoK-dE-gIS" firstAttribute="trailing" secondItem="0kQ-Wp-j2T" secondAttribute="trailing" id="eNr-5n-pRd"/>
+                            <constraint firstItem="0kQ-Wp-j2T" firstAttribute="trailing" secondItem="z5D-GL-CzV" secondAttribute="trailing" id="kiO-kg-kMx"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="0kQ-Wp-j2T"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="CurrentSession" image="google.png" id="B4H-Sy-UiB"/>
+                    <tabBarItem key="tabBarItem" title="CurrentSession" id="B4H-Sy-UiB"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="tableView" destination="z5D-GL-CzV" id="lLQ-H8-Fgq"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EKo-qa-NVn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1852" y="7.6461769115442282"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="google.png" width="18" height="18"/>
-    </resources>
 </document>
