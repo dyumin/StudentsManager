@@ -10,13 +10,23 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Main-->
+        <!--Root view controller-->
         <scene sceneID="w3l-6Z-woG">
             <objects>
-                <viewController id="eG7-2Z-5TI" customClass="Main" customModule="StudentsManager_IOS" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="eG7-2Z-5TI" userLabel="Root view controller" customClass="Main" customModule="StudentsManager_IOS" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="vbt-4g-Czk">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b1Z-Ee-aJ4">
+                                <rect key="frame" x="100" y="128" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="onLogout:" destination="eG7-2Z-5TI" eventType="touchUpInside" id="u7k-Gm-xZc"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="m2L-ux-KSp"/>
                     </view>
@@ -47,10 +57,20 @@
         <!--History-->
         <scene sceneID="g8X-Pi-Q2u">
             <objects>
-                <viewController id="ufd-qW-Ysl" sceneMemberID="viewController">
+                <viewController id="ufd-qW-Ysl" customClass="History" customModule="StudentsManager_IOS" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Pal-jr-Qsv">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DcG-3C-ay2">
+                                <rect key="frame" x="112" y="183" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="onLogout:" destination="ufd-qW-Ysl" eventType="touchUpInside" id="jff-sW-Ibp"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="tMV-8h-3Q5"/>
                     </view>
@@ -69,6 +89,11 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="selectedIndex">
+                            <integer key="value" value="1"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
                     <connections>
                         <segue destination="S13-2v-che" kind="relationship" relationship="viewControllers" id="vDF-Yb-R1P"/>
                         <segue destination="h2M-nJ-8gy" kind="relationship" relationship="viewControllers" id="DVE-jw-5R0"/>

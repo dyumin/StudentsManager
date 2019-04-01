@@ -32,31 +32,59 @@ func UpdateFBUserRecord(_ auth : Auth)
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
 {
-    var window: UIWindow?
+    var window: MyUIWindow?
+    weak var mainViewController : UIViewController?
+    weak var loginViewController : UIViewController?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
+        window = MyUIWindow(frame: UIScreen.main.bounds)
+        window?.makeKeyAndVisible()
+        
         FirebaseApp.configure()
         
         GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
         
         FUIAuth.defaultAuthUI()!.delegate = self
         
+        // sync!
+        updateRootViewController(auth: Auth.auth())
+        
         Auth.auth().addStateDidChangeListener { [unowned self] (auth, user) in
+            self.updateRootViewController(auth: auth)
+        }
+        
+        return true
+    }
+    
+    func updateRootViewController(auth: Auth)
+    {
+        if (auth.currentUser != nil)
+        {
+            loginViewController = nil
             
-            if (auth.currentUser != nil)
+            if (mainViewController == nil)
             {
-                let rootController = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateInitialViewController()
-                self.window?.rootViewController = rootController
+                mainViewController = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateInitialViewController()
+            }
+            
+            if (self.window?.rootViewController != mainViewController)
+            {
+                self.window?.subviews.forEach { $0.removeFromSuperview() }
+                
+                self.window?.rootViewController = mainViewController
                 
                 self.showCurrentUserMessage()
                 
                 DispatchQueue.main.async(execute:
                 {
-                    UpdateFBUserRecord(auth)
+                        UpdateFBUserRecord(auth)
                 })
             }
-            else
+        }
+        else
+        {
+            if (loginViewController == nil)
             {
                 let authUI = FUIAuth.defaultAuthUI()!
                 let providers: [FUIAuthProvider] = [ FUIGoogleAuth() ]
@@ -64,13 +92,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
                 authUI.providers = providers
                 authUI.shouldHideCancelButton = true
                 
-                let authViewController = authUI.authViewController()
+                loginViewController = authUI.authViewController()
+            }
+            
+            if (self.window?.rootViewController != loginViewController)
+            {
+                self.mainViewController = nil
                 
-                self.window?.rootViewController = authViewController
+//                if let presentedViewController = self.window?.rootViewController?.presentedViewController
+//                {
+//                    presentedViewController.dismiss(animated: true, completion: {
+//                        self.window?.rootViewController?.view.subviews.forEach { $0.removeFromSuperview() }
+//                        self.window?.rootViewController?.view.removeFromSuperview()
+//                        self.window?.rootViewController?.removeFromParent()
+//
+//                        self.window?.rootViewController = nil
+//
+//                        self.window?.rootViewController = self.loginViewController
+//                    })
+//
+//                    return
+//                }
+                
+                
+                self.window?.rootViewController?.presentedViewController?.dismiss(animated: false, completion: nil)
+                
+                self.window?.rootViewController?.parent?.presentedViewController?.dismiss(animated: false, completion: nil)
+                
+                self.window?.rootViewController?.view.subviews.forEach { $0.removeFromSuperview() }
+                self.window?.rootViewController?.view.removeFromSuperview()
+                self.window?.rootViewController?.removeFromParent()
+
+                self.window?.rootViewController = nil
+                
+                self.window?.rootViewController = loginViewController
             }
         }
-        
-        return true
     }
 
     

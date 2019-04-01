@@ -14,6 +14,10 @@ import SwiftMessages
 
 class Main: UIViewController
 {
+    @IBAction func onLogout(_ sender: UIButton)
+    {
+        try! Auth.auth().signOut()
+    }
     
     @IBAction func testPressed(_ sender: Any)
     {
@@ -95,6 +99,8 @@ class Main: UIViewController
     {
         super.viewDidLoad()
         
+//        onLogout(UIButton())
+        
         
 //        showMessage("AAAA")
 //
@@ -142,10 +148,12 @@ class Main: UIViewController
         SwiftMessages.show(view: view)
     }
     
-    @IBAction func onLogout(_ sender: UIButton)
+    deinit
     {
-        try! Auth.auth().signOut()
+        print("Main deinit")
     }
+    
+
     
     /*
     // MARK: - Navigation
