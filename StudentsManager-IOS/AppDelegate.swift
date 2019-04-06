@@ -14,6 +14,8 @@ import GoogleSignIn
 
 import SwiftMessages
 
+//import Display
+
 func UpdateFBUserRecord(_ auth : Auth)
 {
     let db = Firestore.firestore()
@@ -32,13 +34,17 @@ func UpdateFBUserRecord(_ auth : Auth)
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
 {
-    var window: MyUIWindow?
+    var window: UIWindow?
     weak var mainViewController : UIViewController?
     weak var loginViewController : UIViewController?
     
+//    @objc var window: UIWindow?
+//    var nativeWindow: (UIWindow & WindowHost)?
+//    var mainWindow: Window1!
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
-        window = MyUIWindow(frame: UIScreen.main.bounds)
+        window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         
         FirebaseApp.configure()
