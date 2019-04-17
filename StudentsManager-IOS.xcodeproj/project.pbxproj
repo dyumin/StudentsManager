@@ -37,11 +37,24 @@
 		CCBC48B82248CD4A0074D559 /* Dependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCBC48B72248CD4A0074D559 /* Dependencies.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		CC014727225972310093A6FA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		3407E9EA48D7E97FC12F55F7 /* Pods_StudentsManager_IOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_StudentsManager_IOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B85FB4EC13D71949C0A046F /* Pods-StudentsManager-IOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StudentsManager-IOS.debug.xcconfig"; path = "Target Support Files/Pods-StudentsManager-IOS/Pods-StudentsManager-IOS.debug.xcconfig"; sourceTree = "<group>"; };
 		78F853A129F066A8B9238275 /* Pods-StudentsManager-IOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StudentsManager-IOS.release.xcconfig"; path = "Target Support Files/Pods-StudentsManager-IOS/Pods-StudentsManager-IOS.release.xcconfig"; sourceTree = "<group>"; };
-		CC27D659224ACD07005E3A58 /* StudentsManager-IOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StudentsManager-IOS-Bridging-Header.h"; sourceTree = "<group>"; };
+		CC2C69C522598A0800F6E58E /* StudentsManager-IOS-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "StudentsManager-IOS-Bridging-Header.h"; sourceTree = "<group>"; };
 		CC2F29352207A0C100D83E12 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "StudentsManager-IOS/Base.lproj/Main.storyboard"; sourceTree = "<group>"; };
 		CC2F29372207A1CC00D83E12 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		CC33CFB42240347800FB000F /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
@@ -139,7 +152,7 @@
 				CC5BB21721F502250069B076 /* Info.plist */,
 				CC5BB22221F5177F0069B076 /* GoogleService-Info.plist */,
 				CC33CFB42240347800FB000F /* History.swift */,
-				CC27D659224ACD07005E3A58 /* StudentsManager-IOS-Bridging-Header.h */,
+				CC2C69C522598A0800F6E58E /* StudentsManager-IOS-Bridging-Header.h */,
 			);
 			path = "StudentsManager-IOS";
 			sourceTree = "<group>";
@@ -183,6 +196,7 @@
 				CC5BB20421F502220069B076 /* Sources */,
 				CC5BB20521F502220069B076 /* Frameworks */,
 				CC5BB20621F502220069B076 /* Resources */,
+				CC014727225972310093A6FA /* Embed Frameworks */,
 				EA9D56C5EEA8CBED89F5515A /* [CP] Embed Pods Frameworks */,
 				D5D61504CFE7DE8CEE9DE1D4 /* [CP] Copy Pods Resources */,
 			);

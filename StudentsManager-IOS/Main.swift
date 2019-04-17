@@ -11,8 +11,7 @@ import Firebase
 import SwiftMessages
 
 
-
-class Main: UIViewController
+class Main: UIViewController//, ContainableController
 {
     @IBAction func onLogout(_ sender: UIButton)
     {
@@ -92,7 +91,10 @@ class Main: UIViewController
     override func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(animated)
-        performSegue(withIdentifier: "showMainTabBar", sender: self)
+        
+        weak var wself = self
+        
+        performSegue(withIdentifier: "showMainTabBar", sender: wself)
     }
     
     override func viewDidLoad()
@@ -150,7 +152,11 @@ class Main: UIViewController
     
     deinit
     {
-        print("Main deinit")
+        print("Main deinit begin")
+        
+        self.presentedViewController?.removeFromParent()
+        
+        print("Main deinit end")
     }
     
 
