@@ -150,6 +150,12 @@ PODS:
   - Protobuf (3.7.0)
   - RxCocoa (4.5.0):
     - RxSwift (>= 4.4.2, ~> 4.4)
+  - RxFirebase/Firestore (0.3.6):
+    - RxFirebaseFirestore (~> 0.3)
+  - RxFirebaseFirestore (0.3.6):
+    - FirebaseFirestore (~> 1)
+    - RxCocoa (~> 4)
+    - RxSwift (~> 4)
   - RxSwift (4.5.0)
   - SwiftMessages (6.0.2):
     - SwiftMessages/App (= 6.0.2)
@@ -162,6 +168,7 @@ DEPENDENCIES:
   - FirebaseUI/Auth
   - FirebaseUI/Google
   - RxCocoa
+  - RxFirebase/Firestore
   - RxSwift
   - SwiftMessages
 
@@ -190,6 +197,8 @@ SPEC REPOS:
     - nanopb
     - Protobuf
     - RxCocoa
+    - RxFirebase
+    - RxFirebaseFirestore
     - RxSwift
     - SwiftMessages
 
@@ -217,9 +226,11 @@ SPEC CHECKSUMS:
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 7a877b7f3e5964e3fce995e2eb323dbc6831bb5a
   RxCocoa: cbf70265dc65a981d4ac982e513c10cf23df24a0
+  RxFirebase: cfeb02f5b1bfc1c5f8a6d14c54fdca876a35eba7
+  RxFirebaseFirestore: 724957f7079b0e6cb5d985bb6331f171af7b31ed
   RxSwift: f172070dfd1a93d70a9ab97a5a01166206e1c575
   SwiftMessages: 8b3cc68dba2f1c91aac1a74c90b10287aac35371
 
-PODFILE CHECKSUM: aac37ca77210bc1f99ca7125417de73da5d644d9
+PODFILE CHECKSUM: 4283023989f55ffa1eb21d844aea06ec71d7b96c
 
 COCOAPODS: 1.6.0.beta.2

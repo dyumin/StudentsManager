@@ -17,7 +17,10 @@ import SwiftMessages
 import RxSwift
 import RxCocoa
 
+import RxFirebase
+
 let CurrentUser = BehaviorRelay<User?>(value: nil)
+let BackEndIsReady = BehaviorRelay<Bool>(value: false)
 
 // https://stackoverflow.com/questions/24402533/is-there-a-swift-alternative-for-nslogs-pretty-function
 func pretty_function(_ file: String = #file, function: String = #function, line: Int = #line)
@@ -39,8 +42,9 @@ func updateFBUserRecord(_ currentUser : User)
     
     let user = db.document("/users/\(uid)")
     
-    let userData = ["displayName" : currentUser.displayName as Any
-                   ,"email"       : currentUser.email as Any
+    var userData : Dictionary =
+        ["displayName" : currentUser.displayName as Any
+        ,"email"       : currentUser.email as Any
     ]
     
     user.getDocument { (document, err) in
@@ -50,17 +54,31 @@ func updateFBUserRecord(_ currentUser : User)
                 if let error = error
                 {
                     print(error)
-                    assertionFailure()
+                    
+                    // updateData usually only fails when there is no such document
+                    // steps to reproduce:
+                    // disable phone internet connection -> open app (updateData block will be added to queue) -> delete user account record on server -> enable phone internet connection
+                    // "onDisposed, combineLatest db.collection(\"users\").document(\"\\(user.uid)\") && BackEndIsReady" will handle this
                 }
+
+                BackEndIsReady.accept(true)
             })
         }
         else
         {
+            userData["position"] = UserAccountType.new.rawValue
+            
             user.setData(userData, completion: { error in
                 if let error = error
                 {
                     print(error)
                     assertionFailure()
+                    
+                    show(messageText: "Fatal error on accout creation, restart app", theme: .error)
+                }
+                else
+                {
+                    BackEndIsReady.accept(true)
                 }
             })
         }
@@ -98,12 +116,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
     
     weak var mainViewController : UIViewController?
     weak var loginViewController : UIViewController?
+    weak var stubController : UIViewController?
     
     var authStateDidChangeListenerHandle: AuthStateDidChangeListenerHandle?
     
     let bag = DisposeBag()
     
-
+    var statusDisposable: Disposable?
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -124,7 +144,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
         }
         
         CurrentUser.asObservable().skip(1).subscribe(onNext: { [weak self] userEvent in
+            
+            DispatchQueue.global(qos: .userInitiated).async {
+                if let userEvent = userEvent
+                {
+                    updateFBUserRecord(userEvent)
+                }
+            }
+
             self?.updateRootViewController(user: userEvent)
+            
         }).disposed(by: bag)
         
         Dependencies.sharedDependencies.reachabilityService.reachability.asObservable().skip(1).observeOn(MainScheduler.instance).subscribe(onNext: { event in
@@ -145,6 +174,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
             pretty_function()
         }).disposed(by: bag)
         
+        // combineLatest reachability && CurrentUser
         Observable.combineLatest(Dependencies.sharedDependencies.reachabilityService.reachability.asObservable().skip(1), CurrentUser.asObservable().skip(1))
             .filter({
             !$0.0.reachable && $0.1 == nil
@@ -154,12 +184,92 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
                 onNext: { event in
             show(messageText: "Network connection is required to login", theme: .info)
             },
-                onError: { print("onError: \($0)") },
-                onCompleted: { pretty_function() },
-                onDisposed: { pretty_function() }
+                onError: { print("onError: \($0), combineLatest reachability && CurrentUser") },
+                onCompleted: { print("onCompleted, combineLatest reachability && CurrentUser") },
+                onDisposed: { print("onDisposed, combineLatest reachability && CurrentUser") }
         ).disposed(by: bag)
         
+        CurrentUser.asObservable().skip(1).subscribe(onNext: { [weak self] event in
+            self?.stateDidChanged(event)
+        }).disposed(by: bag)
+        
         return true
+    }
+    
+    func stateDidChanged(_ user: User?)
+    {
+        statusDisposable?.dispose()
+        statusDisposable = nil
+        
+        if let user = user
+        {
+            let db = Firestore.firestore()
+            statusDisposable =
+                
+                Observable.combineLatest(
+                db.collection("users").document("\(user.uid)").rx.listen(),
+                Observable.combineLatest(BackEndIsReady.asObservable(),
+                                         Dependencies.sharedDependencies.reachabilityService.reachability.asObservable()))
+                .filter({
+                        ($0.1.0 || !$0.1.1.reachable) })
+                .observeOn(MainScheduler.instance)
+                .subscribe(onNext: { [weak self] event in
+                    
+                    let document = event.0
+                    
+                    print("Current data: \(document.data())")
+                    
+                    if (document.data() == nil)
+                    {
+                        print("User account was removed from server! Logout...")
+                        try? Auth.auth().signOut()
+                        return
+                    }
+                    
+                    if let position = document.get("position") as? String, !position.isEmpty, position != UserAccountType.new.rawValue
+                    {
+                        self?.stubController?.view.removeFromSuperview()
+                        self?.stubController?.removeFromParent()
+                        print("Current user position: '\(position)'")
+                    }
+                    else
+                    {
+                        if let stubController = self?.stubController
+                        {
+                            
+                        }
+                        else
+                        {
+                            let stubController = AdminAprovalStub()
+                            self!.stubController = stubController
+                            
+                            let root = self!.window!.rootViewController!
+                            
+                            root.addChild(stubController)
+                            
+                            root.view.frame = UIScreen.main.bounds
+                            
+                            root.view.addSubview(stubController.view)
+                            
+                            stubController.didMove(toParent: root)
+                        }
+                    }
+                    
+                }, onError: { error in
+                    print("Error fetching snapshots: \(error)")
+                    assertionFailure()
+                },
+                   onCompleted: { print("onCompleted, combineLatest db.collection(\"users\").document(\"\\(user.uid)\") && BackEndIsReady") },
+                   onDisposed: {
+                    print("onDisposed, combineLatest db.collection(\"users\").document(\"\\(user.uid)\") && BackEndIsReady")
+                    BackEndIsReady.accept(false)
+                })
+        }
+    }
+    
+    deinit
+    {
+        statusDisposable?.dispose()
     }
     
     func updateRootViewController(user: User?)
@@ -178,7 +288,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
                 DispatchQueue.main.async(execute:
                 {
                     show(messageText: user?.displayName ?? "Error Occured!", theme: .success)
-                    updateFBUserRecord(user!)
                 })
 
                 self.window?.rootViewController = mainViewController
@@ -213,6 +322,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
         if (!successful)
         {
             show(messageText: "Failed to sign in, error: \(error.debugDescription)", theme: .error)
+            
+            return
         }
     }
     

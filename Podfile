@@ -17,6 +17,8 @@ target 'StudentsManager-IOS' do
 	pod 'RxSwift'
     pod 'RxCocoa'
 
+    pod 'RxFirebase/Firestore'
+
     pod 'SwiftMessages'
 
 end

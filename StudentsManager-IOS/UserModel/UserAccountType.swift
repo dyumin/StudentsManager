@@ -18,6 +18,8 @@ public struct UserAccountType: RawRepresentable {
 
 public extension UserAccountType
 {
+    static let new = UserAccountType(rawValue: "new")
+    
     static let admin = UserAccountType(rawValue: "admin")
     static let tutor = UserAccountType(rawValue: "tutor")
     static let student = UserAccountType(rawValue: "student")
