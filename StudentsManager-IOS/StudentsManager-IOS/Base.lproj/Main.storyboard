@@ -55,7 +55,7 @@
         <!--Tab Bar Controller-->
         <scene sceneID="0iR-dd-Jxb">
             <objects>
-                <tabBarController id="Hy0-zy-dAb" sceneMemberID="viewController">
+                <tabBarController id="Hy0-zy-dAb" customClass="TabBarController" customModule="StudentsManager_IOS" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="rKN-Uk-cxg">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>

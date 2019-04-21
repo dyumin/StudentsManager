@@ -150,17 +150,6 @@ class Main: UIViewController//, ContainableController
         SwiftMessages.show(view: view)
     }
     
-    deinit
-    {
-        print("Main deinit begin")
-        
-        self.presentedViewController?.removeFromParent()
-        
-        print("Main deinit end")
-    }
-    
-
-    
     /*
     // MARK: - Navigation
 

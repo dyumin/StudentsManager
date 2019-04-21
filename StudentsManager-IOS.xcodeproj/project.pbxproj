@@ -35,6 +35,8 @@
 		CCBC48B42248CBEB0074D559 /* DownloadableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCBC48A82248CBEB0074D559 /* DownloadableImage.swift */; };
 		CCBC48B62248CC940074D559 /* Example.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCBC48B52248CC940074D559 /* Example.swift */; };
 		CCBC48B82248CD4A0074D559 /* Dependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCBC48B72248CD4A0074D559 /* Dependencies.swift */; };
+		CCD0266A22672B3400A19E47 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD0266922672B3400A19E47 /* TabBarController.swift */; };
+		CCD0266E226B5FD000A19E47 /* UserAccountType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD0266D226B5FD000A19E47 /* UserAccountType.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -84,6 +86,8 @@
 		CCBC48A82248CBEB0074D559 /* DownloadableImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadableImage.swift; sourceTree = "<group>"; };
 		CCBC48B52248CC940074D559 /* Example.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Example.swift; sourceTree = "<group>"; };
 		CCBC48B72248CD4A0074D559 /* Dependencies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dependencies.swift; sourceTree = "<group>"; };
+		CCD0266922672B3400A19E47 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		CCD0266D226B5FD000A19E47 /* UserAccountType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccountType.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +145,7 @@
 		CC5BB20A21F502220069B076 /* StudentsManager-IOS */ = {
 			isa = PBXGroup;
 			children = (
+				CCD0266C226B5F9400A19E47 /* UserModel */,
 				CCBC489C2248CBEB0074D559 /* Services */,
 				CC33CFB822403CB400FB000F /* CurrentSession */,
 				CC2F29342207A0C100D83E12 /* Main.storyboard */,
@@ -153,6 +158,7 @@
 				CC5BB22221F5177F0069B076 /* GoogleService-Info.plist */,
 				CC33CFB42240347800FB000F /* History.swift */,
 				CC2C69C522598A0800F6E58E /* StudentsManager-IOS-Bridging-Header.h */,
+				CCD0266922672B3400A19E47 /* TabBarController.swift */,
 			);
 			path = "StudentsManager-IOS";
 			sourceTree = "<group>";
@@ -174,6 +180,14 @@
 				CCBC48A82248CBEB0074D559 /* DownloadableImage.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		CCD0266C226B5F9400A19E47 /* UserModel */ = {
+			isa = PBXGroup;
+			children = (
+				CCD0266D226B5FD000A19E47 /* UserAccountType.swift */,
+			);
+			path = UserModel;
 			sourceTree = "<group>";
 		};
 		EE2AC82BEE9E99D128E5AAE9 /* Pods */ = {
@@ -364,6 +378,7 @@
 				CC2F29382207A1CC00D83E12 /* Main.swift in Sources */,
 				CC33CFBF2242194900FB000F /* CurrentSessionEventCell.swift in Sources */,
 				CCBC48AE2248CBEB0074D559 /* HtmlParsing.swift in Sources */,
+				CCD0266E226B5FD000A19E47 /* UserAccountType.swift in Sources */,
 				CCBC48A92248CBEB0074D559 /* ImageService.swift in Sources */,
 				CCBC48B82248CD4A0074D559 /* Dependencies.swift in Sources */,
 				CC33CFBA2240FD7300FB000F /* CurrentSessionViewModel.swift in Sources */,
@@ -378,6 +393,7 @@
 				CC33CFB52240347800FB000F /* History.swift in Sources */,
 				CCBC48B22248CBEB0074D559 /* Reachability.swift in Sources */,
 				CC5BB20C21F502220069B076 /* AppDelegate.swift in Sources */,
+				CCD0266A22672B3400A19E47 /* TabBarController.swift in Sources */,
 				CCBC48B02248CBEB0074D559 /* UIImage+Extensions.swift in Sources */,
 				CCBC48B12248CBEB0074D559 /* ActivityIndicator.swift in Sources */,
 			);

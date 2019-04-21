@@ -1,27 +1,19 @@
 //
-//  History.swift
+//  TabBarController.swift
 //  StudentsManager-IOS
 //
-//  Created by Дюмин Алексей on 18/03/2019.
+//  Created by Дюмин Алексей on 17/04/2019.
 //  Copyright © 2019 TeamUUUU. All rights reserved.
 //
 
 import UIKit
-import Firebase
 
-class History: UIViewController
-{
+class TabBarController: UITabBarController {
 
-    override func viewDidLoad()
-    {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-    }
-    
-    @IBAction func onLogout(_ sender: UIButton)
-    {
-        try! Auth.auth().signOut()
     }
     
     deinit
