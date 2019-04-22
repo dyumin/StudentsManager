@@ -221,8 +221,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
                     
                     if (document.data() == nil)
                     {
-                        print("User account was removed from server! Logout...")
-                        try? Auth.auth().signOut()
+                        print("User account was removed from server! Restoring...")
+                        updateFBUserRecord(CurrentUser.value!)
                         return
                     }
                     

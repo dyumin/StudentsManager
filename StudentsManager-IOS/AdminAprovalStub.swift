@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class AdminAprovalStub: UIViewController
 {
@@ -22,7 +23,11 @@ class AdminAprovalStub: UIViewController
         pretty_function()
     }
 
-
+    @IBAction func onLogoutPressed(_ sender: Any)
+    {
+        try! Auth.auth().signOut()
+    }
+    
     /*
     // MARK: - Navigation
 
