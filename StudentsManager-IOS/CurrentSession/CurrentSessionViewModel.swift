@@ -57,6 +57,7 @@ extension CurrentSessionModel: UITableViewDataSource
         
         return UITableViewCell()
     }
+    
 }
 
 enum CurrentSessionModelItemType
