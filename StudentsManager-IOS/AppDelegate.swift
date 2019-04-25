@@ -94,26 +94,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
             CurrentUser.accept(user)
         }
         
-//        Auth.auth().currentUser?.rx.as
-        
-    Dependencies.sharedDependencies.reachabilityService.reachability.asObservable().skip(1).observeOn(MainScheduler.instance).subscribe(onNext: { event in
+
+        Dependencies.sharedDependencies.reachabilityService.reachability.asObservable().debug().skip(1).observeOn(MainScheduler.instance).subscribe(
+                onNext: { event in
             
-            switch (event)
-            {
-            case .reachable:
-                // It work half of the times
-                show(messageText: "Network online", theme: .success)
-                break
-            case .unreachable:
-                show(messageText: "Network offline", theme: .info)
-                break
-            }
-            
-            print(event)
-            
-        }, onDisposed: {
-            pretty_function()
-        }).disposed(by: disposeBag)
+                    switch (event)
+                    {
+                    case .reachable:
+                        // It work half of the times
+                        show(messageText: "Network online", theme: .success)
+                        break
+                    case .unreachable:
+                        show(messageText: "Network offline", theme: .info)
+                        break
+                }
+            }).disposed(by: disposeBag)
         
         // combineLatest reachability && CurrentUser
         Observable.combineLatest(Dependencies.sharedDependencies.reachabilityService.reachability.asObservable().skip(1), CurrentUser.asObservable().skip(1))
@@ -121,16 +116,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
             !$0.0.reachable && $0.1 == nil
         })
             // TODO scheduler: MainScheduler.instance - I'm not sure about that
-            .take(1).delay(1, scheduler: MainScheduler.instance).observeOn(MainScheduler.instance).subscribe(
+            .take(1).delay(1, scheduler: MainScheduler.instance).observeOn(MainScheduler.instance).debug().subscribe(
                 onNext: { event in
-            show(messageText: "Network connection is required to login", theme: .info)
-            },
-                onError: { print("onError: \($0), combineLatest reachability && CurrentUser") },
-                onCompleted: { print("onCompleted, combineLatest reachability && CurrentUser") },
-                onDisposed: { print("onDisposed, combineLatest reachability && CurrentUser") }
-        ).disposed(by: disposeBag)
+                    show(messageText: "Network connection is required to login", theme: .info)
+                }
+            ).disposed(by: disposeBag)
         
-        Observable.zip(CurrentUser.asObservable(), CurrentUser.asObservable().skip(1)).subscribe(
+        Observable.zip(CurrentUser.asObservable(), CurrentUser.asObservable().skip(1)).debug().subscribe(
             onNext: { [weak self] (old, new) in
                 
                 // nil -> value
@@ -162,7 +154,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
                 .filter({
                         ($0.1.0 || !$0.1.1.reachable) && $0.0.data() != nil })
                 .observeOn(MainScheduler.instance)
-                .subscribe(
+                .debug().subscribe(
                 onNext: { [weak self] event in
                     
                     let document = event.0
@@ -196,14 +188,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
                         }
                     }
                     
-                },
-                onError: { error in
-                    print("onError, combineLatest Api.sharedApi.userObservable && Api.sharedApi.ready, \(error)")
-                    assertionFailure()
-                },
-                onCompleted: { print("onCompleted, combineLatest Api.sharedApi.userObservable && Api.sharedApi.ready") },
-                onDisposed: {
-                    print("onDisposed, combineLatest Api.sharedApi.userObservable && Api.sharedApi.ready")
                 })
         }
     }

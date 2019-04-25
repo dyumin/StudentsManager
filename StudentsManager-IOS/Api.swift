@@ -51,7 +51,7 @@ class Api
         let db = Firestore.firestore()
         userObservable = db.document("/users/\(Auth.auth().currentUser!.uid)").rx.listen()
         
-        userObservable.takeUntil(.inclusive, predicate: { (event) -> Bool in
+        userObservable.debug().takeUntil(.inclusive, predicate: { (event) -> Bool in
             !event.exists
         }).subscribe(
             onNext: { [weak self] event in
@@ -68,17 +68,6 @@ class Api
                     self?.onUserInitDone()
                     self?.ready.accept(true)
                 }
-            },
-            onError: { error in
-                print(Api.self, "userObservable.takeUntil onError", error)
-                assertionFailure()
-            },
-            onCompleted: {
-                print(Api.self, "userObservable.takeUntil onCompleted")
-                
-            },
-            onDisposed: {
-                print(Api.self, "userObservable.takeUntil onDisposed")
             }
         ).disposed(by: disposeBag)
     }
@@ -87,7 +76,7 @@ class Api
     {
         let db = Firestore.firestore()
         
-        userObservable.subscribe(
+        userObservable.debug().subscribe(
             onNext: { [weak self] event in
                 
                 if event.exists, let data = event.data()
@@ -101,21 +90,10 @@ class Api
                 {
                     try! Auth.auth().signOut()
                 }
-            },
-            onError: { error in
-                print(Api.self, "userObservable onError", error)
-                assertionFailure()
-            },
-            onCompleted: {
-                print(Api.self, "userObservable onCompleted")
-                
-            },
-            onDisposed: {
-                print(Api.self, "userObservable onDisposed")
             }
         ).disposed(by: disposeBag)
         
-        db.collection("sessions").whereField("host", isEqualTo: user.value!.reference).whereField("active", isEqualTo: true).rx.listen().subscribe(
+        db.collection("sessions").whereField("host", isEqualTo: user.value!.reference).whereField("active", isEqualTo: true).rx.listen().debug().subscribe(
             onNext: { [weak self] event in
                 print(Api.self, "sessions onNext", event)
                 for i in event.documents
@@ -124,16 +102,6 @@ class Api
                 }
                 
                 self?.currentSessions.accept(event.documents)
-            },
-            onError: { error in
-                print(Api.self, "sessions onError", error)
-                assertionFailure()
-            },
-            onCompleted: {
-                print(Api.self, "sessions onCompleted")
-            },
-            onDisposed: {
-                print(Api.self, "sessions onDisposed")
             }
         ).disposed(by: disposeBag)
     }
