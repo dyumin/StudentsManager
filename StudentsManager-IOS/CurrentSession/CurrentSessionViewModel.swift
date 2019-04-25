@@ -44,10 +44,12 @@ class CurrentSessionModel: NSObject
 //
 //        }).disposed(by: disposeBag)
         
-        Api.sharedApi.currentSessions.asObservable().debug("currentSessions").subscribe(
+        Observable.combineLatest(
+            Api.sharedApi.editingAllowed.asObservable().distinctUntilChanged(),
+            Api.sharedApi.currentSessions.asObservable()).debug("currentSessions").subscribe(
             onNext: { [weak self] event in
             
-                self?.buildItems(event)
+                self?.buildItems(editingAllowed: event.0, currentSessions: event.1)
                 
                 DispatchQueue.main.async
                 {
@@ -58,13 +60,16 @@ class CurrentSessionModel: NSObject
         ).disposed(by: disposeBag)
     }
     
-    func buildItems(_ currentSessions: [DocumentSnapshot])
+    func buildItems(editingAllowed: Bool, currentSessions: [DocumentSnapshot])
     {
         items.removeAll(keepingCapacity: true)
         
         if (currentSessions.isEmpty)
         {
-            items.append(CurrentSessionModelNewEventItem(someNewEvent: "someNewEvent"))
+            if editingAllowed
+            {
+                items.append(CurrentSessionModelNewEventItem(someNewEvent: "someNewEvent"))
+            }
         }
         else
         {

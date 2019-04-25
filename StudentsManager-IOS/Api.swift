@@ -51,11 +51,10 @@ class Api
         let db = Firestore.firestore()
         userObservable = db.document("/users/\(Auth.auth().currentUser!.uid)").rx.listen()
         
-        userObservable.debug("userObservable.takeUntil").takeUntil(.inclusive, predicate: { (event) -> Bool in
+        userObservable.takeUntil(.inclusive, predicate: { (event) -> Bool in
             !event.exists
-        }).subscribe(
+        }).debug("userObservable.takeUntil").subscribe(
             onNext: { [weak self] event in
-                print(Api.self, "userObservable.takeUntil onNext", event, event.data() as Any)
                 
                 if !event.exists
                 {
@@ -68,6 +67,7 @@ class Api
                     self?.onUserInitDone()
                     self?.ready.accept(true)
                 }
+
             }
         ).disposed(by: disposeBag)
     }
@@ -81,8 +81,7 @@ class Api
                 
                 if event.exists, let data = event.data()
                 {
-                    print(Api.self, "userObservable onNext", event, event.data() as Any)
-                self?.editingAllowed.accept(UserAccountType.AccountTypesWithEditingPermissions.contains(data["position"] as! String))
+                    self?.editingAllowed.accept(UserAccountType.AccountTypesWithEditingPermissions.contains(data["position"] as! String))
                     
                     self?.user.accept(event)
                 }
@@ -95,7 +94,7 @@ class Api
         
         db.collection("sessions").whereField("host", isEqualTo: user.value!.reference).whereField("active", isEqualTo: true).rx.listen().debug("sessions").subscribe(
             onNext: { [weak self] event in
-                print(Api.self, "sessions onNext", event)
+                
                 for i in event.documents
                 {
                     print(i.data())
