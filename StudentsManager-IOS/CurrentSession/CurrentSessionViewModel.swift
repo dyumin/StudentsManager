@@ -13,6 +13,8 @@ import UIKit
 
 import RxSwift
 
+import Firebase
+
 class CurrentSessionModel: NSObject
 {
     private var items = [CurrentSessionModelItem]()
@@ -21,30 +23,68 @@ class CurrentSessionModel: NSObject
     
     private let disposeBag = DisposeBag()
     
+    deinit
+    {
+        pretty_function()
+    }
+    
     override init()
     {
         super.init()
         
-        Api.sharedApi.editingAllowed.asObservable().distinctUntilChanged().subscribe(
-        { [weak self] event in
+//        Api.sharedApi.editingAllowed.asObservable().distinctUntilChanged().subscribe(
+//        { [weak self] event in
+//
+//            self?.buildItems()
+//
+//            DispatchQueue.main.async
+//            {
+//                self?.tableView.reloadData()
+//            }
+//
+//        }).disposed(by: disposeBag)
+        
+        Api.sharedApi.currentSessions.asObservable().subscribe(
+            onNext: { [weak self] event in
             
-            self?.buildItems()
+                print(CurrentSessionModel.self, "currentSessions onNext", event)
+                
+                self?.buildItems(event)
+                
+                DispatchQueue.main.async
+                {
+                    self?.tableView.reloadData()
+                }
             
-            DispatchQueue.main.async
-            {
-                self?.tableView.reloadData()
+            },
+            onError: { error in
+                print(CurrentSessionModel.self, "currentSessions onError", error)
+                assertionFailure()
+            },
+            onCompleted: {
+                print(CurrentSessionModel.self, "currentSessions onCompleted")
+            },
+            onDisposed: {
+                print(CurrentSessionModel.self, "currentSessions onDisposed")
             }
-        }).disposed(by: disposeBag)
+        ).disposed(by: disposeBag)
     }
     
-    func buildItems()
+    func buildItems(_ currentSessions: [DocumentSnapshot])
     {
         items.removeAll(keepingCapacity: true)
         
-//        if (Api.sharedApi.editingAllowed.value)
+        if (currentSessions.isEmpty)
+        {
+            items.append(CurrentSessionModelNewEventItem(someNewEvent: "someNewEvent"))
+        }
+        else
+        {
+            items.append(CurrentSessionModelEventItem(someEvent: "someEvent"))
+            items.append(CurrentSessionModelTutorItem(someTutor: "someTutor"))
+        }
         
-        items.append(CurrentSessionModelEventItem(someEvent: "def init 666"))
-        items.append(CurrentSessionModelTutorItem(someTutor: "tutor init 666"))
+//        if (Api.sharedApi.editingAllowed.value)
     }
 }
 
@@ -81,6 +121,11 @@ extension CurrentSessionModel: UITableViewDataSource
             }
         case .Participants:
             return UITableViewCell()
+        case .NewEvent:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionNewEventCell.identifier, for: indexPath) as? CurrentSessionNewEventCell
+            {
+                return cell
+            }
         }
         
         return UITableViewCell()
@@ -93,6 +138,8 @@ enum CurrentSessionModelItemType
     case Event
     case Tutor
     case Participants
+    
+    case NewEvent
 }
 
 protocol CurrentSessionModelItem
@@ -122,6 +169,21 @@ class CurrentSessionModelEventItem: CurrentSessionModelItem
         self.someEvent = someEvent
     }
 }
+
+class CurrentSessionModelNewEventItem: CurrentSessionModelItem
+{
+    var type: CurrentSessionModelItemType { return .NewEvent }
+    
+    var sectionTitle: String { return "New event" }
+    
+    var someNewEvent: String
+    
+    init(someNewEvent: String)
+    {
+        self.someNewEvent = someNewEvent
+    }
+}
+
 
 class CurrentSessionModelTutorItem: CurrentSessionModelItem
 {

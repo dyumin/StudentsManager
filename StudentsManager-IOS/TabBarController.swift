@@ -15,7 +15,7 @@ class TabBarController: UITabBarController
     {
         super.viewDidLoad()
         
-        let _ = Api.sharedApi.editingAllowed.value
+//        let _ = Api.sharedApi.editingAllowed.value
     }
     
     deinit

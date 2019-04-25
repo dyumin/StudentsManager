@@ -21,7 +21,6 @@ import RxFirebase
 
 let CurrentUser = BehaviorRelay<User?>(value: nil)
 
-
 // https://stackoverflow.com/questions/24402533/is-there-a-swift-alternative-for-nslogs-pretty-function
 func pretty_function(_ file: String = #file, function: String = #function, line: Int = #line)
 {
@@ -95,17 +94,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
             CurrentUser.accept(user)
         }
         
-        CurrentUser.asObservable().skip(1).subscribe(onNext: { [weak self] userEvent in
-            
-            self?.updateRootViewController(user: userEvent)
-            
-        }).disposed(by: disposeBag)
+//        Auth.auth().currentUser?.rx.as
         
     Dependencies.sharedDependencies.reachabilityService.reachability.asObservable().skip(1).observeOn(MainScheduler.instance).subscribe(onNext: { event in
             
             switch (event)
             {
             case .reachable:
+                // It work half of the times
                 show(messageText: "Network online", theme: .success)
                 break
             case .unreachable:
@@ -134,9 +130,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
                 onDisposed: { print("onDisposed, combineLatest reachability && CurrentUser") }
         ).disposed(by: disposeBag)
         
-        CurrentUser.asObservable().skip(1).subscribe(onNext: { [weak self] event in
-            self?.stateDidChanged(event)
-        }).disposed(by: disposeBag)
+        Observable.zip(CurrentUser.asObservable(), CurrentUser.asObservable().skip(1)).subscribe(
+            onNext: { [weak self] (old, new) in
+                
+                // nil -> value
+                if (old == nil && new != nil)
+                {
+                    Api.configure()
+                }
+                
+                self?.stateDidChanged(new)
+                self?.updateRootViewController(user: new)
+            }
+        ).disposed(by: disposeBag)
         
         return true
     }
@@ -148,8 +154,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
         
         if user != nil
         {
-            Api.reset()
-            
             statusDisposable =
                 Observable.combineLatest(
                 Api.sharedApi.userObservable,
@@ -206,7 +210,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
     
     deinit
     {
+        pretty_function()
         statusDisposable?.dispose()
+        if let authStateDidChangeListenerHandle = authStateDidChangeListenerHandle
+        {
+            Auth.auth().removeStateDidChangeListener(authStateDidChangeListenerHandle)
+        }
     }
     
     func updateRootViewController(user: User?)

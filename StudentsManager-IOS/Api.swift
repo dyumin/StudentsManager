@@ -20,13 +20,14 @@ class Api
     {
         get
         {
-            return _sharedApi
+            assert(_sharedApi != nil, "sharedApi called before configure()")
+            return _sharedApi!
         }
     }
     
-    private static var _sharedApi = Api()
+    private static var _sharedApi: Api? = nil
     
-    static func reset()
+    static func configure()
     {
         _sharedApi = Api()
     }
@@ -88,7 +89,8 @@ class Api
         
         userObservable.subscribe(
             onNext: { [weak self] event in
-                if let data = event.data()
+                
+                if event.exists, let data = event.data()
                 {
                     print(Api.self, "userObservable onNext", event, event.data() as Any)
                 self?.editingAllowed.accept(UserAccountType.AccountTypesWithEditingPermissions.contains(data["position"] as! String))
@@ -162,11 +164,6 @@ class Api
                     if let error = error
                     {
                         print(error)
-                        
-                        // updateData usually only fails when there is no such document
-                        // steps to reproduce:
-                        // disable phone internet connection -> open app (updateData block will be added to queue) -> delete user account record on server -> enable phone internet connection
-                        // "onDisposed, combineLatest db.collection(\"users\").document(\"\\(user.uid)\") && BackEndIsReady" will handle this
                     }
                 })
             }
@@ -178,9 +175,9 @@ class Api
                     if let error = error
                     {
                         print(error)
-                        assertionFailure()
-                        
                         show(messageText: "Fatal error on accout creation, restart app", theme: .error)
+                        
+                        assertionFailure()
                     }
                 })
             }
