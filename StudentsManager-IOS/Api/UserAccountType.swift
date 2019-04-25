@@ -24,3 +24,8 @@ public extension UserAccountType
     static let tutor = UserAccountType(rawValue: "tutor")
     static let student = UserAccountType(rawValue: "student")
 }
+
+public extension UserAccountType
+{
+    static let AccountTypesWithEditingPermissions = [ admin.rawValue, tutor.rawValue ]
+}

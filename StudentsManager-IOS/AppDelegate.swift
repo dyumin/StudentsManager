@@ -20,7 +20,7 @@ import RxCocoa
 import RxFirebase
 
 let CurrentUser = BehaviorRelay<User?>(value: nil)
-let BackEndIsReady = BehaviorRelay<Bool>(value: false)
+
 
 // https://stackoverflow.com/questions/24402533/is-there-a-swift-alternative-for-nslogs-pretty-function
 func pretty_function(_ file: String = #file, function: String = #function, line: Int = #line)
@@ -34,56 +34,8 @@ func pretty_function(_ file: String = #file, function: String = #function, line:
     }
 }
 
-func updateFBUserRecord(_ currentUser : User)
-{
-    let db = Firestore.firestore()
-    
-    let uid = currentUser.uid
-    
-    let user = db.document("/users/\(uid)")
-    
-    var userData : Dictionary =
-        ["displayName" : currentUser.displayName as Any
-        ,"email"       : currentUser.email as Any
-    ]
-    
-    user.getDocument { (document, err) in
-        if let document = document, document.exists
-        {
-            user.updateData(userData, completion: { error in
-                if let error = error
-                {
-                    print(error)
-                    
-                    // updateData usually only fails when there is no such document
-                    // steps to reproduce:
-                    // disable phone internet connection -> open app (updateData block will be added to queue) -> delete user account record on server -> enable phone internet connection
-                    // "onDisposed, combineLatest db.collection(\"users\").document(\"\\(user.uid)\") && BackEndIsReady" will handle this
-                }
 
-                BackEndIsReady.accept(true)
-            })
-        }
-        else
-        {
-            userData["position"] = UserAccountType.new.rawValue
-            
-            user.setData(userData, completion: { error in
-                if let error = error
-                {
-                    print(error)
-                    assertionFailure()
-                    
-                    show(messageText: "Fatal error on accout creation, restart app", theme: .error)
-                }
-                else
-                {
-                    BackEndIsReady.accept(true)
-                }
-            })
-        }
-    }
-}
+
 
 func show(messageText: String, theme: Theme)
 {
@@ -120,7 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
     
     var authStateDidChangeListenerHandle: AuthStateDidChangeListenerHandle?
     
-    let bag = DisposeBag()
+    let disposeBag = DisposeBag()
     
     var statusDisposable: Disposable?
     
@@ -145,18 +97,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
         
         CurrentUser.asObservable().skip(1).subscribe(onNext: { [weak self] userEvent in
             
-            DispatchQueue.global(qos: .userInitiated).async {
-                if let userEvent = userEvent
-                {
-                    updateFBUserRecord(userEvent)
-                }
-            }
-
             self?.updateRootViewController(user: userEvent)
             
-        }).disposed(by: bag)
+        }).disposed(by: disposeBag)
         
-        Dependencies.sharedDependencies.reachabilityService.reachability.asObservable().skip(1).observeOn(MainScheduler.instance).subscribe(onNext: { event in
+    Dependencies.sharedDependencies.reachabilityService.reachability.asObservable().skip(1).observeOn(MainScheduler.instance).subscribe(onNext: { event in
             
             switch (event)
             {
@@ -172,7 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
             
         }, onDisposed: {
             pretty_function()
-        }).disposed(by: bag)
+        }).disposed(by: disposeBag)
         
         // combineLatest reachability && CurrentUser
         Observable.combineLatest(Dependencies.sharedDependencies.reachabilityService.reachability.asObservable().skip(1), CurrentUser.asObservable().skip(1))
@@ -187,11 +132,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
                 onError: { print("onError: \($0), combineLatest reachability && CurrentUser") },
                 onCompleted: { print("onCompleted, combineLatest reachability && CurrentUser") },
                 onDisposed: { print("onDisposed, combineLatest reachability && CurrentUser") }
-        ).disposed(by: bag)
+        ).disposed(by: disposeBag)
         
         CurrentUser.asObservable().skip(1).subscribe(onNext: { [weak self] event in
             self?.stateDidChanged(event)
-        }).disposed(by: bag)
+        }).disposed(by: disposeBag)
         
         return true
     }
@@ -201,31 +146,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
         statusDisposable?.dispose()
         statusDisposable = nil
         
-        if let user = user
+        if user != nil
         {
-            let db = Firestore.firestore()
+            Api.reset()
+            
             statusDisposable =
-                
                 Observable.combineLatest(
-                db.collection("users").document("\(user.uid)").rx.listen(),
-                Observable.combineLatest(BackEndIsReady.asObservable(),
+                Api.sharedApi.userObservable,
+                Observable.combineLatest(Api.sharedApi.ready.asObservable(),
                                          Dependencies.sharedDependencies.reachabilityService.reachability.asObservable()))
                 .filter({
-                        ($0.1.0 || !$0.1.1.reachable) })
+                        ($0.1.0 || !$0.1.1.reachable) && $0.0.data() != nil })
                 .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { [weak self] event in
+                .subscribe(
+                onNext: { [weak self] event in
                     
                     let document = event.0
-                    
-                    print("Current data: \(document.data())")
-                    
-                    if (document.data() == nil)
-                    {
-                        print("User account was removed from server! Restoring...")
-                        updateFBUserRecord(CurrentUser.value!)
-                        return
-                    }
-                    
+                                        
                     if let position = document.get("position") as? String, !position.isEmpty, position != UserAccountType.new.rawValue
                     {
                         self?.stubController?.view.removeFromSuperview()
@@ -234,7 +171,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
                     }
                     else
                     {
-                        if let stubController = self?.stubController
+                        if (self?.stubController) != nil
                         {
                             
                         }
@@ -255,14 +192,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
                         }
                     }
                     
-                }, onError: { error in
-                    print("Error fetching snapshots: \(error)")
+                },
+                onError: { error in
+                    print("onError, combineLatest Api.sharedApi.userObservable && Api.sharedApi.ready, \(error)")
                     assertionFailure()
                 },
-                   onCompleted: { print("onCompleted, combineLatest db.collection(\"users\").document(\"\\(user.uid)\") && BackEndIsReady") },
-                   onDisposed: {
-                    print("onDisposed, combineLatest db.collection(\"users\").document(\"\\(user.uid)\") && BackEndIsReady")
-                    BackEndIsReady.accept(false)
+                onCompleted: { print("onCompleted, combineLatest Api.sharedApi.userObservable && Api.sharedApi.ready") },
+                onDisposed: {
+                    print("onDisposed, combineLatest Api.sharedApi.userObservable && Api.sharedApi.ready")
                 })
         }
     }

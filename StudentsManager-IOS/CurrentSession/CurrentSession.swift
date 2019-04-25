@@ -18,15 +18,19 @@ class CurrentSession: UIViewController
     {
         super.viewDidLoad()
         
-        // tableView.register(CurrentSessionEventCell.self, forCellReuseIdentifier: CurrentSessionEventCell.identifier) // Todo: why this one not working?
+        // tableView.register(CurrentSessionEventCell.self, forCellReuseIdentifier: CurrentSessionEventCell.identifier) // Todo: why does this one not working?
         
         tableView.register(UINib(nibName: CurrentSessionEventCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionEventCell.identifier)
         
         tableView.register(UINib(nibName: CurrentSessionTutorCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionTutorCell.identifier)
         
+        // insert here
+        
+        tableView.register(UINib(nibName: CurrentSessionNewEventCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionNewEventCell.identifier)
+        
         tableView.dataSource = viewModel
-
-        // Do any additional setup after loading the view.
+        
+        viewModel.tableView = tableView
     }
     
 
@@ -39,5 +43,4 @@ class CurrentSession: UIViewController
         // Pass the selected object to the new view controller.
     }
     */
-
 }

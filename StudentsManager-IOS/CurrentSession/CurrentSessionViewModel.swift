@@ -2,6 +2,8 @@
 //  File.swift
 //  StudentsManager-IOS
 //
+//  NOTE: CurrentSessionModel expects tableView variable to be set in order to function properly
+//
 //  Created by Дюмин Алексей on 19/03/2019.
 //  Copyright © 2019 TeamUUUU. All rights reserved.
 //
@@ -9,12 +11,38 @@
 import Foundation
 import UIKit
 
+import RxSwift
+
 class CurrentSessionModel: NSObject
 {
-    var items = [CurrentSessionModelItem]()
+    private var items = [CurrentSessionModelItem]()
+    
+    weak var tableView: UITableView!
+    
+    private let disposeBag = DisposeBag()
     
     override init()
     {
+        super.init()
+        
+        Api.sharedApi.editingAllowed.asObservable().distinctUntilChanged().subscribe(
+        { [weak self] event in
+            
+            self?.buildItems()
+            
+            DispatchQueue.main.async
+            {
+                self?.tableView.reloadData()
+            }
+        }).disposed(by: disposeBag)
+    }
+    
+    func buildItems()
+    {
+        items.removeAll(keepingCapacity: true)
+        
+//        if (Api.sharedApi.editingAllowed.value)
+        
         items.append(CurrentSessionModelEventItem(someEvent: "def init 666"))
         items.append(CurrentSessionModelTutorItem(someTutor: "tutor init 666"))
     }

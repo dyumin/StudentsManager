@@ -39,6 +39,9 @@
 		CCD0266E226B5FD000A19E47 /* UserAccountType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD0266D226B5FD000A19E47 /* UserAccountType.swift */; };
 		CCD02690226CE1BD00A19E47 /* AdminAprovalStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD0268E226CE1BD00A19E47 /* AdminAprovalStub.swift */; };
 		CCD02691226CE1BD00A19E47 /* AdminAprovalStub.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCD0268F226CE1BD00A19E47 /* AdminAprovalStub.xib */; };
+		CCD0269E226F340A00A19E47 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD0269D226F340900A19E47 /* Api.swift */; };
+		CCD026A4226F46F400A19E47 /* CurrentSessionNewEventCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD026A2226F46F400A19E47 /* CurrentSessionNewEventCell.swift */; };
+		CCD026A5226F46F400A19E47 /* CurrentSessionNewEventCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCD026A3226F46F400A19E47 /* CurrentSessionNewEventCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -92,6 +95,9 @@
 		CCD0266D226B5FD000A19E47 /* UserAccountType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccountType.swift; sourceTree = "<group>"; };
 		CCD0268E226CE1BD00A19E47 /* AdminAprovalStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminAprovalStub.swift; sourceTree = "<group>"; };
 		CCD0268F226CE1BD00A19E47 /* AdminAprovalStub.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AdminAprovalStub.xib; sourceTree = "<group>"; };
+		CCD0269D226F340900A19E47 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Api.swift; path = ../Api.swift; sourceTree = "<group>"; };
+		CCD026A2226F46F400A19E47 /* CurrentSessionNewEventCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionNewEventCell.swift; sourceTree = "<group>"; };
+		CCD026A3226F46F400A19E47 /* CurrentSessionNewEventCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentSessionNewEventCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +130,8 @@
 				CC33CFBE2242194900FB000F /* CurrentSessionEventCell.xib */,
 				CCB522CF22423D0500737C7D /* CurrentSessionTutorCell.swift */,
 				CCB522D022423D0500737C7D /* CurrentSessionTutorCell.xib */,
+				CCD026A2226F46F400A19E47 /* CurrentSessionNewEventCell.swift */,
+				CCD026A3226F46F400A19E47 /* CurrentSessionNewEventCell.xib */,
 			);
 			path = CurrentSession;
 			sourceTree = "<group>";
@@ -149,10 +157,10 @@
 		CC5BB20A21F502220069B076 /* StudentsManager-IOS */ = {
 			isa = PBXGroup;
 			children = (
-				CCD0266C226B5F9400A19E47 /* UserModel */,
 				CCBC489C2248CBEB0074D559 /* Services */,
 				CC33CFB822403CB400FB000F /* CurrentSession */,
 				CC2F29342207A0C100D83E12 /* Main.storyboard */,
+				CCD0269F226F341700A19E47 /* Api */,
 				CC2F29372207A1CC00D83E12 /* Main.swift */,
 				CC5BB20B21F502220069B076 /* AppDelegate.swift */,
 				CC5BB20D21F502220069B076 /* ViewController.swift */,
@@ -188,12 +196,13 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		CCD0266C226B5F9400A19E47 /* UserModel */ = {
+		CCD0269F226F341700A19E47 /* Api */ = {
 			isa = PBXGroup;
 			children = (
 				CCD0266D226B5FD000A19E47 /* UserAccountType.swift */,
+				CCD0269D226F340900A19E47 /* Api.swift */,
 			);
-			path = UserModel;
+			path = Api;
 			sourceTree = "<group>";
 		};
 		EE2AC82BEE9E99D128E5AAE9 /* Pods */ = {
@@ -268,6 +277,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CCD026A5226F46F400A19E47 /* CurrentSessionNewEventCell.xib in Resources */,
 				CC5BB21621F502250069B076 /* LaunchScreen.storyboard in Resources */,
 				CCD02691226CE1BD00A19E47 /* AdminAprovalStub.xib in Resources */,
 				CC33CFC02242194900FB000F /* CurrentSessionEventCell.xib in Resources */,
@@ -387,6 +397,7 @@
 				CCBC48AE2248CBEB0074D559 /* HtmlParsing.swift in Sources */,
 				CCD0266E226B5FD000A19E47 /* UserAccountType.swift in Sources */,
 				CCBC48A92248CBEB0074D559 /* ImageService.swift in Sources */,
+				CCD0269E226F340A00A19E47 /* Api.swift in Sources */,
 				CCBC48B82248CD4A0074D559 /* Dependencies.swift in Sources */,
 				CC33CFBA2240FD7300FB000F /* CurrentSessionViewModel.swift in Sources */,
 				CCBC48AB2248CBEB0074D559 /* PseudoRandomGenerator.swift in Sources */,
@@ -399,6 +410,7 @@
 				CCB522D122423D0500737C7D /* CurrentSessionTutorCell.swift in Sources */,
 				CC33CFB52240347800FB000F /* History.swift in Sources */,
 				CCBC48B22248CBEB0074D559 /* Reachability.swift in Sources */,
+				CCD026A4226F46F400A19E47 /* CurrentSessionNewEventCell.swift in Sources */,
 				CC5BB20C21F502220069B076 /* AppDelegate.swift in Sources */,
 				CCD0266A22672B3400A19E47 /* TabBarController.swift in Sources */,
 				CCBC48B02248CBEB0074D559 /* UIImage+Extensions.swift in Sources */,
