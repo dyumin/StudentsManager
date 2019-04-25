@@ -44,11 +44,9 @@ class CurrentSessionModel: NSObject
 //
 //        }).disposed(by: disposeBag)
         
-        Api.sharedApi.currentSessions.asObservable().subscribe(
+        Api.sharedApi.currentSessions.asObservable().debug("currentSessions").subscribe(
             onNext: { [weak self] event in
             
-                print(CurrentSessionModel.self, "currentSessions onNext", event)
-                
                 self?.buildItems(event)
                 
                 DispatchQueue.main.async
@@ -56,16 +54,6 @@ class CurrentSessionModel: NSObject
                     self?.tableView.reloadData()
                 }
             
-            },
-            onError: { error in
-                print(CurrentSessionModel.self, "currentSessions onError", error)
-                assertionFailure()
-            },
-            onCompleted: {
-                print(CurrentSessionModel.self, "currentSessions onCompleted")
-            },
-            onDisposed: {
-                print(CurrentSessionModel.self, "currentSessions onDisposed")
             }
         ).disposed(by: disposeBag)
     }

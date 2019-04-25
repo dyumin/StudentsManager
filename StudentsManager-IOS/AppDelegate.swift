@@ -116,7 +116,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
             !$0.0.reachable && $0.1 == nil
         })
             // TODO scheduler: MainScheduler.instance - I'm not sure about that
-            .take(1).delay(1, scheduler: MainScheduler.instance).observeOn(MainScheduler.instance).debug().subscribe(
+            .take(1).delay(1, scheduler: MainScheduler.instance).observeOn(MainScheduler.instance).debug("combineLatest reachability && CurrentUser").subscribe(
                 onNext: { event in
                     show(messageText: "Network connection is required to login", theme: .info)
                 }
@@ -154,7 +154,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
                 .filter({
                         ($0.1.0 || !$0.1.1.reachable) && $0.0.data() != nil })
                 .observeOn(MainScheduler.instance)
-                .debug().subscribe(
+                .debug("combineLatest Api.sharedApi.userObservable && Api.sharedApi.ready").subscribe(
                 onNext: { [weak self] event in
                     
                     let document = event.0

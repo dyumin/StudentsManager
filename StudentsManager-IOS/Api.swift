@@ -51,7 +51,7 @@ class Api
         let db = Firestore.firestore()
         userObservable = db.document("/users/\(Auth.auth().currentUser!.uid)").rx.listen()
         
-        userObservable.debug().takeUntil(.inclusive, predicate: { (event) -> Bool in
+        userObservable.debug("userObservable.takeUntil").takeUntil(.inclusive, predicate: { (event) -> Bool in
             !event.exists
         }).subscribe(
             onNext: { [weak self] event in
@@ -76,7 +76,7 @@ class Api
     {
         let db = Firestore.firestore()
         
-        userObservable.debug().subscribe(
+        userObservable.debug("userObservable").subscribe(
             onNext: { [weak self] event in
                 
                 if event.exists, let data = event.data()
@@ -93,7 +93,7 @@ class Api
             }
         ).disposed(by: disposeBag)
         
-        db.collection("sessions").whereField("host", isEqualTo: user.value!.reference).whereField("active", isEqualTo: true).rx.listen().debug().subscribe(
+        db.collection("sessions").whereField("host", isEqualTo: user.value!.reference).whereField("active", isEqualTo: true).rx.listen().debug("sessions").subscribe(
             onNext: { [weak self] event in
                 print(Api.self, "sessions onNext", event)
                 for i in event.documents
