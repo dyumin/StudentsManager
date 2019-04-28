@@ -2,7 +2,7 @@
 //  File.swift
 //  StudentsManager-IOS
 //
-//  NOTE: CurrentSessionModel expects tableView variable to be set in order to function properly
+//  NOTE: CurrentSessionModel expects partialUpdatesTableViewOutlet variable to be set in order to function properly
 //
 //  Created by Дюмин Алексей on 19/03/2019.
 //  Copyright © 2019 TeamUUUU. All rights reserved.
@@ -12,16 +12,80 @@ import Foundation
 import UIKit
 
 import RxSwift
+import RxCocoa
 
 import Firebase
 
+import RxDataSources
+
 class CurrentSessionModel: NSObject
 {
-    private var items = [CurrentSessionModelItem]()
+    weak var partialUpdatesTableViewOutlet: UITableView!
+    {
+        didSet
+        {
+            self.dataSourceDisposeBag = nil
+            
+            if let partialUpdatesTableViewOutlet = partialUpdatesTableViewOutlet
+            {
+                let dataSourceDisposeBag = DisposeBag()
+                
+                let configureCell: TableViewSectionedDataSource<Section>.ConfigureCell =
+                { dataSource, tableView, indexPath, item in
+                    
+                    switch item.type
+                    {
+                        case .Event:
+                            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionEventCell.identifier, for: indexPath) as? CurrentSessionEventCell
+                            {
+                                cell.item = nil
+                                return cell
+                            }
+                        
+                        
+                        case .Tutor:
+                            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionTutorCell.identifier, for: indexPath) as? CurrentSessionTutorCell
+                            {
+                                return cell
+                            }
+                        case .Participants:
+                            return UITableViewCell()
+                        case .NewEvent:
+                            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionNewEventCell.identifier, for: indexPath) as? CurrentSessionNewEventCell
+                            {
+                                return cell
+                            }
+                    }
+                    
+                    return UITableViewCell()
+                }
+                
+                let titleForSection : TableViewSectionedDataSource<Section>.TitleForHeaderInSection =
+                { (ds, section) -> String? in
+                    
+//                    if ds[section].model == .Tutor
+//                    {
+//                        return nil
+//                    }
+                    
+                    return ds[section].model.rawValue
+                }
+                
+                let dataSource = RxTableViewSectionedAnimatedDataSource<Section>(configureCell:configureCell,
+                                                                                 titleForHeaderInSection: titleForSection)
+                
+                sections.asObservable().debug("sections_to_table").bind(to: partialUpdatesTableViewOutlet.rx.items(dataSource: dataSource)).disposed(by: dataSourceDisposeBag)
+                
+                self.dataSourceDisposeBag = dataSourceDisposeBag
+            }
+        }
+    }
     
-    weak var tableView: UITableView!
+    private var dataSourceDisposeBag: DisposeBag?
     
-    private let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
+    
+    private let sections: BehaviorRelay<[Section]> = BehaviorRelay(value: [])
     
     deinit
     {
@@ -46,87 +110,39 @@ class CurrentSessionModel: NSObject
         
         Observable.combineLatest(
             Api.sharedApi.editingAllowed.asObservable().distinctUntilChanged(),
-            Api.sharedApi.currentSessions.asObservable()).debug("currentSessions").subscribe(
+            Api.sharedApi.currentSessions.asObservable()).debounce(0.5, scheduler: MainScheduler.instance).debug("editingAllowed && currentSessions").subscribe(
             onNext: { [weak self] event in
-            
+
                 self?.buildItems(editingAllowed: event.0, currentSessions: event.1)
-                
-                DispatchQueue.main.async
-                {
-                    self?.tableView.reloadData()
-                }
-            
+
             }
         ).disposed(by: disposeBag)
     }
     
     func buildItems(editingAllowed: Bool, currentSessions: [DocumentSnapshot])
     {
-        items.removeAll(keepingCapacity: true)
-        
         if (currentSessions.isEmpty)
         {
             if editingAllowed
             {
-                items.append(CurrentSessionModelNewEventItem(someNewEvent: "someNewEvent"))
+                sections.accept([
+                    Section(model: .NewEvent, items: [CurrentSessionModelNewEventItem(someNewEvent: "666 new 666")])
+                    ])
             }
         }
         else
         {
-            items.append(CurrentSessionModelEventItem(someEvent: "someEvent"))
-            items.append(CurrentSessionModelTutorItem(someTutor: "someTutor"))
+            sections.accept([
+                Section(model: .Event, items: [CurrentSessionModelEventItem(someEvent: "someEvent")]),
+                Section(model: .Tutor, items: [CurrentSessionModelTutorItem(someTutor: "someTutor")])
+                ])
         }
-        
+
 //        if (Api.sharedApi.editingAllowed.value)
     }
 }
 
-extension CurrentSessionModel: UITableViewDataSource
-{
-    func numberOfSections(in tableView: UITableView) -> Int
-    {
-        return items.count
-    }
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
-        return items[section].rowCount
-    }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    {
-        // we will configure the cells here
-        let item = items[indexPath.section]
-        
-        switch item.type
-        {
-        case .Event:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionEventCell.identifier, for: indexPath) as? CurrentSessionEventCell
-            {
-                cell.item = item
-                return cell
-            }
-        
-            
-        case .Tutor:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionTutorCell.identifier, for: indexPath) as? CurrentSessionTutorCell
-            {
-//                cell.item = item
-                return cell
-            }
-        case .Participants:
-            return UITableViewCell()
-        case .NewEvent:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionNewEventCell.identifier, for: indexPath) as? CurrentSessionNewEventCell
-            {
-                return cell
-            }
-        }
-        
-        return UITableViewCell()
-    }
-    
-}
-
-enum CurrentSessionModelItemType
+enum CurrentSessionModelItemType: String
 {
     case Event
     case Tutor
@@ -135,25 +151,55 @@ enum CurrentSessionModelItemType
     case NewEvent
 }
 
-protocol CurrentSessionModelItem
+extension CurrentSessionModelItemType: IdentifiableType
 {
-    var type: CurrentSessionModelItemType { get }
-    var rowCount: Int { get }
-    var sectionTitle: String { get }
-}
-
-extension CurrentSessionModelItem
-{
-    var rowCount: Int
+    var identity: String
     {
-        return 1
+        return rawValue
     }
 }
 
-class CurrentSessionModelEventItem: CurrentSessionModelItem
+// https://medium.com/@stasost/ios-how-to-build-a-table-view-with-multiple-cell-types-2df91a206429
+protocol CurrentSessionModelItem: IdentifiableType, Equatable
 {
-    var type: CurrentSessionModelItemType { return .Event }
-    var sectionTitle: String { return "Event info" }
+    var type: CurrentSessionModelItemType { get }
+}
+
+// https://stackoverflow.com/questions/33112559/protocol-doesnt-conform-to-itself
+// https://medium.com/@thenewt15/equatable-pitfalls-in-ios-d250534bd7cc
+// Because IdentifiableType has associated type inside, things get really,
+// really messy, sorry for that
+class CurrentSessionModelItemBox: NSObject, CurrentSessionModelItem
+{
+    // IdentifiableType
+    var identity: String
+    {
+        assertionFailure("Please override")
+        return UUID().uuidString
+    }
+    
+    var type: CurrentSessionModelItemType
+    {
+        assertionFailure("Please override")
+        return .NewEvent
+    }
+}
+
+typealias Section = AnimatableSectionModel<CurrentSessionModelItemType, CurrentSessionModelItemBox>
+
+class CurrentSessionModelEventItem: CurrentSessionModelItemBox
+{
+    override var type: CurrentSessionModelItemType { return .Event }
+    override var identity: String { return type.rawValue }
+    
+    override func isEqual(_ object: Any?) -> Bool
+    {
+        guard let other = object as? CurrentSessionModelEventItem else {
+            return false
+        }
+        
+        return self.identity == other.identity
+    }
     
     var someEvent: String
     
@@ -163,11 +209,21 @@ class CurrentSessionModelEventItem: CurrentSessionModelItem
     }
 }
 
-class CurrentSessionModelNewEventItem: CurrentSessionModelItem
+class CurrentSessionModelNewEventItem: CurrentSessionModelItemBox
 {
-    var type: CurrentSessionModelItemType { return .NewEvent }
+    override var type: CurrentSessionModelItemType { return .NewEvent }
+    override var identity: String { return type.rawValue }
     
-    var sectionTitle: String { return "New event" }
+    override func isEqual(_ object: Any?) -> Bool
+    {
+        pretty_function()
+        
+        guard let other = object as? CurrentSessionModelNewEventItem else {
+            return false
+        }
+        
+        return self.identity == other.identity
+    }
     
     var someNewEvent: String
     
@@ -178,9 +234,20 @@ class CurrentSessionModelNewEventItem: CurrentSessionModelItem
 }
 
 
-class CurrentSessionModelTutorItem: CurrentSessionModelItem
+class CurrentSessionModelTutorItem: CurrentSessionModelItemBox
 {
-    var type: CurrentSessionModelItemType { return .Tutor }
+    override var type: CurrentSessionModelItemType { return .Tutor }
+    override var identity: String { return type.rawValue }
+    
+    override func isEqual(_ object: Any?) -> Bool
+    {
+        guard let other = object as? CurrentSessionModelTutorItem else {
+            return false
+        }
+        
+        return self.identity == other.identity
+    }
+    
     var sectionTitle: String { return "Tutor info" }
     
     var someTutor: String
@@ -191,13 +258,13 @@ class CurrentSessionModelTutorItem: CurrentSessionModelItem
     }
 }
 
-class CurrentSessionModelParticipantsItem: CurrentSessionModelItem
+class CurrentSessionModelParticipantsItem: CurrentSessionModelItemBox
 {
-    var type: CurrentSessionModelItemType { return .Participants }
+    override var type: CurrentSessionModelItemType { return .Participants }
     var sectionTitle: String { return "Participants info" }
-    
+
     var someParticipants: String
-    
+
     init(someParticipants: String)
     {
         self.someParticipants = someParticipants

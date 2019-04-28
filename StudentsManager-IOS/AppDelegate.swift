@@ -90,7 +90,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
         
         FUIAuth.defaultAuthUI()!.delegate = self
         
-        authStateDidChangeListenerHandle = Auth.auth().addStateDidChangeListener { auth, user in
+        authStateDidChangeListenerHandle = Auth.auth().addStateDidChangeListener
+        { auth, user in
             CurrentUser.accept(user)
         }
         
