@@ -28,6 +28,16 @@ class CurrentSessionModel: NSObject
             
             if let partialUpdatesTableViewOutlet = partialUpdatesTableViewOutlet
             {
+                // tableView.register(CurrentSessionEventCell.self, forCellReuseIdentifier: CurrentSessionEventCell.identifier) // Todo: why does this one not working?
+                // https://stackoverflow.com/questions/540345/how-do-you-load-custom-uitableviewcells-from-xib-files
+                // http://bdunagan.com/2009/06/28/custom-uitableviewcell-from-a-xib-in-interface-builder/
+                
+                partialUpdatesTableViewOutlet.register(UINib(nibName: CurrentSessionEventCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionEventCell.identifier)
+                
+                partialUpdatesTableViewOutlet.register(UINib(nibName: CurrentSessionTutorCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionTutorCell.identifier)
+                
+                partialUpdatesTableViewOutlet.register(UINib(nibName: CurrentSessionNewEventCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionNewEventCell.identifier)
+                
                 let dataSourceDisposeBag = DisposeBag()
                 
                 let configureCell: TableViewSectionedDataSource<Section>.ConfigureCell =
@@ -51,12 +61,6 @@ class CurrentSessionModel: NSObject
                             break
                         case .Participants:
                             return UITableViewCell()
-                            break
-                        case .NewEvent:
-                            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionNewEventCell.identifier, for: indexPath) as? CurrentSessionNewEventCell
-                            {
-                                return cell
-                            }
                             break
                     }
                     
@@ -112,7 +116,7 @@ class CurrentSessionModel: NSObject
     
     private var dataSourceDisposeBag: DisposeBag?
     
-    private var disposeBag = DisposeBag()
+    private var disposeBag: DisposeBag?
     
     private let sections: BehaviorRelay<[Section]> = BehaviorRelay(value: [])
     
@@ -120,69 +124,63 @@ class CurrentSessionModel: NSObject
     {
         pretty_function()
     }
-    
-    override init()
+
+    enum Mode
     {
+        case CurrentSession
+        case History
+    }
+
+    init(_ mode: Mode)
+    {
+        self.mode = mode
+        
         super.init()
-        
-//        Api.sharedApi.editingAllowed.asObservable().distinctUntilChanged().subscribe(
-//        { [weak self] event in
-//
-//            self?.buildItems()
-//
-//            DispatchQueue.main.async
-//            {
-//                self?.tableView.reloadData()
-//            }
-//
-//        }).disposed(by: disposeBag)
-        
-        Observable.combineLatest(
-            Api.sharedApi.editingAllowed.asObservable().distinctUntilChanged(),
-            Api.sharedApi.currentSessions.asObservable(),
-            Api.sharedApi.user.asObservable()).debug("editingAllowed && currentSessions").subscribe(
-        onNext: { [weak self] event in
-
-            assert(event.1.count < 2, "Multiple active session not yet supported")
-            
-            self?.buildItems(event)
-
-        }
-        ).disposed(by: disposeBag)
     }
     
-    func buildItems(_ event: (Bool, [DocumentSnapshot], DocumentSnapshot?))
+    private let mode: Mode
+    
+    var currentSession: DocumentReference?
     {
-        let editingAllowed = event.0
-        let currentSessions = event.1
-        
-        if (currentSessions.isEmpty)
+        didSet
         {
-            if editingAllowed
-            {
-                sections.accept([
-                    Section(model: .NewEvent, items: [CurrentSessionModelNewEventItem(someNewEvent: "666 new 666")])
-                    ])
-            }
-        }
-        else
-        {
-            var _sections = Array<Section>()
+            disposeBag = nil
             
-            if let event = currentSessions.first
+            if let currentSession = currentSession
             {
-                _sections.append(Section(model: .Event, items: [CurrentSessionModelEventItem(item: event)]))
+                let disposeBag = DisposeBag()
                 
-                if let host = event.get(Session.host) as? DocumentReference
-                {
-                    _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
-                }
+                currentSession.rx.listen().asObservable().debug("currentSession").subscribe(
+                    onNext: { [weak self] event in
+                        
+                        self?.buildItems(for: event)
+                        
+                    }).disposed(by: disposeBag)
+                
+                self.disposeBag = disposeBag
             }
-            
-            sections.accept(_sections)
+            else
+            {
+                buildItems(for: nil)
+            }
         }
-
-//        if (Api.sharedApi.editingAllowed.value)
+    }
+    
+    func buildItems(for currentSession: DocumentSnapshot?)
+    {
+        var _sections = Array<Section>()
+        
+        if let currentSession = currentSession, currentSession.exists
+        {
+            _sections.append(Section(model: .Event, items: [CurrentSessionModelEventItem(item: currentSession)]))
+            
+            if let host = currentSession.get(Session.host) as? DocumentReference
+            {
+                _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
+            }
+        }
+        
+        sections.accept(_sections)
     }
 }
 
@@ -191,8 +189,6 @@ enum CurrentSessionModelItemType: String
     case Event
     case Tutor
     case Participants
-    
-    case NewEvent
 }
 
 extension CurrentSessionModelItemType: IdentifiableType
@@ -225,7 +221,7 @@ class CurrentSessionModelItemBox: NSObject, CurrentSessionModelItem
     var type: CurrentSessionModelItemType
     {
         assertionFailure("Please override")
-        return .NewEvent
+        return .Event
     }
 }
 
@@ -242,7 +238,7 @@ class CurrentSessionModelEventItem: CurrentSessionModelItemBox
             return false
         }
         
-        // NOTE: always false on first call (because of lhs.metadata_ == rhs.metadata_ difference)
+        // NOTE: seems to be always false on first call (because of lhs.metadata_ == rhs.metadata_ difference)
         let isEqual = self.item == other.item
         
         return isEqual
@@ -255,31 +251,6 @@ class CurrentSessionModelEventItem: CurrentSessionModelItemBox
         self.item = item
     }
 }
-
-class CurrentSessionModelNewEventItem: CurrentSessionModelItemBox
-{
-    override var type: CurrentSessionModelItemType { return .NewEvent }
-    override var identity: String { return type.rawValue }
-    
-    override func isEqual(_ object: Any?) -> Bool
-    {
-        pretty_function()
-        
-        guard let other = object as? CurrentSessionModelNewEventItem else {
-            return false
-        }
-        
-        return self.identity == other.identity
-    }
-    
-    var someNewEvent: String
-    
-    init(someNewEvent: String)
-    {
-        self.someNewEvent = someNewEvent
-    }
-}
-
 
 class CurrentSessionModelTutorItem: CurrentSessionModelItemBox
 {

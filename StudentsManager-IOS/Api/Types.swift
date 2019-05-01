@@ -25,6 +25,7 @@ final class ApiUser
     static let displayName = String("displayName")
     static let email = String("email")
     static let phone = String("phone")
+    static let selectedSession = String("selectedSession")
 }
 
 // class representing data structure under rooms collection entity

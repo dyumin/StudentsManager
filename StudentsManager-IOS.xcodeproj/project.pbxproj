@@ -161,9 +161,9 @@
 			children = (
 				CCBC489C2248CBEB0074D559 /* Services */,
 				CC33CFB822403CB400FB000F /* CurrentSession */,
-				CC2F29342207A0C100D83E12 /* Main.storyboard */,
 				CCD0269F226F341700A19E47 /* Api */,
 				CC2F29372207A1CC00D83E12 /* Main.swift */,
+				CC2F29342207A0C100D83E12 /* Main.storyboard */,
 				CC5BB20B21F502220069B076 /* AppDelegate.swift */,
 				CC5BB20D21F502220069B076 /* ViewController.swift */,
 				CC5BB21221F502250069B076 /* Assets.xcassets */,

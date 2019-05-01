@@ -8,44 +8,45 @@
 
 import UIKit
 
+import RxSwift
+
+import Firebase
+
 class CurrentSession: UIViewController
 {
     @IBOutlet weak var tableView: UITableView!
     {
         didSet
         {
-            if let tableView = tableView
-            {
-                // tableView.register(CurrentSessionEventCell.self, forCellReuseIdentifier: CurrentSessionEventCell.identifier) // Todo: why does this one not working?
-                // https://stackoverflow.com/questions/540345/how-do-you-load-custom-uitableviewcells-from-xib-files
-                // http://bdunagan.com/2009/06/28/custom-uitableviewcell-from-a-xib-in-interface-builder/
-                
-                tableView.register(UINib(nibName: CurrentSessionEventCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionEventCell.identifier)
-                
-                tableView.register(UINib(nibName: CurrentSessionTutorCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionTutorCell.identifier)
-                
-                tableView.register(UINib(nibName: CurrentSessionNewEventCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionNewEventCell.identifier)
-                
-                let viewModel = CurrentSessionModel()
-                
-                viewModel.partialUpdatesTableViewOutlet = tableView
-                
-                self.viewModel = viewModel
-            }
-            else
-            {
-                self.viewModel = nil
-            }
+            self.viewModel.partialUpdatesTableViewOutlet = tableView
         }
     }
     
-    var viewModel: CurrentSessionModel?
+    var viewModel = CurrentSessionModel(CurrentSessionModel.Mode.CurrentSession)
     
-    // viewDidLoad is called twice, be aware...
-    override func viewDidLoad()
+    private var disposeBag = DisposeBag()
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?)
     {
-        super.viewDidLoad()
+        fatalError("\(#function) has not been implemented")
+    }
+    
+    required init?(coder aDecoder: NSCoder)
+    {
+        super.init(coder: aDecoder)
         
+        Api.sharedApi.user.debug("CurrentSession.selectedSession").subscribe(
+            onNext: { [weak self] event in
+            
+            let selectedSession = event?.get(ApiUser.selectedSession) as? DocumentReference
+            
+            self?.viewModel.currentSession = selectedSession
+            
+        }).disposed(by: disposeBag)
+    }
+    
+    deinit
+    {
         pretty_function()
     }
     
