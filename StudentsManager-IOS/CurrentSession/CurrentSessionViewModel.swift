@@ -36,25 +36,28 @@ class CurrentSessionModel: NSObject
                     switch item.type
                     {
                         case .Event:
-                            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionEventCell.identifier, for: indexPath) as? CurrentSessionEventCell
+                            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionEventCell.identifier, for: indexPath) as? CurrentSessionEventCell, let item = item as? CurrentSessionModelEventItem
                             {
-                                cell.item = nil
+                                cell.item = item.item
                                 return cell
                             }
-                        
-                        
+                            break
                         case .Tutor:
-                            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionTutorCell.identifier, for: indexPath) as? CurrentSessionTutorCell
+                            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionTutorCell.identifier, for: indexPath) as? CurrentSessionTutorCell, let item = item as? CurrentSessionModelTutorItem
                             {
+                                cell.item = item.host
                                 return cell
                             }
+                            break
                         case .Participants:
                             return UITableViewCell()
+                            break
                         case .NewEvent:
                             if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionNewEventCell.identifier, for: indexPath) as? CurrentSessionNewEventCell
                             {
                                 return cell
                             }
+                            break
                     }
                     
                     return UITableViewCell()
@@ -74,7 +77,33 @@ class CurrentSessionModel: NSObject
                 let dataSource = RxTableViewSectionedAnimatedDataSource<Section>(configureCell:configureCell,
                                                                                  titleForHeaderInSection: titleForSection)
                 
+                #if DEBUG
+                let animationConfiguration = AnimationConfiguration(insertAnimation: .right,
+                                                                    reloadAnimation: .middle,
+                                                                    deleteAnimation: .left)
+                #else
+                let animationConfiguration = AnimationConfiguration(insertAnimation: .fade,
+                                                                    reloadAnimation: .none,
+                                                                    deleteAnimation: .fade)
+                #endif
+                
+                dataSource.animationConfiguration = animationConfiguration
+                
                 sections.asObservable().debug("sections_to_table").bind(to: partialUpdatesTableViewOutlet.rx.items(dataSource: dataSource)).disposed(by: dataSourceDisposeBag)
+                
+                // well, maybe it not the best solution, will see
+//                partialUpdatesTableViewOutlet.rx.didEndDisplayingCell
+//                    .asObservable().debug("didEndDisplayingCell").subscribe(
+//                        onNext: { event in
+//
+//                            let selector = Selector("dispose")
+//                            
+//                            if event.cell.responds(to: selector)
+//                            {
+//                                event.cell.perform(selector)
+//                            }
+//
+//                        }).disposed(by: dataSourceDisposeBag)
                 
                 self.dataSourceDisposeBag = dataSourceDisposeBag
             }
@@ -110,17 +139,23 @@ class CurrentSessionModel: NSObject
         
         Observable.combineLatest(
             Api.sharedApi.editingAllowed.asObservable().distinctUntilChanged(),
-            Api.sharedApi.currentSessions.asObservable()).debounce(0.5, scheduler: MainScheduler.instance).debug("editingAllowed && currentSessions").subscribe(
-            onNext: { [weak self] event in
+            Api.sharedApi.currentSessions.asObservable(),
+            Api.sharedApi.user.asObservable()).debug("editingAllowed && currentSessions").subscribe(
+        onNext: { [weak self] event in
 
-                self?.buildItems(editingAllowed: event.0, currentSessions: event.1)
+            assert(event.1.count < 2, "Multiple active session not yet supported")
+            
+            self?.buildItems(event)
 
-            }
+        }
         ).disposed(by: disposeBag)
     }
     
-    func buildItems(editingAllowed: Bool, currentSessions: [DocumentSnapshot])
+    func buildItems(_ event: (Bool, [DocumentSnapshot], DocumentSnapshot?))
     {
+        let editingAllowed = event.0
+        let currentSessions = event.1
+        
         if (currentSessions.isEmpty)
         {
             if editingAllowed
@@ -132,10 +167,19 @@ class CurrentSessionModel: NSObject
         }
         else
         {
-            sections.accept([
-                Section(model: .Event, items: [CurrentSessionModelEventItem(someEvent: "someEvent")]),
-                Section(model: .Tutor, items: [CurrentSessionModelTutorItem(someTutor: "someTutor")])
-                ])
+            var _sections = Array<Section>()
+            
+            if let event = currentSessions.first
+            {
+                _sections.append(Section(model: .Event, items: [CurrentSessionModelEventItem(item: event)]))
+                
+                if let host = event.get(Session.host) as? DocumentReference
+                {
+                    _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
+                }
+            }
+            
+            sections.accept(_sections)
         }
 
 //        if (Api.sharedApi.editingAllowed.value)
@@ -198,14 +242,17 @@ class CurrentSessionModelEventItem: CurrentSessionModelItemBox
             return false
         }
         
-        return self.identity == other.identity
+        // NOTE: always false on first call (because of lhs.metadata_ == rhs.metadata_ difference)
+        let isEqual = self.item == other.item
+        
+        return isEqual
     }
     
-    var someEvent: String
+    let item: DocumentSnapshot
     
-    init(someEvent: String)
+    init(item: DocumentSnapshot)
     {
-        self.someEvent = someEvent
+        self.item = item
     }
 }
 
@@ -245,16 +292,14 @@ class CurrentSessionModelTutorItem: CurrentSessionModelItemBox
             return false
         }
         
-        return self.identity == other.identity
+        return self.host == other.host
     }
     
-    var sectionTitle: String { return "Tutor info" }
+    var host: DocumentReference
     
-    var someTutor: String
-    
-    init(someTutor: String)
+    init(_ host: DocumentReference)
     {
-        self.someTutor = someTutor
+        self.host = host
     }
 }
 

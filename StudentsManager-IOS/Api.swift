@@ -92,7 +92,8 @@ class Api
             }
         ).disposed(by: disposeBag)
         
-        db.collection("sessions").whereField("host", isEqualTo: user.value!.reference).whereField("active", isEqualTo: true).rx.listen().debug("sessions").subscribe(
+        // TODO add or host back in whereField
+        db.collection("sessions").whereField(Session.createdBy, isEqualTo: user.value!.reference).whereField(Session.active, isEqualTo: true).rx.listen().debug("sessions -> currentSessions").subscribe(
             onNext: { [weak self] event in
                 
                 for i in event.documents
@@ -103,6 +104,22 @@ class Api
                 self?.currentSessions.accept(event.documents)
             }
         ).disposed(by: disposeBag)
+        
+        // reference version
+        // TODO add or host back in whereField
+//        db.collection("sessions").whereField(Session.createdBy, isEqualTo: user.value!.reference).whereField(Session.active, isEqualTo: true).rx.listen().map(
+//            { (querySnapshot) -> [DocumentReference] in
+//
+//                var currentSessions = Array<DocumentReference>()
+//
+//                querySnapshot.documents.forEach(
+//                    { (queryDocumentSnapshot) in
+//                        currentSessions.append(queryDocumentSnapshot.reference)
+//                })
+//
+//                return currentSessions
+//
+//        }).debug("sessions -> currentSessions").bind(to: currentSessions).disposed(by: disposeBag)
     }
     
     deinit
@@ -120,8 +137,8 @@ class Api
         let user = db.document("/users/\(uid)")
         
         var userData : Dictionary =
-            ["displayName" : currentUser.displayName as Any
-                ,"email"       : currentUser.email as Any
+            [ApiUser.displayName : currentUser.displayName as Any
+                ,ApiUser.email   : currentUser.email as Any
         ]
         
         user.getDocument { (document, err) in

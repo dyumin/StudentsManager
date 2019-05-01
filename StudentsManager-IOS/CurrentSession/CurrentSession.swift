@@ -17,19 +17,29 @@ class CurrentSession: UIViewController
             if let tableView = tableView
             {
                 // tableView.register(CurrentSessionEventCell.self, forCellReuseIdentifier: CurrentSessionEventCell.identifier) // Todo: why does this one not working?
+                // https://stackoverflow.com/questions/540345/how-do-you-load-custom-uitableviewcells-from-xib-files
+                // http://bdunagan.com/2009/06/28/custom-uitableviewcell-from-a-xib-in-interface-builder/
                 
                 tableView.register(UINib(nibName: CurrentSessionEventCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionEventCell.identifier)
                 
                 tableView.register(UINib(nibName: CurrentSessionTutorCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionTutorCell.identifier)
                 
                 tableView.register(UINib(nibName: CurrentSessionNewEventCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionNewEventCell.identifier)
+                
+                let viewModel = CurrentSessionModel()
+                
+                viewModel.partialUpdatesTableViewOutlet = tableView
+                
+                self.viewModel = viewModel
             }
-            
-            viewModel.partialUpdatesTableViewOutlet = tableView
+            else
+            {
+                self.viewModel = nil
+            }
         }
     }
     
-    let viewModel = CurrentSessionModel()
+    var viewModel: CurrentSessionModel?
     
     // viewDidLoad is called twice, be aware...
     override func viewDidLoad()
