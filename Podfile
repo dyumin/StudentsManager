@@ -18,6 +18,9 @@ target 'StudentsManager-IOS' do
     pod 'RxCocoa'
 
     pod 'RxFirebase/Firestore'
+    pod 'RxFirebase/Storage'
+
+    
     pod 'RxDataSources', '~> 3.0'
 
     pod 'SwiftMessages'

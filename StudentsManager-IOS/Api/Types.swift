@@ -17,6 +17,7 @@ final class Session
     static let name = String("name")
     static let room = String("room")
     static let startTime = String("startTime")
+    static let participants = String("attendees")
 }
 
 // class representing data structure under sessions collection entity

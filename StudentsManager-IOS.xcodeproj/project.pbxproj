@@ -43,6 +43,8 @@
 		CCD026A4226F46F400A19E47 /* CurrentSessionNewEventCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD026A2226F46F400A19E47 /* CurrentSessionNewEventCell.swift */; };
 		CCD026A5226F46F400A19E47 /* CurrentSessionNewEventCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCD026A3226F46F400A19E47 /* CurrentSessionNewEventCell.xib */; };
 		CCDA3F042278BA99000B2CFA /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA3F032278BA99000B2CFA /* Types.swift */; };
+		CCDA3F07227A5F12000B2CFA /* CurrentSessionParticipantCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA3F05227A5F0D000B2CFA /* CurrentSessionParticipantCell.swift */; };
+		CCDA3F08227A5F12000B2CFA /* CurrentSessionParticipantCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA3F06227A5F0E000B2CFA /* CurrentSessionParticipantCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -100,6 +102,8 @@
 		CCD026A2226F46F400A19E47 /* CurrentSessionNewEventCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionNewEventCell.swift; sourceTree = "<group>"; };
 		CCD026A3226F46F400A19E47 /* CurrentSessionNewEventCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentSessionNewEventCell.xib; sourceTree = "<group>"; };
 		CCDA3F032278BA99000B2CFA /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
+		CCDA3F05227A5F0D000B2CFA /* CurrentSessionParticipantCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionParticipantCell.swift; sourceTree = "<group>"; };
+		CCDA3F06227A5F0E000B2CFA /* CurrentSessionParticipantCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentSessionParticipantCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +138,8 @@
 				CCB522D022423D0500737C7D /* CurrentSessionTutorCell.xib */,
 				CCD026A2226F46F400A19E47 /* CurrentSessionNewEventCell.swift */,
 				CCD026A3226F46F400A19E47 /* CurrentSessionNewEventCell.xib */,
+				CCDA3F05227A5F0D000B2CFA /* CurrentSessionParticipantCell.swift */,
+				CCDA3F06227A5F0E000B2CFA /* CurrentSessionParticipantCell.xib */,
 			);
 			path = CurrentSession;
 			sourceTree = "<group>";
@@ -282,6 +288,7 @@
 			files = (
 				CCD026A5226F46F400A19E47 /* CurrentSessionNewEventCell.xib in Resources */,
 				CC5BB21621F502250069B076 /* LaunchScreen.storyboard in Resources */,
+				CCDA3F08227A5F12000B2CFA /* CurrentSessionParticipantCell.xib in Resources */,
 				CCD02691226CE1BD00A19E47 /* AdminAprovalStub.xib in Resources */,
 				CC33CFC02242194900FB000F /* CurrentSessionEventCell.xib in Resources */,
 				CC2F29362207A0C100D83E12 /* Main.storyboard in Resources */,
@@ -403,6 +410,7 @@
 				CC33CFBF2242194900FB000F /* CurrentSessionEventCell.swift in Sources */,
 				CCBC48AE2248CBEB0074D559 /* HtmlParsing.swift in Sources */,
 				CCD0266E226B5FD000A19E47 /* UserAccountType.swift in Sources */,
+				CCDA3F07227A5F12000B2CFA /* CurrentSessionParticipantCell.swift in Sources */,
 				CCBC48A92248CBEB0074D559 /* ImageService.swift in Sources */,
 				CCD0269E226F340A00A19E47 /* Api.swift in Sources */,
 				CCBC48B82248CD4A0074D559 /* Dependencies.swift in Sources */,

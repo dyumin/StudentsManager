@@ -78,6 +78,10 @@ PODS:
     - GoogleUtilities/Environment (~> 5.2)
     - "GoogleUtilities/NSData+zlib (~> 5.2)"
     - Protobuf (~> 3.5)
+  - FirebaseStorage (3.1.1):
+    - FirebaseAuthInterop (~> 1.0)
+    - FirebaseCore (~> 5.2)
+    - GTMSessionFetcher/Core (~> 1.1)
   - FirebaseUI/Auth (6.2.1):
     - Firebase/Auth (~> 5.0)
     - GoogleUtilities/UserDefaults
@@ -157,8 +161,14 @@ PODS:
     - RxSwift (~> 4.0)
   - RxFirebase/Firestore (0.3.6):
     - RxFirebaseFirestore (~> 0.3)
+  - RxFirebase/Storage (0.3.6):
+    - RxFirebaseStorage (~> 0.3)
   - RxFirebaseFirestore (0.3.6):
     - FirebaseFirestore (~> 1)
+    - RxCocoa (~> 4)
+    - RxSwift (~> 4)
+  - RxFirebaseStorage (0.3.6):
+    - FirebaseStorage (~> 3)
     - RxCocoa (~> 4)
     - RxSwift (~> 4)
   - RxSwift (4.5.0)
@@ -175,6 +185,7 @@ DEPENDENCIES:
   - RxCocoa
   - RxDataSources (~> 3.0)
   - RxFirebase/Firestore
+  - RxFirebase/Storage
   - RxSwift
   - SwiftMessages
 
@@ -192,6 +203,7 @@ SPEC REPOS:
     - FirebaseInstanceID
     - FirebasePerformance
     - FirebaseRemoteConfig
+    - FirebaseStorage
     - FirebaseUI
     - GoogleAppMeasurement
     - GoogleSignIn
@@ -207,6 +219,7 @@ SPEC REPOS:
     - RxDataSources
     - RxFirebase
     - RxFirebaseFirestore
+    - RxFirebaseStorage
     - RxSwift
     - SwiftMessages
 
@@ -223,6 +236,7 @@ SPEC CHECKSUMS:
   FirebaseInstanceID: a122b0c258720cf250551bb2bedf48c699f80d90
   FirebasePerformance: 25ecee2a260bcf398d7f32d6f4804438df953100
   FirebaseRemoteConfig: 7e11c65f0769c09bff6947997c209515058c5318
+  FirebaseStorage: 6162ef4322502b818d9de0ec552f5226d283de43
   FirebaseUI: c9e227a7d44e2e422a461cb3f4ead8dc5c7326e6
   GoogleAppMeasurement: ffe513e90551844a739e7bcbb1d2aca1c28a4338
   GoogleSignIn: 7ff245e1a7b26d379099d3243a562f5747e23d39
@@ -238,9 +252,10 @@ SPEC CHECKSUMS:
   RxDataSources: a843bad90c29817f5923ec8163f4af2de084ceb3
   RxFirebase: cfeb02f5b1bfc1c5f8a6d14c54fdca876a35eba7
   RxFirebaseFirestore: 724957f7079b0e6cb5d985bb6331f171af7b31ed
+  RxFirebaseStorage: 9b8cdab65d20bafeae724a8e40733b92458f2b1a
   RxSwift: f172070dfd1a93d70a9ab97a5a01166206e1c575
   SwiftMessages: 8b3cc68dba2f1c91aac1a74c90b10287aac35371
 
-PODFILE CHECKSUM: 1f869aceb4e857aaa926c6c4454eb343e889f23a
+PODFILE CHECKSUM: 3ca5abf5d574a99f4d0078997203ecf5a687f31c
 
 COCOAPODS: 1.6.0.beta.2

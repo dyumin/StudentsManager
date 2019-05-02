@@ -36,7 +36,7 @@ class CurrentSessionModel: NSObject
                 
                 partialUpdatesTableViewOutlet.register(UINib(nibName: CurrentSessionTutorCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionTutorCell.identifier)
                 
-                partialUpdatesTableViewOutlet.register(UINib(nibName: CurrentSessionNewEventCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionNewEventCell.identifier)
+                partialUpdatesTableViewOutlet.register(UINib(nibName: CurrentSessionParticipantCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionParticipantCell.identifier)
                 
                 let dataSourceDisposeBag = DisposeBag()
                 
@@ -59,9 +59,13 @@ class CurrentSessionModel: NSObject
                                 return cell
                             }
                             break
-                        case .Participants:
-                            return UITableViewCell()
-                            break
+                        case .Participant:
+                            if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionParticipantCell.identifier, for: indexPath) as? CurrentSessionParticipantCell, let item = item as? CurrentSessionModelParticipantItem
+                            {
+                                cell.item = item.item
+                                return cell
+                            }
+                        break
                     }
                     
                     return UITableViewCell()
@@ -70,10 +74,10 @@ class CurrentSessionModel: NSObject
                 let titleForSection : TableViewSectionedDataSource<Section>.TitleForHeaderInSection =
                 { (ds, section) -> String? in
                     
-//                    if ds[section].model == .Tutor
-//                    {
-//                        return nil
-//                    }
+                    if ds[section].model == .Participant
+                    {
+                        return String("Participants")
+                    }
                     
                     return ds[section].model.rawValue
                 }
@@ -178,6 +182,11 @@ class CurrentSessionModel: NSObject
             {
                 _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
             }
+            
+            if let participants = currentSession.get(Session.participants) as? Array<DocumentReference>
+            {
+                _sections.append(Section(model: .Participant, items: participants.map({ CurrentSessionModelParticipantItem($0) })))
+            }
         }
         
         sections.accept(_sections)
@@ -188,7 +197,7 @@ enum CurrentSessionModelItemType: String
 {
     case Event
     case Tutor
-    case Participants
+    case Participant
 }
 
 extension CurrentSessionModelItemType: IdentifiableType
@@ -274,15 +283,24 @@ class CurrentSessionModelTutorItem: CurrentSessionModelItemBox
     }
 }
 
-class CurrentSessionModelParticipantsItem: CurrentSessionModelItemBox
+class CurrentSessionModelParticipantItem: CurrentSessionModelItemBox
 {
-    override var type: CurrentSessionModelItemType { return .Participants }
-    var sectionTitle: String { return "Participants info" }
-
-    var someParticipants: String
-
-    init(someParticipants: String)
+    override var type: CurrentSessionModelItemType { return .Participant }
+    override var identity: String { return item.documentID }
+    
+    override func isEqual(_ object: Any?) -> Bool
     {
-        self.someParticipants = someParticipants
+        guard let other = object as? CurrentSessionModelParticipantItem else {
+            return false
+        }
+        
+        return self.item == other.item
+    }
+    
+    var item: DocumentReference
+    
+    init(_ item: DocumentReference)
+    {
+        self.item = item
     }
 }
