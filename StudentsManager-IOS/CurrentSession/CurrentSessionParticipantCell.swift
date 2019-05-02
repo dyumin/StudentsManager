@@ -88,7 +88,26 @@ class CurrentSessionParticipantCell: UITableViewCell
                     let image = UIImage(data: data)
                     self?.userImage.image = image
                     
-                }).disposed(by: disposeBag)
+                },
+                onError: { [weak self] error in
+                    
+                    // TODO: just kidding, I will refactor this
+                    let reference = Storage.storage().reference(withPath: "\(d)/datasetPhotos/1.JPG")
+                        .rx
+                    
+                    // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+                    reference.getData(maxSize: 1 * 1024 * 1024)/*.debug("CurrentSessionParticipantCell.photo")*/.observeOn(MainScheduler.instance)
+                        .subscribe(
+                            onNext: { [weak self] data in
+                                
+                                let image = UIImage(data: data)
+                                self?.userImage.image = image
+                                
+                            }
+                        ).disposed(by: disposeBag)
+                }
+                ).disposed(by: disposeBag)
+            
             
             self.disposeBag = disposeBag
         }
