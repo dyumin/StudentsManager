@@ -170,7 +170,7 @@ class CurrentSessionModel: NSObject
                     partialUpdatesTableViewOutlet.prefetchDataSource = self
                 }
                 
-                sections.asObservable().debug("sections_to_table").bind(to: partialUpdatesTableViewOutlet.rx.items(dataSource: dataSource)).disposed(by: dataSourceDisposeBag)
+                sections.asObservable()/*.debug("sections_to_table")*/.bind(to: partialUpdatesTableViewOutlet.rx.items(dataSource: dataSource)).disposed(by: dataSourceDisposeBag)
                 
                 self.dataSource = dataSource
                 

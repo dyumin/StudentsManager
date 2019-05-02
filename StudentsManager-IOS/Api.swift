@@ -93,7 +93,7 @@ class Api
         ).disposed(by: disposeBag)
         
         // TODO add or host back in whereField
-        db.collection("sessions").whereField(Session.createdBy, isEqualTo: user.value!.reference).whereField(Session.active, isEqualTo: true).rx.listen().debug("sessions -> currentSessions").subscribe(
+        db.collection("sessions").whereField(Session.createdBy, isEqualTo: user.value!.reference).whereField(Session.active, isEqualTo: true).rx.listen()/*.debug("sessions -> currentSessions")*/.subscribe(
             onNext: { [weak self] event in
                 
                 for i in event.documents

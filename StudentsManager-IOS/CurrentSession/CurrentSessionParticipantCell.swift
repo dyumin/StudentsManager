@@ -44,7 +44,7 @@ class CurrentSessionParticipantCell: UITableViewCell
             self.userImage.image = UIImage(named: "Instructress")
             
             let disposeBag = DisposeBag()
-            item.rx.listen().distinctUntilChanged().debug("CurrentSessionParticipantCell.item").observeOn(MainScheduler.instance).subscribe(
+            item.rx.listen().distinctUntilChanged()/*.debug("CurrentSessionParticipantCell.item")*/.observeOn(MainScheduler.instance).subscribe(
                 onNext: { [weak self] event in
                     
                     if let name = event.get(ApiUser.displayName) as? String
