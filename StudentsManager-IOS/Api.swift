@@ -52,7 +52,7 @@ class Api
         userObservable = db.document("/users/\(Auth.auth().currentUser!.uid)").rx.listen()
         
         userObservable.takeUntil(.inclusive, predicate: { (event) -> Bool in
-            !event.exists
+            event.exists
         }).debug("userObservable.takeUntil").subscribe(
             onNext: { [weak self] event in
                 
