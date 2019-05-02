@@ -8,6 +8,7 @@ target 'StudentsManager-IOS' do
 	# Pods for StudentsManager-IOS
 
 	pod 'Firebase/Core'
+	pod 'Firebase/Storage'
 	pod 'Firebase/Firestore'
 	pod 'Firebase/Performance'
 
@@ -20,7 +21,7 @@ target 'StudentsManager-IOS' do
     pod 'RxFirebase/Firestore'
     pod 'RxFirebase/Storage'
 
-    
+
     pod 'RxDataSources', '~> 3.0'
 
     pod 'SwiftMessages'

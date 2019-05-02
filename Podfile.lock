@@ -20,6 +20,9 @@ PODS:
   - Firebase/Performance (5.20.2):
     - Firebase/Core
     - FirebasePerformance (= 2.2.4)
+  - Firebase/Storage (5.20.2):
+    - Firebase/CoreOnly
+    - FirebaseStorage (= 3.1.1)
   - FirebaseABTesting (2.0.0):
     - FirebaseCore (~> 5.0)
     - Protobuf (~> 3.5)
@@ -180,6 +183,7 @@ DEPENDENCIES:
   - Firebase/Core
   - Firebase/Firestore
   - Firebase/Performance
+  - Firebase/Storage
   - FirebaseUI/Auth
   - FirebaseUI/Google
   - RxCocoa
@@ -256,6 +260,6 @@ SPEC CHECKSUMS:
   RxSwift: f172070dfd1a93d70a9ab97a5a01166206e1c575
   SwiftMessages: 8b3cc68dba2f1c91aac1a74c90b10287aac35371
 
-PODFILE CHECKSUM: 3ca5abf5d574a99f4d0078997203ecf5a687f31c
+PODFILE CHECKSUM: f203aca44b5f1698826d6f79fc574a0d60074351
 
 COCOAPODS: 1.6.0.beta.2
