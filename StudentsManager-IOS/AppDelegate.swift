@@ -150,12 +150,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
             statusDisposable =
                 Observable.combineLatest(
                 Api.sharedApi.userObservable,
-                Observable.combineLatest(Api.sharedApi.ready.asObservable(),
-                                         Dependencies.sharedDependencies.reachabilityService.reachability.asObservable()))
-                .filter({
-                        ($0.1.0 || !$0.1.1.reachable) && $0.0.data() != nil })
+                Api.sharedApi.ready.asObservable(),
+                Dependencies.sharedDependencies.reachabilityService.reachability.asObservable())
+                    .filter(
+                    { (arg) -> Bool in
+                        
+                        let (apiUser, apiReady, reachability) = arg
+                        return (apiReady || !reachability.reachable) && apiUser.data() != nil
+                    })
                 .observeOn(MainScheduler.instance)
-                .debug("combineLatest Api.sharedApi.userObservable && Api.sharedApi.ready").subscribe(
+                .debug("userObservable && ready && reachability").subscribe(
                 onNext: { [weak self] event in
                     
                     let document = event.0
