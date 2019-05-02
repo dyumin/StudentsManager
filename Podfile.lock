@@ -155,6 +155,7 @@ PODS:
     - nanopb/encode (= 0.3.901)
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
+  - PINCache (2.3)
   - Protobuf (3.7.0)
   - RxCocoa (4.5.0):
     - RxSwift (>= 4.4.2, ~> 4.4)
@@ -175,6 +176,7 @@ PODS:
     - RxCocoa (~> 4)
     - RxSwift (~> 4)
   - RxSwift (4.5.0)
+  - SPTPersistentCache (1.1.0)
   - SwiftMessages (6.0.2):
     - SwiftMessages/App (= 6.0.2)
   - SwiftMessages/App (6.0.2)
@@ -186,11 +188,13 @@ DEPENDENCIES:
   - Firebase/Storage
   - FirebaseUI/Auth
   - FirebaseUI/Google
+  - PINCache
   - RxCocoa
   - RxDataSources (~> 3.0)
   - RxFirebase/Firestore
   - RxFirebase/Storage
   - RxSwift
+  - SPTPersistentCache
   - SwiftMessages
 
 SPEC REPOS:
@@ -218,6 +222,7 @@ SPEC REPOS:
     - GTMSessionFetcher
     - leveldb-library
     - nanopb
+    - PINCache
     - Protobuf
     - RxCocoa
     - RxDataSources
@@ -225,6 +230,7 @@ SPEC REPOS:
     - RxFirebaseFirestore
     - RxFirebaseStorage
     - RxSwift
+    - SPTPersistentCache
     - SwiftMessages
 
 SPEC CHECKSUMS:
@@ -251,6 +257,7 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
+  PINCache: ce36ed282031b92fc7733ffe831f474ff80fddc2
   Protobuf: 7a877b7f3e5964e3fce995e2eb323dbc6831bb5a
   RxCocoa: cbf70265dc65a981d4ac982e513c10cf23df24a0
   RxDataSources: a843bad90c29817f5923ec8163f4af2de084ceb3
@@ -258,8 +265,9 @@ SPEC CHECKSUMS:
   RxFirebaseFirestore: 724957f7079b0e6cb5d985bb6331f171af7b31ed
   RxFirebaseStorage: 9b8cdab65d20bafeae724a8e40733b92458f2b1a
   RxSwift: f172070dfd1a93d70a9ab97a5a01166206e1c575
+  SPTPersistentCache: df36ea46762d7cf026502bbb86a8b79d0080dff4
   SwiftMessages: 8b3cc68dba2f1c91aac1a74c90b10287aac35371
 
-PODFILE CHECKSUM: f203aca44b5f1698826d6f79fc574a0d60074351
+PODFILE CHECKSUM: 51dfe0b51d4ee15a16ee6f1b0bb274cc80ab42a2
 
 COCOAPODS: 1.6.0.beta.2

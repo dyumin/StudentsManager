@@ -8,6 +8,8 @@
 
 import RxSwift
 
+import SPTPersistentCache
+
 import class Foundation.URLSession
 import class Foundation.OperationQueue
 import enum Foundation.QualityOfService
@@ -25,6 +27,7 @@ class Dependencies {
     let mainScheduler: SerialDispatchQueueScheduler
     let wireframe: Wireframe
     let reachabilityService: ReachabilityService
+    let cache: SPTPersistentCache
     
     private init() {
         wireframe = DefaultWireframe()
@@ -36,6 +39,8 @@ class Dependencies {
         
         mainScheduler = MainScheduler.instance
         reachabilityService = try! DefaultReachabilityService() // try! is only for simplicity sake
+        
+        cache = SPTPersistentCache()
     }
     
 }

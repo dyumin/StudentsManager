@@ -12,13 +12,17 @@ import RxSwift
 
 import Firebase
 
-import FirebaseStorage
+import SPTPersistentCache
+
+import PINCache
 
 class CurrentSessionParticipantCell: UITableViewCell
 {
     static let identifier: String = "CurrentSessionParticipantCell"
     
     var disposeBag: DisposeBag?
+    
+    let cache = Dependencies.sharedDependencies.cache
     
     @IBOutlet weak var name: UILabel!
     
@@ -75,39 +79,26 @@ class CurrentSessionParticipantCell: UITableViewCell
                     
             }).disposed(by: disposeBag)
             
-            let d = item.path
-            
-            let reference = Storage.storage().reference(withPath: "\(d)/photo.jpeg")
-                .rx
-            
-            // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
-            reference.getData(maxSize: 1 * 1024 * 1024)/*.debug("CurrentSessionParticipantCell.photo")*/.observeOn(MainScheduler.instance)
-                .subscribe(
-                onNext: { [weak self] data in
-                    
-                    let image = UIImage(data: data)
-                    self?.userImage.image = image
-                    
-                },
-                onError: { [weak self] error in
-                    
-                    // TODO: just kidding, I will refactor this
-                    let reference = Storage.storage().reference(withPath: "\(d)/datasetPhotos/1.JPG")
-                        .rx
-                    
-                    // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
-                    reference.getData(maxSize: 1 * 1024 * 1024)/*.debug("CurrentSessionParticipantCell.photo")*/.observeOn(MainScheduler.instance)
-                        .subscribe(
-                            onNext: { [weak self] data in
-                                
-                                let image = UIImage(data: data)
-                                self?.userImage.image = image
-                                
-                            }
-                        ).disposed(by: disposeBag)
+            cache.loadData(forKey: CurrentSessionModelParticipantItem.cachePhotoKey(for: item), withCallback:
+            { (persistentCacheResponse) in
+
+                if persistentCacheResponse.result == .operationSucceeded
+                {
+                    self.userImage.image = UIImage(data: persistentCacheResponse.record.data)
                 }
-                ).disposed(by: disposeBag)
+
+            }, on: DispatchQueue.main)
             
+//            PINCache.shared().object(forKey: CurrentSessionModelParticipantItem.cachePhotoKey(for: item))
+//            { (cache, key, object) in
+//                if let image = object as? UIImage
+//                {
+//                    DispatchQueue.main.async
+//                    {
+//                        self.userImage.image = image
+//                    }
+//                }
+//            }
             
             self.disposeBag = disposeBag
         }

@@ -26,4 +26,8 @@ target 'StudentsManager-IOS' do
 
     pod 'SwiftMessages'
 
+    pod 'SPTPersistentCache'
+
+    pod 'PINCache'
+
 end

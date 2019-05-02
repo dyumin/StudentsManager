@@ -18,8 +18,76 @@ import Firebase
 
 import RxDataSources
 
+import PINCache
+
+// MARK: - UITableViewDataSourcePrefetching
+extension CurrentSessionModel: UITableViewDataSourcePrefetching
+{
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath])
+    {
+        print("prefetchRowsAt \(indexPaths)")
+        
+        for indexPath in indexPaths
+        {
+            guard let dataSource = self.dataSource else { return }
+            
+            let item = dataSource[indexPath]
+            
+            if item.type == .Participant, let item = item as? CurrentSessionModelParticipantItem
+            {
+                let cache = Dependencies.sharedDependencies.cache
+                
+                cache.loadData(forKey: item.cachePhotoKey, withCallback:
+                { (persistentCacheResponse) in
+                    
+                    if persistentCacheResponse.result != .operationSucceeded
+                    {
+                        let reference = Storage.storage().reference(withPath: item.serverPhotoPath).rx
+                        
+                        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+                        reference.getData(maxSize: 1 * 1024 * 1024)/*.debug("CurrentSessionParticipantCell.photo")*/
+                            .subscribe(
+                                onNext: { data in
+                                    
+                                    cache.store(data, forKey: item.cachePhotoKey, locked: false, withCallback: nil, on: nil)
+                                    
+                                }
+                        ) // TODO: should it be disposed somehow?
+                    }
+                }, on: DispatchQueue.global())
+                
+//                if !PINCache.shared().containsObject(forKey: item.cachePhotoKey)
+//                {
+//                    let reference = Storage.storage().reference(withPath: item.serverPhotoPath).rx
+//                    
+//                    // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+//                    reference.getData(maxSize: 1 * 1024 * 1024)/*.debug("CurrentSessionParticipantCell.photo")*/
+//                        .subscribe(
+//                            onNext: { data in
+//                                
+//                                guard let image = UIImage(data: data) else { return }
+//                                
+//                                PINCache.shared().setObject(image, forKey: item.cachePhotoKey)
+//                                
+//                            }
+//                    ) // TODO: should it be disposed somehow?
+//                }
+                
+            }
+        }
+    }
+    
+//    func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath])
+//    {
+//        print("cancelPrefetchingForRowsAt \(indexPaths)")
+//        indexPaths.forEach { self.cancelDownloadingImage(forItemAtIndex: $0.row) }
+//    }
+}
+
 class CurrentSessionModel: NSObject
 {
+    weak var dataSource: RxTableViewSectionedAnimatedDataSource<Section>?
+    
     weak var partialUpdatesTableViewOutlet: UITableView!
     {
         didSet
@@ -97,7 +165,14 @@ class CurrentSessionModel: NSObject
                 
                 dataSource.animationConfiguration = animationConfiguration
                 
+                if #available(iOS 10.0, *)
+                {
+                    partialUpdatesTableViewOutlet.prefetchDataSource = self
+                }
+                
                 sections.asObservable().debug("sections_to_table").bind(to: partialUpdatesTableViewOutlet.rx.items(dataSource: dataSource)).disposed(by: dataSourceDisposeBag)
+                
+                self.dataSource = dataSource
                 
                 // well, maybe it not the best solution, will see
 //                partialUpdatesTableViewOutlet.rx.didEndDisplayingCell
@@ -297,7 +372,32 @@ class CurrentSessionModelParticipantItem: CurrentSessionModelItemBox
         return self.item == other.item
     }
     
-    var item: DocumentReference
+    let item: DocumentReference
+    
+    var cachePhotoKey: String
+    {
+        return CurrentSessionModelParticipantItem.cachePhotoKey(for: item)
+    }
+    
+    var serverPhotoPath: String
+    {
+        return "\(item.path)/datasetPhotos/1.JPG"
+    }
+    
+    private static func cachePhotoKey(for id: String) -> String
+    {
+        return "\(id)_profilePhoto"
+    }
+    
+    static func cachePhotoKey(for documentReference: DocumentReference) -> String
+    {
+        return cachePhotoKey(for: documentReference.documentID)
+    }
+    
+    static func cachePhotoKey(for documentSnapshot: DocumentSnapshot) -> String
+    {
+        return cachePhotoKey(for: documentSnapshot.documentID)
+    }
     
     init(_ item: DocumentReference)
     {

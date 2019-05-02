@@ -45,6 +45,7 @@
 		CCDA3F042278BA99000B2CFA /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA3F032278BA99000B2CFA /* Types.swift */; };
 		CCDA3F07227A5F12000B2CFA /* CurrentSessionParticipantCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA3F05227A5F0D000B2CFA /* CurrentSessionParticipantCell.swift */; };
 		CCDA3F08227A5F12000B2CFA /* CurrentSessionParticipantCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA3F06227A5F0E000B2CFA /* CurrentSessionParticipantCell.xib */; };
+		CCDA3F0E227B6147000B2CFA /* String+UUUUUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA3F0D227B6147000B2CFA /* String+UUUUUIKit.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -104,6 +105,7 @@
 		CCDA3F032278BA99000B2CFA /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		CCDA3F05227A5F0D000B2CFA /* CurrentSessionParticipantCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionParticipantCell.swift; sourceTree = "<group>"; };
 		CCDA3F06227A5F0E000B2CFA /* CurrentSessionParticipantCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentSessionParticipantCell.xib; sourceTree = "<group>"; };
+		CCDA3F0D227B6147000B2CFA /* String+UUUUUIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+UUUUUIKit.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,6 +167,7 @@
 		CC5BB20A21F502220069B076 /* StudentsManager-IOS */ = {
 			isa = PBXGroup;
 			children = (
+				CCDA3F09227B6080000B2CFA /* UIKitExt */,
 				CCBC489C2248CBEB0074D559 /* Services */,
 				CC33CFB822403CB400FB000F /* CurrentSession */,
 				CCD0269F226F341700A19E47 /* Api */,
@@ -212,6 +215,14 @@
 				CCDA3F032278BA99000B2CFA /* Types.swift */,
 			);
 			path = Api;
+			sourceTree = "<group>";
+		};
+		CCDA3F09227B6080000B2CFA /* UIKitExt */ = {
+			isa = PBXGroup;
+			children = (
+				CCDA3F0D227B6147000B2CFA /* String+UUUUUIKit.swift */,
+			);
+			path = UIKitExt;
 			sourceTree = "<group>";
 		};
 		EE2AC82BEE9E99D128E5AAE9 /* Pods */ = {
@@ -364,10 +375,12 @@
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/PINCache/PINCache.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxDataSources/RxDataSources.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SPTPersistentCache/SPTPersistentCache.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftMessages/SwiftMessages.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
@@ -383,10 +396,12 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PINCache.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxDataSources.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SPTPersistentCache.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftMessages.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
@@ -427,6 +442,7 @@
 				CCBC48B22248CBEB0074D559 /* Reachability.swift in Sources */,
 				CCD026A4226F46F400A19E47 /* CurrentSessionNewEventCell.swift in Sources */,
 				CC5BB20C21F502220069B076 /* AppDelegate.swift in Sources */,
+				CCDA3F0E227B6147000B2CFA /* String+UUUUUIKit.swift in Sources */,
 				CCDA3F042278BA99000B2CFA /* Types.swift in Sources */,
 				CCD0266A22672B3400A19E47 /* TabBarController.swift in Sources */,
 				CCBC48B02248CBEB0074D559 /* UIImage+Extensions.swift in Sources */,
