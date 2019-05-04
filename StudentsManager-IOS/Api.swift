@@ -102,6 +102,28 @@ class Api
                 print("\tserverRequestsCount:", self.serverRequestsCount)
                 print("\tserverRead:", ByteCountFormatter().string(fromByteCount: self.serverBytesReadCount))
                 
+                var mediaObservablesCacheCount: Int64 = 0
+                self.mediaObservablesCache.enumerateObjects(block:
+                { (_, _, _) in
+                    mediaObservablesCacheCount += 1
+                })
+                
+                var mediaObservablesRetainingSubscriptionCacheCount: Int64 = 0
+                self.mediaObservablesRetainingSubscriptionCache.enumerateObjects(block:
+                    { (_, _, _) in
+                        mediaObservablesRetainingSubscriptionCacheCount += 1
+                })
+                
+                var mediaCacheCount: Int64 = 0
+                self.mediaCache.enumerateObjects(block:
+                    { (_, _, _) in
+                        mediaCacheCount += 1
+                })
+                
+                print("\tmediaCacheCount.count:", mediaCacheCount)
+                print("\tmediaObservablesCache.count:", mediaObservablesCacheCount)
+                print("\tmediaObservablesRetainingSubscriptionCache.count:", mediaObservablesRetainingSubscriptionCacheCount)
+                
             }).disposed(by: disposeBag)
     }
     
@@ -348,7 +370,7 @@ class Api
                                 self?.persistentCache.store(data, forKey: cachePhotoKey, locked: false, withCallback:
                                 { (persistentCacheResponse) in
                                     
-                                    print("Api.persistentCache.store got result: \(persistentCacheResponse.result) for \(cachePhotoKey)")
+                                    print("Api.persistentCache.store got result: \(persistentCacheResponse.result.rawValue) for \(cachePhotoKey)")
                                     if persistentCacheResponse.result == .operationError
                                     {
                                         print("Api.persistentCache.store error: \(persistentCacheResponse.error)")
@@ -400,6 +422,7 @@ class Api
         // since underlying sequence terminates in finite time, subscription will be completed automatically
         // but lets add it to dispose bag anyway
         // underlying sequence will clear this subscription itself on dispose (yep, it prob reminds you of of cyclic reference, but it's not)
+        // TODO: think about autoconnect() operator
         let bag = DisposeBag()
         workingObservable.subscribe().disposed(by: bag)
         mediaObservablesRetainingSubscriptionCache.setObject(bag, forKey: cachePhotoKey)
