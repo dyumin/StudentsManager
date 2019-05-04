@@ -87,6 +87,22 @@ class Api
 
             }
         ).disposed(by: disposeBag)
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        Observable<Int>.interval(60, scheduler: MainScheduler.instance).subscribe(
+            onNext: { [weak self] count in
+                
+                guard let self = self else { return }
+                
+                print("Api.mediaStatistics \(formatter.string(from: Date()))")
+                print("\tdiskRequestsCount:", self.diskRequestsCount)
+                print("\tdiskRead:", ByteCountFormatter().string(fromByteCount: self.diskBytesReadCount))
+                
+                print("\tserverRequestsCount:", self.serverRequestsCount)
+                print("\tserverRead:", ByteCountFormatter().string(fromByteCount: self.serverBytesReadCount))
+                
+            }).disposed(by: disposeBag)
     }
     
     private func onUserInitDone()
@@ -289,18 +305,24 @@ class Api
             else
             {
 //#endif
+                self.diskRequestsCount += 1
                 self.persistentCache.loadData(forKey: cachePhotoKey, withCallback:
                 { (persistentCacheResponse) in
 
                     if persistentCacheResponse.result == .operationSucceeded
                         , let image = UIImage(data: persistentCacheResponse.record.data)
                     {
+                        // TODO: is a little bit inaccurate count, only data suitable for UIImage creation is counted
+                        self.diskBytesReadCount += Int64(persistentCacheResponse.record.data.count)
+                        
                         self.mediaCache.setObject(image, forKey: cachePhotoKey)
                         observer.onNext(image)
                         observer.onCompleted()
                     }
                     else // start server request
                     {
+                        self.serverRequestsCount += 1
+                        
                         let serverPhotoPath = Api.serverPhotoPath(for: id)
                         let reference = Storage.storage().reference(withPath: serverPhotoPath).rx
                         serverRequestDisposeBag = DisposeBag()
@@ -309,6 +331,8 @@ class Api
                         reference.getData(maxSize: 1 * 1024 * 1024).debug("Api.userProfilePhoto: \(serverPhotoPath)")
                         .subscribe(
                             onNext: { [weak self] data in
+                                
+                                self?.serverBytesReadCount += Int64(data.count)
                                 
                                 // TODO add caches synchronisation check?
                                 guard let image = UIImage(data: data) else
@@ -392,4 +416,10 @@ class Api
     {
         return "\(id)_profilePhoto"
     }
+    
+    private var diskRequestsCount: Int64 = 0
+    private var diskBytesReadCount: Int64 = 0
+    
+    private var serverRequestsCount: Int64 = 0
+    private var serverBytesReadCount: Int64 = 0
 }
