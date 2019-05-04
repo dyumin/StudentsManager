@@ -187,10 +187,11 @@ class Api
     
     
     // MARK: media
-    
+
+    private let mediaCache: PINMemoryCache
     private let persistentCache: SPTPersistentCache = Dependencies.sharedDependencies.cache
     private let mediaObservablesCache: PINMemoryCache
-    private let mediaCache: PINMemoryCache
+    private let mediaObservablesRetainingSubscriptionCache = PINMemoryCache()
     
     // this needs to be refactored using proper synchronization, for now we will go with this
     func prefetchUserProfilePhoto(for id: String)
@@ -236,8 +237,9 @@ class Api
         // if let image = mediaCache.object(forKey: cachePhotoKey) as? UIImage
         // swift compiler treats "as? UIImage" part as if it were a trailing closure!
         // so         mediaCache.object(forKey: <#T##String#>, block: <#T##PINMemoryCacheObjectBlock?##PINMemoryCacheObjectBlock?##(PINMemoryCache, String, Any?) -> Void#>) gets called
-        // instead of mediaCache.containsObject(forKey: <#T##String#>)
+        // instead of mediaCache.object(forKey: <#T##String?#>), which even have different return types
         // omg, Apple
+        
         if let image = mediaCache.object(forKey: cachePhotoKey), image is UIImage
         {
             return Observable.just((image as! UIImage))
@@ -251,15 +253,16 @@ class Api
             return imageObservable as! Observable<UIImage?>
         }
         
-        let workingObservable: Observable<UIImage?> = Observable.create
+        let workingObservable: Observable<UIImage?> = (Observable.create
         { [weak self] observer -> Disposable in
             
             var serverRequestDisposeBag: DisposeBag?
-            let disposable = Disposables.create
+            let disposable = Disposables.create(with:
             {
                 serverRequestDisposeBag = nil // drop server request if exists
                 self?.mediaObservablesCache.removeObject(forKey: cachePhotoKey)
-            }
+                self?.mediaObservablesRetainingSubscriptionCache.removeObject(forKey: cachePhotoKey)
+            })
             
             guard let self = self else
             {
@@ -280,7 +283,7 @@ class Api
                 print(message)
                 assertionFailure(message)
                 
-                observer.onNext(image as! UIImage) // force bacause of check in condition
+                observer.onNext((image as! UIImage)) // force because of check in condition
                 observer.onCompleted()
             }
             else
@@ -288,7 +291,7 @@ class Api
 //#endif
                 self.persistentCache.loadData(forKey: cachePhotoKey, withCallback:
                 { (persistentCacheResponse) in
-                    
+
                     if persistentCacheResponse.result == .operationSucceeded
                         , let image = UIImage(data: persistentCacheResponse.record.data)
                     {
@@ -363,10 +366,19 @@ class Api
             }
 //#endif
             return disposable
-        }.share(replay: 1) //NOTE: BEWARE!, shared later from mediaObservablesCache
+        }).share(replay: 1) // NOTE: BEWARE!, shared later from mediaObservablesCache until it is complete, think of it as some kind of singleton
+        // Also, .forever SubjectLifetimeScope has some strange behaviour and it seems like generally is not recommended to use
+        // https://github.com/ReactiveX/RxSwift/issues/1615
         
-        // TODO: synchronisation needed?
         mediaObservablesCache.setObject(workingObservable, forKey: cachePhotoKey)
+        
+        // subscribe immediately to keep observable "connected" to avoid creation of duplicate internal resources that compute sequence elements
+        // since underlying sequence terminates in finite time, subscription will be completed automatically
+        // but lets add it to dispose bag anyway
+        // underlying sequence will clear this subscription itself on dispose (yep, it prob reminds you of of cyclic reference, but it's not)
+        let bag = DisposeBag()
+        workingObservable.subscribe().disposed(by: bag)
+        mediaObservablesRetainingSubscriptionCache.setObject(bag, forKey: cachePhotoKey)
         
         return workingObservable
     }
