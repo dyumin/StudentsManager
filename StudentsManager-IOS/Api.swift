@@ -87,10 +87,11 @@ class Api
 
             }
         ).disposed(by: disposeBag)
-        
+ 
+#if DEBUG
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm:ss.SSS"
-        Observable<Int>.interval(60, scheduler: MainScheduler.instance).subscribe(
+        Observable<Int>.interval(15, scheduler: MainScheduler.instance).subscribe(
             onNext: { [weak self] count in
                 
                 guard let self = self else { return }
@@ -125,6 +126,7 @@ class Api
                 print("\tmediaObservablesRetainingSubscriptionCache.count:", mediaObservablesRetainingSubscriptionCacheCount)
                 
             }).disposed(by: disposeBag)
+#endif
     }
     
     private func onUserInitDone()
@@ -230,7 +232,9 @@ class Api
     private let persistentCache: SPTPersistentCache = Dependencies.sharedDependencies.cache
     private let mediaObservablesCache: PINMemoryCache
     private let mediaObservablesRetainingSubscriptionCache = PINMemoryCache()
-    
+#if DEBUG
+    private let testSync = PINMemoryCache()
+#endif
     // NOTE: keep if let checks in sync with userProfilePhoto func
     func prefetchUserProfilePhoto(for id: String)
     {
@@ -285,16 +289,20 @@ class Api
         }
         else if let imageObservable = mediaObservablesCache.object(forKey: cachePhotoKey), imageObservable is Observable<UIImage?>
         {
+            print("Api reuse workingObservable for: \(cachePhotoKey)")
             return imageObservable as! Observable<UIImage?>
         }
-        
+
         return serverMediaRequest(for: id)
     }
     
     private func serverMediaRequest(for id: String) -> Observable<UIImage?>
     {
         let cachePhotoKey = Api.cachePhotoKey(for: id)
-        
+#if DEBUG
+        assert(!self.testSync.containsObject(forKey: cachePhotoKey))
+        self.testSync.setObject(cachePhotoKey, forKey: cachePhotoKey, block: nil)
+#endif
         let workingObservable = _serverMediaRequest(for: id)
         
         mediaObservablesCache.setObject(workingObservable, forKey: cachePhotoKey)
@@ -337,8 +345,7 @@ class Api
             }
             
             // TODO: do we need weak self below?
-            
-            //#if DEBUG
+#if DEBUG
             if let image = self.mediaCache.object(forKey: cachePhotoKey), image is UIImage
             {
                 let message = "Api.Error Caches synchronisation failure occurred"
@@ -347,94 +354,91 @@ class Api
                 
                 observer.onNext((image as! UIImage)) // force because of check in condition
                 observer.onCompleted()
+                
+                return disposable
             }
-            else
-            {
-                //#endif
-                self.diskRequestsCount += 1
-                self.persistentCache.loadData(forKey: cachePhotoKey, withCallback:
-                { (persistentCacheResponse) in
+#endif
+
+            self.diskRequestsCount += 1
+            self.persistentCache.loadData(forKey: cachePhotoKey, withCallback:
+            { (persistentCacheResponse) in
+                
+                if persistentCacheResponse.result == .operationSucceeded
+                    , let image = UIImage(data: persistentCacheResponse.record.data)
+                {
+                    // TODO: is a little bit inaccurate count, only data suitable for UIImage creation is counted
+                    self.diskBytesReadCount += Int64(persistentCacheResponse.record.data.count)
                     
-                    if persistentCacheResponse.result == .operationSucceeded
-                        , let image = UIImage(data: persistentCacheResponse.record.data)
-                    {
-                        // TODO: is a little bit inaccurate count, only data suitable for UIImage creation is counted
-                        self.diskBytesReadCount += Int64(persistentCacheResponse.record.data.count)
-                        
-                        self.mediaCache.setObject(image, forKey: cachePhotoKey)
-                        observer.onNext(image)
-                        observer.onCompleted()
-                    }
-                    else // start server request
-                    {
-                        self.serverRequestsCount += 1
-                        
-                        let serverPhotoPath = Api.serverPhotoPath(for: id)
-                        let reference = Storage.storage().reference(withPath: serverPhotoPath).rx
-                        serverRequestDisposeBag = DisposeBag()
-                        
-                        // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
-                        reference.getData(maxSize: 1 * 1024 * 1024).debug("Api.userProfilePhoto: \(serverPhotoPath)")
-                        .subscribe(
-                            onNext: { [weak self] data in
-                                
-                                self?.serverBytesReadCount += Int64(data.count)
-                                
-                                // TODO add caches synchronisation check?
-                                guard let image = UIImage(data: data) else
-                                {
-                                    observer.onError(Errors.DataCorrupted)
-                                    return
-                                }
-                                
-                                observer.onNext(image)
-                                observer.onCompleted()
-                                
-                                self?.mediaCache.setObject(image, forKey: cachePhotoKey)
-                                self?.persistentCache.store(data, forKey: cachePhotoKey, locked: false, withCallback:
-                                    { (persistentCacheResponse) in
-                                        
-                                        print("Api.persistentCache.store got result: \(persistentCacheResponse.result.rawValue) for \(cachePhotoKey)")
-                                        if persistentCacheResponse.result == .operationError
-                                        {
-                                            print("Api.persistentCache.store error: \(persistentCacheResponse.error)")
-                                        }
-                                        
-                                        assert(persistentCacheResponse.result == .operationSucceeded, "Failed to store server request result")
-                                        
-                                    }, on: DispatchQueue.global())
-                                
-                            },
-                            onError: { error in
-                                
-                                if let error = error as? NSError, let code = error.userInfo["ResponseErrorCode"] as? Int
-                                {
-                                    if code == 404 // not found on server
+                    self.mediaCache.setObject(image, forKey: cachePhotoKey)
+                    observer.onNext(image)
+                    observer.onCompleted()
+                }
+                else // start server request
+                {
+                    self.serverRequestsCount += 1
+                    
+                    let serverPhotoPath = Api.serverPhotoPath(for: id)
+                    let reference = Storage.storage().reference(withPath: serverPhotoPath).rx
+                    serverRequestDisposeBag = DisposeBag()
+                    
+                    // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
+                    reference.getData(maxSize: 1 * 1024 * 1024).debug("Api.userProfilePhoto: \(serverPhotoPath)")
+                    .subscribe(
+                        onNext: { [weak self] data in
+                            
+                            self?.serverBytesReadCount += Int64(data.count)
+                            
+                            // TODO add caches synchronisation check?
+                            guard let image = UIImage(data: data) else
+                            {
+                                observer.onError(Errors.DataCorrupted)
+                                return
+                            }
+                            
+                            observer.onNext(image)
+                            observer.onCompleted()
+                            
+                            self?.mediaCache.setObject(image, forKey: cachePhotoKey)
+                            self?.persistentCache.store(data, forKey: cachePhotoKey, locked: false, withCallback:
+                                { (persistentCacheResponse) in
+                                    
+                                    print("Api.persistentCache.store got result: \(persistentCacheResponse.result.rawValue) for \(cachePhotoKey)")
+                                    if persistentCacheResponse.result == .operationError
                                     {
-                                        // contextual type
-                                        // let nilImage: UIImage? = nil
-                                        self.mediaCache.setObject(NSNull(), forKey: cachePhotoKey)
+                                        print("Api.persistentCache.store error: \(persistentCacheResponse.error)")
                                     }
-                                }
-                                
-                                if !disposable.isDisposed
+                                    
+                                    assert(persistentCacheResponse.result == .operationSucceeded, "Failed to store server request result")
+                                    
+                                }, on: DispatchQueue.global())
+                            
+                        },
+                        onError: { error in
+                            
+                            if let error = error as? NSError, let code = error.userInfo["ResponseErrorCode"] as? Int
+                            {
+                                if code == 404 // not found on server
                                 {
-                                    observer.onError(error)
-                                }
-                            },
-                            onCompleted: {
-                                if !disposable.isDisposed
-                                {
-                                    observer.onCompleted()
+                                    // contextual type
+                                    // let nilImage: UIImage? = nil
+                                    self.mediaCache.setObject(NSNull(), forKey: cachePhotoKey)
                                 }
                             }
-                        ).disposed(by: serverRequestDisposeBag!)
-                    }
-                    
-                }, on: DispatchQueue.global())
-                //#if DEBUG
-            }
-            //#endif
+                            
+                            if !disposable.isDisposed
+                            {
+                                observer.onError(error)
+                            }
+                        },
+                        onCompleted: {
+                            if !disposable.isDisposed
+                            {
+                                observer.onCompleted()
+                            }
+                        }
+                    ).disposed(by: serverRequestDisposeBag!)
+                }
+            }, on: DispatchQueue.global())
             return disposable
         }).share(replay: 1) // NOTE: BEWARE!, shared later from mediaObservablesCache until it is complete, think of it as some kind of singleton
         // Also, .forever SubjectLifetimeScope has some strange behaviour and it seems like generally is not recommended to use
