@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="s0r-CR-N1H">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="FN3-TA-wpg">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--CurrentSession-->
+        <!--Current Session-->
         <scene sceneID="2nk-Ob-V0E">
             <objects>
                 <viewController id="s0r-CR-N1H" customClass="CurrentSession" customModule="StudentsManager_IOS" customModuleProvider="target" sceneMemberID="viewController">
@@ -18,12 +18,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KoK-dE-gIS">
-                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
-                                <items>
-                                    <barButtonItem title="Item" width="99" id="5Ut-4K-Z6O"/>
-                                </items>
-                            </toolbar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="z5D-GL-CzV">
                                 <rect key="frame" x="0.0" y="64" width="375" height="554"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -31,23 +25,39 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="KoK-dE-gIS" firstAttribute="leading" secondItem="0kQ-Wp-j2T" secondAttribute="leading" id="43b-4R-D19"/>
-                            <constraint firstItem="z5D-GL-CzV" firstAttribute="top" secondItem="KoK-dE-gIS" secondAttribute="bottom" id="CMZ-8H-Jrq"/>
                             <constraint firstItem="z5D-GL-CzV" firstAttribute="leading" secondItem="0kQ-Wp-j2T" secondAttribute="leading" id="DE7-zl-JKk"/>
                             <constraint firstItem="0kQ-Wp-j2T" firstAttribute="bottom" secondItem="z5D-GL-CzV" secondAttribute="bottom" id="OOC-vZ-2Pw"/>
-                            <constraint firstItem="KoK-dE-gIS" firstAttribute="top" secondItem="0kQ-Wp-j2T" secondAttribute="top" id="RbM-BC-rgX"/>
-                            <constraint firstItem="KoK-dE-gIS" firstAttribute="trailing" secondItem="0kQ-Wp-j2T" secondAttribute="trailing" id="eNr-5n-pRd"/>
+                            <constraint firstItem="z5D-GL-CzV" firstAttribute="top" secondItem="0kQ-Wp-j2T" secondAttribute="top" id="jNk-q1-KBJ"/>
                             <constraint firstItem="0kQ-Wp-j2T" firstAttribute="trailing" secondItem="z5D-GL-CzV" secondAttribute="trailing" id="kiO-kg-kMx"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="0kQ-Wp-j2T"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="CurrentSession" id="B4H-Sy-UiB"/>
+                    <navigationItem key="navigationItem" id="15B-JK-Aua"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="tableView" destination="z5D-GL-CzV" id="lLQ-H8-Fgq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EKo-qa-NVn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2791.1999999999998" y="7.6461769115442282"/>
+        </scene>
+        <!--CurrentSession-->
+        <scene sceneID="ooI-eo-fsw">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="FN3-TA-wpg" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="CurrentSession" id="B4H-Sy-UiB"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="seV-dh-s5N">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="s0r-CR-N1H" kind="relationship" relationship="rootViewController" id="iVT-Jo-a0O"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jiG-qt-nf6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1852" y="7.6461769115442282"/>
         </scene>
