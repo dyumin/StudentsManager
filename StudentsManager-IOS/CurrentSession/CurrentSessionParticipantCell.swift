@@ -12,17 +12,13 @@ import RxSwift
 
 import Firebase
 
-import SPTPersistentCache
-
-import PINCache
-
 class CurrentSessionParticipantCell: UITableViewCell
 {
     static let identifier: String = "CurrentSessionParticipantCell"
     
     var disposeBag: DisposeBag?
     
-    let cache = Dependencies.sharedDependencies.cache
+    let api = Api.sharedApi
     
     @IBOutlet weak var name: UILabel!
     
@@ -30,7 +26,7 @@ class CurrentSessionParticipantCell: UITableViewCell
     
     @IBOutlet weak var email: UILabel!
     
-    @IBOutlet weak var userImage: UIImageView!
+    @IBOutlet weak var avatarView: AvatarView!
     
     var item: DocumentReference?
     {
@@ -40,17 +36,25 @@ class CurrentSessionParticipantCell: UITableViewCell
             {
                 return
             }
-            
-            self.userImage.image = UIImage(named: "Instructress")
-            
+
             let disposeBag = DisposeBag()
-            item.rx.listen().distinctUntilChanged()/*.debug("CurrentSessionParticipantCell.item")*/.observeOn(MainScheduler.instance).subscribe(
+            
+            // todo: use more stable hash
+            avatarView.parameters = (item.documentID.hashValue, [])
+            avatarView.image = nil
+            
+            item.rx.listen().distinctUntilChanged()
+                /*.debug("CurrentSessionParticipantCell.item")*/
+                .observeOn(MainScheduler.instance).subscribe(
                 onNext: { [weak self] event in
                     
                     if let name = event.get(ApiUser.displayName) as? String
                     {
                         self?.name.isHidden = false
                         self?.name.text = name
+                        
+                        let letters = name.components(separatedBy: " ").map({ $0.first != nil ? String($0.first!) : String() })
+                        self?.avatarView.parameters.letters = letters
                     }
                     else
                     {
@@ -79,26 +83,12 @@ class CurrentSessionParticipantCell: UITableViewCell
                     
             }).disposed(by: disposeBag)
             
-            cache.loadData(forKey: CurrentSessionModelParticipantItem.cachePhotoKey(for: item), withCallback:
-            { (persistentCacheResponse) in
-
-                if persistentCacheResponse.result == .operationSucceeded
-                {
-                    self.userImage.image = UIImage(data: persistentCacheResponse.record.data)
-                }
-
-            }, on: DispatchQueue.main)
-            
-//            PINCache.shared().object(forKey: CurrentSessionModelParticipantItem.cachePhotoKey(for: item))
-//            { (cache, key, object) in
-//                if let image = object as? UIImage
-//                {
-//                    DispatchQueue.main.async
-//                    {
-//                        self.userImage.image = image
-//                    }
-//                }
-//            }
+            api.userProfilePhoto(for: item.documentID).observeOn(MainScheduler.instance).subscribe(
+                onNext: { [weak self] image in
+                    
+                    self?.avatarView.image = image
+                    
+                }).disposed(by: disposeBag)
             
             self.disposeBag = disposeBag
         }

@@ -19,13 +19,14 @@
                 <rect key="frame" x="0.0" y="0.0" width="480" height="109.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Instructress" translatesAutoresizingMaskIntoConstraints="NO" id="ioR-1o-LQf">
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zra-hm-xv6" customClass="AvatarView" customModule="StudentsManager_IOS" customModuleProvider="target">
                         <rect key="frame" x="20" y="11" width="66" height="66"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="width" secondItem="ioR-1o-LQf" secondAttribute="height" multiplier="1:1" id="IBO-8A-hbS"/>
-                            <constraint firstAttribute="height" constant="66" id="lpc-pH-icL"/>
+                            <constraint firstAttribute="width" secondItem="zra-hm-xv6" secondAttribute="height" multiplier="1:1" id="Wb8-NW-2yN"/>
+                            <constraint firstAttribute="height" constant="66" id="lrT-Ug-6Ud"/>
                         </constraints>
-                    </imageView>
+                    </view>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" alignment="top" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="fna-Nd-zKc">
                         <rect key="frame" x="94" y="11" width="366" height="66"/>
                         <subviews>
@@ -51,27 +52,24 @@
                     </stackView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="ioR-1o-LQf" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="SNK-sU-Hmo"/>
-                    <constraint firstItem="ioR-1o-LQf" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" symbolic="YES" id="UHP-8t-WDO"/>
-                    <constraint firstItem="ioR-1o-LQf" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="XFj-QS-icS"/>
+                    <constraint firstItem="fna-Nd-zKc" firstAttribute="leading" secondItem="zra-hm-xv6" secondAttribute="trailing" constant="8" symbolic="YES" id="2QT-wA-urR"/>
+                    <constraint firstItem="zra-hm-xv6" firstAttribute="bottom" secondItem="H2p-sc-9uM" secondAttribute="bottomMargin" id="4BL-70-gA5"/>
+                    <constraint firstItem="fna-Nd-zKc" firstAttribute="height" relation="lessThanOrEqual" secondItem="zra-hm-xv6" secondAttribute="height" id="AVS-Qh-zgw"/>
+                    <constraint firstItem="zra-hm-xv6" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" symbolic="YES" id="F87-LQ-OWY"/>
                     <constraint firstAttribute="trailing" secondItem="fna-Nd-zKc" secondAttribute="trailing" constant="20" symbolic="YES" id="hQg-5w-OiX"/>
-                    <constraint firstItem="fna-Nd-zKc" firstAttribute="leading" secondItem="ioR-1o-LQf" secondAttribute="trailing" constant="8" symbolic="YES" id="nW3-DH-1pf"/>
-                    <constraint firstItem="fna-Nd-zKc" firstAttribute="height" relation="lessThanOrEqual" secondItem="ioR-1o-LQf" secondAttribute="height" id="ntu-8D-t6A"/>
-                    <constraint firstItem="fna-Nd-zKc" firstAttribute="centerY" secondItem="ioR-1o-LQf" secondAttribute="centerY" id="px4-gZ-Bfu"/>
-                    <constraint firstAttribute="bottomMargin" secondItem="ioR-1o-LQf" secondAttribute="bottom" id="xnM-3H-KAv"/>
+                    <constraint firstItem="zra-hm-xv6" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="qT7-RR-2tO"/>
+                    <constraint firstItem="zra-hm-xv6" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="src-8e-LUZ"/>
+                    <constraint firstItem="fna-Nd-zKc" firstAttribute="centerY" secondItem="zra-hm-xv6" secondAttribute="centerY" id="xaE-BL-MMB"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
+                <outlet property="avatarView" destination="zra-hm-xv6" id="EM2-HK-0de"/>
                 <outlet property="email" destination="bcd-t9-RFI" id="6n3-p7-00a"/>
                 <outlet property="name" destination="sxJ-tl-4WS" id="QK7-Kr-h7u"/>
                 <outlet property="phone" destination="0gs-2i-k2a" id="oDA-vl-zsR"/>
-                <outlet property="userImage" destination="ioR-1o-LQf" id="MKT-YO-cAg"/>
             </connections>
             <point key="canvasLocation" x="108.8" y="77.361319340329842"/>
         </tableViewCell>
     </objects>
-    <resources>
-        <image name="Instructress" width="256" height="256"/>
-    </resources>
 </document>
