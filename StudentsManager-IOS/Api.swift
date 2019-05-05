@@ -231,40 +231,37 @@ class Api
     private let mediaObservablesCache: PINMemoryCache
     private let mediaObservablesRetainingSubscriptionCache = PINMemoryCache()
     
-    // this needs to be refactored using proper synchronization, for now we will go with this
+    // NOTE: keep if let checks in sync with userProfilePhoto func
     func prefetchUserProfilePhoto(for id: String)
     {
         let cachePhotoKey = Api.cachePhotoKey(for: id)
         
-        // what if something inserts object in question just after?? (one more additional disk read will occur below, or worse, network request)
-        // hashtag: #1
-        if mediaCache.containsObject(forKey: cachePhotoKey)
+        // what if something inserts object in question just after?? (one more additional memory/disk (depends on observable implementation) read will occur below, or worse, network request)
+        // hashtag: #2
+        
+        // if let image = mediaCache.object(forKey: cachePhotoKey) as? UIImage
+        // swift compiler treats "as? UIImage" part as if it were a trailing closure!
+        // so         mediaCache.object(forKey: <#T##String#>, block: <#T##PINMemoryCacheObjectBlock?##PINMemoryCacheObjectBlock?##(PINMemoryCache, String, Any?) -> Void#>) gets called
+        // instead of mediaCache.object(forKey: <#T##String?#>), which even have different return types
+        // omg, Apple
+        
+        if let image = mediaCache.object(forKey: cachePhotoKey), image is UIImage
+        {
+            return
+        }
+        else if let obj = mediaCache.object(forKey: cachePhotoKey), obj is NSNull
+        {
+            return
+        }
+        else if let imageObservable = mediaObservablesCache.object(forKey: cachePhotoKey), imageObservable is Observable<UIImage?>
         {
             return
         }
         
-        persistentCache.loadData(forKey: cachePhotoKey, withCallback:
-        { (persistentCacheResponse) in
-            
-            if persistentCacheResponse.result == .operationSucceeded
-                , let image = UIImage(data: persistentCacheResponse.record.data)
-            {
-                // #1
-                PINMemoryCache.shared().setObject(image, forKey: cachePhotoKey)
-            }
-            else
-            {
-                
-                
-                
-                
-                
-            }
-            
-        }, on: DispatchQueue.global())
+        _ = serverMediaRequest(for: id)
     }
-    
-    
+
+    // NOTE: keep if let checks in sync with prefetchUserProfilePhoto func
     func userProfilePhoto(for id: String) -> Observable<UIImage?>
     {
         let cachePhotoKey = Api.cachePhotoKey(for: id)
@@ -291,6 +288,33 @@ class Api
             return imageObservable as! Observable<UIImage?>
         }
         
+        return serverMediaRequest(for: id)
+    }
+    
+    private func serverMediaRequest(for id: String) -> Observable<UIImage?>
+    {
+        let cachePhotoKey = Api.cachePhotoKey(for: id)
+        
+        let workingObservable = _serverMediaRequest(for: id)
+        
+        mediaObservablesCache.setObject(workingObservable, forKey: cachePhotoKey)
+        
+        // subscribe immediately to keep observable "connected" to avoid creation of duplicate internal resources that compute sequence elements
+        // since underlying sequence terminates in finite time, subscription will be completed automatically
+        // but lets add it to dispose bag anyway
+        // underlying sequence will clear this subscription itself on dispose (yep, it prob reminds you of of cyclic reference, but it's not)
+        // TODO: think about autoconnect() operator
+        let bag = DisposeBag()
+        workingObservable.subscribe().disposed(by: bag)
+        mediaObservablesRetainingSubscriptionCache.setObject(bag, forKey: cachePhotoKey)
+        
+        return workingObservable
+    }
+    
+    private func _serverMediaRequest(for id: String) -> Observable<UIImage?>
+    {
+        let cachePhotoKey = Api.cachePhotoKey(for: id)
+        
         let workingObservable: Observable<UIImage?> = (Observable.create
         { [weak self] observer -> Disposable in
             
@@ -314,7 +338,7 @@ class Api
             
             // TODO: do we need weak self below?
             
-//#if DEBUG
+            //#if DEBUG
             if let image = self.mediaCache.object(forKey: cachePhotoKey), image is UIImage
             {
                 let message = "Api.Error Caches synchronisation failure occurred"
@@ -326,11 +350,11 @@ class Api
             }
             else
             {
-//#endif
+                //#endif
                 self.diskRequestsCount += 1
                 self.persistentCache.loadData(forKey: cachePhotoKey, withCallback:
                 { (persistentCacheResponse) in
-
+                    
                     if persistentCacheResponse.result == .operationSucceeded
                         , let image = UIImage(data: persistentCacheResponse.record.data)
                     {
@@ -368,17 +392,17 @@ class Api
                                 
                                 self?.mediaCache.setObject(image, forKey: cachePhotoKey)
                                 self?.persistentCache.store(data, forKey: cachePhotoKey, locked: false, withCallback:
-                                { (persistentCacheResponse) in
-                                    
-                                    print("Api.persistentCache.store got result: \(persistentCacheResponse.result.rawValue) for \(cachePhotoKey)")
-                                    if persistentCacheResponse.result == .operationError
-                                    {
-                                        print("Api.persistentCache.store error: \(persistentCacheResponse.error)")
-                                    }
-                                    
-                                    assert(persistentCacheResponse.result == .operationSucceeded, "Failed to store server request result")
-                                    
-                                }, on: DispatchQueue.global())
+                                    { (persistentCacheResponse) in
+                                        
+                                        print("Api.persistentCache.store got result: \(persistentCacheResponse.result.rawValue) for \(cachePhotoKey)")
+                                        if persistentCacheResponse.result == .operationError
+                                        {
+                                            print("Api.persistentCache.store error: \(persistentCacheResponse.error)")
+                                        }
+                                        
+                                        assert(persistentCacheResponse.result == .operationSucceeded, "Failed to store server request result")
+                                        
+                                    }, on: DispatchQueue.global())
                                 
                             },
                             onError: { error in
@@ -408,24 +432,13 @@ class Api
                     }
                     
                 }, on: DispatchQueue.global())
-//#if DEBUG
+                //#if DEBUG
             }
-//#endif
+            //#endif
             return disposable
         }).share(replay: 1) // NOTE: BEWARE!, shared later from mediaObservablesCache until it is complete, think of it as some kind of singleton
         // Also, .forever SubjectLifetimeScope has some strange behaviour and it seems like generally is not recommended to use
         // https://github.com/ReactiveX/RxSwift/issues/1615
-        
-        mediaObservablesCache.setObject(workingObservable, forKey: cachePhotoKey)
-        
-        // subscribe immediately to keep observable "connected" to avoid creation of duplicate internal resources that compute sequence elements
-        // since underlying sequence terminates in finite time, subscription will be completed automatically
-        // but lets add it to dispose bag anyway
-        // underlying sequence will clear this subscription itself on dispose (yep, it prob reminds you of of cyclic reference, but it's not)
-        // TODO: think about autoconnect() operator
-        let bag = DisposeBag()
-        workingObservable.subscribe().disposed(by: bag)
-        mediaObservablesRetainingSubscriptionCache.setObject(bag, forKey: cachePhotoKey)
         
         return workingObservable
     }
