@@ -305,8 +305,6 @@ class Api
 #endif
         let workingObservable = _serverMediaRequest(for: id)
         
-        mediaObservablesCache.setObject(workingObservable, forKey: cachePhotoKey)
-        
         // subscribe immediately to keep observable "connected" to avoid creation of duplicate internal resources that compute sequence elements
         // since underlying sequence terminates in finite time, subscription will be completed automatically
         // but lets add it to dispose bag anyway
@@ -314,6 +312,9 @@ class Api
         // TODO: think about autoconnect() operator
         let bag = DisposeBag()
         workingObservable.subscribe().disposed(by: bag)
+        
+        mediaObservablesCache.setObject(workingObservable, forKey: cachePhotoKey)
+        
         mediaObservablesRetainingSubscriptionCache.setObject(bag, forKey: cachePhotoKey)
         
         return workingObservable
