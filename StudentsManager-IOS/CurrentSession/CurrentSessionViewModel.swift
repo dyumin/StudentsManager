@@ -298,6 +298,33 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             return nil
         }
     }
+    
+    func deleteCurrentlySelectedRows()
+    {
+        guard let indexPathsForSelectedRows = partialUpdatesTableViewOutlet.indexPathsForSelectedRows, let dataSource = dataSource, let currentSessionSnapshot = self.getCurrentSessionSnapshot() else
+        {
+            assertionFailure(); return
+        }
+        
+        let participants = indexPathsForSelectedRows.map
+        { (indexPath) -> DocumentReference? in
+            
+            let item: CurrentSessionModelItemBox = dataSource[indexPath]
+            
+            switch item.type
+            {
+            case .Participant:
+                return (item as? CurrentSessionModelParticipantItem)?.item
+            case .Tutor:
+                return (item as? CurrentSessionModelTutorItem)?.host
+            default:
+                assertionFailure()
+                return nil
+            }
+        }.filter { $0 != nil }.map { $0! }
+        
+        let _ = Api.sharedApi.remove(participants: participants, from: currentSessionSnapshot).subscribe()
+    }
         
     private func getDeleteActionFor(_ participant: DocumentReference) -> UITableViewRowAction
     {

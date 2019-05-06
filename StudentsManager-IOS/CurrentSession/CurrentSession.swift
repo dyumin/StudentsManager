@@ -23,6 +23,8 @@ class CurrentSession: UIViewController
             self.viewModel.partialUpdatesTableViewOutlet = tableView
         }
     }
+    
+    private let DefaultNavItemTitle = "Current Event"
 
     // viewDidLoad is called twice, be aware...
     override func viewDidLoad()
@@ -31,7 +33,7 @@ class CurrentSession: UIViewController
         
         tableView.allowsMultipleSelectionDuringEditing = true
         
-        navigationItem.title = "Current Event"
+        navigationItem.title = DefaultNavItemTitle
         
         if #available(iOS 11.0, *)
         {
@@ -93,7 +95,9 @@ class CurrentSession: UIViewController
         }).disposed(by: disposeBag)
     }
     
+    // toolbar and his friend dispose bag for polling sequence, since Apple, apparently, does not want us to be able to obtain selected rows in any appropriate way
     private weak var toolbar: UIToolbar?
+    private var toolbarDisposable: DisposeBag?
     
     override func setEditing(_ editing: Bool, animated: Bool)
     {
@@ -110,12 +114,12 @@ class CurrentSession: UIViewController
             {
                 UIView.animate(withDuration: CurrentSession.EditingAnimationDuration)
                 {
-                    searchBar.alpha = editing ? 0.7 : 1
+                    searchBar.alpha = editing ? 0.6 : 1
                 }
             }
             else
             {
-                searchBar.alpha = editing ? 0.7 : 1
+                searchBar.alpha = editing ? 0.6 : 1
             }
         }
         
@@ -128,15 +132,62 @@ class CurrentSession: UIViewController
             else if let tabBarController = self.tabBarController
             {
                 let toolbar = UIToolbar(frame: tabBarController.tabBar.frame)
+                let toolbarDisposable = DisposeBag()
                 
                 let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
                 let delete = UIBarButtonItem(title: "Delete", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
                 
+                delete.rx.tap.subscribe(
+                onNext: { [weak self] event in
+                    
+                    self?.viewModel.deleteCurrentlySelectedRows()
+                        
+                }).disposed(by: toolbarDisposable)
+                
                 toolbar.items = [flexibleSpace, flexibleSpace, delete]
                 
-                tabBarController.view.addSubview(toolbar)
+                // TODO: background scheduler?
+                // we can use didSelectRowAt/didDeselectRowAt magic in UITableViewDataSource, but there are too much edge cases
                 
+                var previousSelectedRowsValue = self.tableView.indexPathsForSelectedRows
+                delete.isEnabled = false
+                
+                Observable<Int64>.interval(0.1, scheduler: MainScheduler.instance)/*.debug("indexPathsForSelectedRows")*/.subscribe(
+                onNext: { [weak self] _ in
+                    
+                    guard let self = self else { return }
+                    
+                    let indexPathsForSelectedRows = self.tableView.indexPathsForSelectedRows
+                    if indexPathsForSelectedRows == previousSelectedRowsValue
+                    {
+                        return
+                    }
+                    
+                    previousSelectedRowsValue = indexPathsForSelectedRows
+                    
+                    if let indexPathsForSelectedRows = indexPathsForSelectedRows
+                    {
+                        let selectedRowsCount = indexPathsForSelectedRows.count
+                        let pluralisation = selectedRowsCount == 1 ? "" : "s"
+                        
+                        self.navigationItem.title = "\(selectedRowsCount) Participant\(pluralisation) Selected"
+                        delete.isEnabled = true
+                    }
+                    else
+                    {
+                        self.navigationItem.title = self.DefaultNavItemTitle
+                        delete.isEnabled = false
+                    }
+                    
+                },
+                onDisposed: { [weak self] in
+                    self?.navigationItem.title = self?.DefaultNavItemTitle
+                }).disposed(by: toolbarDisposable)
+                
+                
+                tabBarController.view.addSubview(toolbar)
                 self.toolbar = toolbar
+                self.toolbarDisposable = toolbarDisposable
                 
                 if animated
                 {
@@ -150,6 +201,8 @@ class CurrentSession: UIViewController
         }
         else
         {
+            toolbarDisposable = nil
+            
             if let toolbar = self.toolbar
             {
                 self.toolbar = nil
