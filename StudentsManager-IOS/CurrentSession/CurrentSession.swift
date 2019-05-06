@@ -44,6 +44,8 @@ class CurrentSession: UIViewController
     
     private var disposeBag = DisposeBag()
     
+    private static let EditingAnimationDuration: TimeInterval = 0.3
+    
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?)
     {
         fatalError("\(#function) has not been implemented")
@@ -98,6 +100,25 @@ class CurrentSession: UIViewController
         super.setEditing(editing, animated: animated)
         self.tableView.setEditing(editing, animated: animated)
         
+        // probably it's time for animation group in code below
+        
+        if #available(iOS 11.0, *), let searchBar = navigationItem.searchController?.searchBar
+        {
+            searchBar.isUserInteractionEnabled = !editing
+            
+            if (animated)
+            {
+                UIView.animate(withDuration: CurrentSession.EditingAnimationDuration)
+                {
+                    searchBar.alpha = editing ? 0.7 : 1
+                }
+            }
+            else
+            {
+                searchBar.alpha = editing ? 0.7 : 1
+            }
+        }
+        
         if editing
         {
             if toolbar != nil
@@ -120,7 +141,7 @@ class CurrentSession: UIViewController
                 if animated
                 {
                     toolbar.alpha = 0
-                    UIView.animate(withDuration: 0.3)
+                    UIView.animate(withDuration: CurrentSession.EditingAnimationDuration)
                     {
                         toolbar.alpha = 1
                     }
@@ -135,7 +156,7 @@ class CurrentSession: UIViewController
                 
                 if animated
                 {
-                    UIView.animate(withDuration: 0.3, animations:
+                    UIView.animate(withDuration: CurrentSession.EditingAnimationDuration, animations:
                     {
                         toolbar.alpha = 0
                     })
