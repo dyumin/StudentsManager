@@ -311,7 +311,8 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                 
                 if let currentSessionSnapshot = self?.getCurrentSessionSnapshot()
                 {
-                    let _ = Api.sharedApi.remove(participants: [ participant ], from: currentSessionSnapshot)
+                    // it is ok, remove sequences will terminate in finite time
+                    let _ = Api.sharedApi.remove(participants: [ participant ], from: currentSessionSnapshot).debug("delete \(participant.documentID) from UITableViewRowAction").subscribe()
                 }
             }
             let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
