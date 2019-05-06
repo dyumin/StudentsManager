@@ -469,6 +469,8 @@ class Api
     
     func remove(participants: [DocumentReference], from session: DocumentSnapshot) -> Observable<Void>
     {
+        guard participants.count != 0 else { return Observable.empty() }
+        
         guard let sessionParticipants = session.get(Session.participants) as? Array<DocumentReference> else { assertionFailure("How did this happen?))"); return Observable.error(Errors.NotFound) }
         
         let updatedSessionParticipants = sessionParticipants.filter
@@ -477,5 +479,14 @@ class Api
         }
         
         return session.reference.rx.updateData([Session.participants : updatedSessionParticipants])
+    }
+    
+    func remove(hosts: [DocumentReference], from session: DocumentSnapshot) -> Observable<Void>
+    {
+        guard hosts.count != 0 else { return Observable.empty() }
+        
+        assert(hosts.count < 2, "Multiple hosts not yet implemented")
+        
+        return session.reference.rx.updateData([Session.host : FieldValue.delete()])
     }
 }

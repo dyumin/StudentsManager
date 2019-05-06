@@ -79,15 +79,6 @@ extension CurrentSessionModel: UITableViewDataSourcePrefetching
 
 extension CurrentSessionModel
 {
-    func getItem(at indexPath: IndexPath) -> CurrentSessionModelItemBox?
-    {
-        let item = dataSource?[indexPath]
-
-        assert(item != nil)
-
-        return item
-    }
-    
     func getCurrentSessionSnapshot() -> DocumentSnapshot?
     {
         guard let currentSessionModelEventItems = dataSource?.sectionModels.first(where:
@@ -109,6 +100,8 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
     
     weak var dataSource: DataSource?
     
+    private static let DefaulfCellReuseIdentifier = "Cell"
+    
     weak var partialUpdatesTableViewOutlet: UITableView!
     {
         didSet
@@ -126,6 +119,10 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                 partialUpdatesTableViewOutlet.register(UINib(nibName: CurrentSessionTutorCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionTutorCell.identifier)
                 
                 partialUpdatesTableViewOutlet.register(UINib(nibName: CurrentSessionParticipantCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionParticipantCell.identifier)
+                
+                partialUpdatesTableViewOutlet.register(UITableViewCell.self, forCellReuseIdentifier: CurrentSessionModel.DefaulfCellReuseIdentifier)
+                
+                partialUpdatesTableViewOutlet.allowsMultipleSelectionDuringEditing = true
                 
                 let dataSourceDisposeBag = DisposeBag()
                 
@@ -155,18 +152,30 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                                 return cell
                             }
                         break
+                        case .AddNewParticipant:
+                            let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionModel.DefaulfCellReuseIdentifier, for: indexPath)
+                            
+                            cell.textLabel?.text = "Add new Participant"
+                            cell.accessoryType = .disclosureIndicator
+                            
+                            return cell
                     }
                     
+                    assertionFailure()
                     return UITableViewCell()
                 }
                 
                 let titleForSection : TableViewSectionedDataSource<Section>.TitleForHeaderInSection =
                 { (ds, section) -> String? in
                     
+                    let shouldAdjustTitleToIncludeAddNewButton = Api.sharedApi.editingAllowed.value
+                    
                     switch ds[section].model
                     {
                     case .Participant:
-                        return String("Participants")
+                        return shouldAdjustTitleToIncludeAddNewButton ? nil : "Participants"
+                    case .AddNewParticipant:
+                        return shouldAdjustTitleToIncludeAddNewButton ? "Participants" : nil
                     case .Event:
                         return nil
                     case .Tutor:
@@ -192,7 +201,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                 let canEditRowAtIndexPath: TableViewSectionedDataSource<Section>.CanEditRowAtIndexPath =
                 { [weak self] (ds, ip) in
                     
-                    guard let item = self?.getItem(at: ip) else
+                    guard let item = self?.dataSource?[ip] else
                     {
                         return false
                     }
@@ -214,7 +223,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                 let canMoveRowAtIndexPath: TableViewSectionedDataSource<Section>.CanMoveRowAtIndexPath =
                 { [weak self] (ds, ip) in
                     
-                    guard let item = self?.getItem(at: ip) else
+                    guard let item = self?.dataSource?[ip] else
                     {
                         return false
                     }
@@ -283,16 +292,14 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
     // https://medium.com/ios-os-x-development/enable-slide-to-delete-in-uitableview-9311653dfe2
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
     {
-        guard let item = getItem(at: indexPath) else { return nil }
+        guard let item = dataSource?[indexPath] else { return nil }
         
         switch item.type
         {
         case .Tutor:
-            guard let item = item as? CurrentSessionModelTutorItem else { return nil }
-            return [ getDeleteActionFor(item.host) ]
+            fallthrough
         case .Participant:
-            guard let item = item as? CurrentSessionModelParticipantItem else { return nil }
-            return [ getDeleteActionFor(item.item) ]
+            return [ getDeleteActionFor(item) ]
         
         default:
             return nil
@@ -315,18 +322,30 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             {
             case .Participant:
                 return (item as? CurrentSessionModelParticipantItem)?.item
-            case .Tutor:
-                return (item as? CurrentSessionModelTutorItem)?.host
             default:
-                assertionFailure()
                 return nil
             }
         }.filter { $0 != nil }.map { $0! }
         
-        let _ = Api.sharedApi.remove(participants: participants, from: currentSessionSnapshot).subscribe()
+        let hosts = indexPathsForSelectedRows.map
+        { (indexPath) -> DocumentReference? in
+            
+            let item: CurrentSessionModelItemBox = dataSource[indexPath]
+            
+            switch item.type
+            {
+            case .Tutor:
+                return (item as? CurrentSessionModelTutorItem)?.host
+            default:
+                return nil
+            }
+        }.filter { $0 != nil }.map { $0! }
+        
+        let _ = Api.sharedApi.remove(participants: participants, from: currentSessionSnapshot).debug("delete participants \(participants) from editing mode").subscribe()
+        let _ = Api.sharedApi.remove(hosts: hosts, from: currentSessionSnapshot).debug("delete hosts \(hosts) from editing mode").subscribe()
     }
         
-    private func getDeleteActionFor(_ participant: DocumentReference) -> UITableViewRowAction
+    private func getDeleteActionFor(_ participant: CurrentSessionModelItemBox) -> UITableViewRowAction
     {
         let delete = UITableViewRowAction(style: .destructive, title: "Delete")
         { (action, indexPath) in
@@ -338,8 +357,23 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                 
                 if let currentSessionSnapshot = self?.getCurrentSessionSnapshot()
                 {
-                    // it is ok, remove sequences will terminate in finite time
-                    let _ = Api.sharedApi.remove(participants: [ participant ], from: currentSessionSnapshot).debug("delete \(participant.documentID) from UITableViewRowAction").subscribe()
+                    switch participant.type
+                    {
+                    case .Tutor:
+                        guard let participant = participant as? CurrentSessionModelTutorItem else { return }
+                        let _ = Api.sharedApi.remove(hosts: [ participant.host ], from: currentSessionSnapshot).debug("delete host \(participant.host.documentID) from UITableViewRowAction").subscribe()
+                        return
+                        
+                    case .Participant:
+                        guard let participant = participant as? CurrentSessionModelParticipantItem else { return }
+                        // it is ok, remove sequences will terminate in finite time
+                        let _ = Api.sharedApi.remove(participants: [ participant.item ], from: currentSessionSnapshot).debug("delete participant \(participant.item.documentID) from UITableViewRowAction").subscribe()
+                        return
+                        
+                    default:
+                        assertionFailure()
+                        return
+                    }
                 }
             }
             let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
@@ -366,6 +400,25 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
         }
         
         return proposedDestinationIndexPath
+    }
+    
+    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool
+    {
+        guard let item = dataSource?[indexPath] else { return false }
+        
+        let isEditing = tableView.isEditing
+        
+        switch item.type
+        {
+        case .Tutor:
+            return isEditing ? true : false
+        case .Participant:
+            return isEditing ? true : false
+        case .AddNewParticipant:
+            return isEditing ? false : true
+        case .Event:
+            return isEditing ? false : true
+        }
     }
 
     deinit
@@ -426,6 +479,15 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             {
                 _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
             }
+            else
+            {
+                // todo: Add
+            }
+            
+            if Api.sharedApi.editingAllowed.value
+            {
+                _sections.append(Section(model: .AddNewParticipant, items: [CurrentSessionModelAddNewParticipantItem()]))
+            }
             
             if let participants = currentSession.get(Session.participants) as? Array<DocumentReference>
             {
@@ -442,6 +504,7 @@ enum CurrentSessionModelItemType: String
 {
     case Event
     case Tutor
+    case AddNewParticipant
     case Participant
 }
 
@@ -560,5 +623,20 @@ class CurrentSessionModelParticipantItem: CurrentSessionModelItemBox
     init(_ item: DocumentReference)
     {
         self.item = item
+    }
+}
+
+class CurrentSessionModelAddNewParticipantItem: CurrentSessionModelItemBox
+{
+    override var type: CurrentSessionModelItemType { return .AddNewParticipant }
+    override var identity: String { return type.rawValue }
+    
+    override func isEqual(_ object: Any?) -> Bool
+    {
+        guard let other = object as? CurrentSessionModelAddNewParticipantItem else {
+            return false
+        }
+        
+        return self.identity == other.identity
     }
 }

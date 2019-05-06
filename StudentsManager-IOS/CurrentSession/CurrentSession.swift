@@ -31,8 +31,6 @@ class CurrentSession: UIViewController
     {
         super.viewDidLoad()
         
-        tableView.allowsMultipleSelectionDuringEditing = true
-        
         navigationItem.title = DefaultNavItemTitle
         
         if #available(iOS 11.0, *)
@@ -135,12 +133,17 @@ class CurrentSession: UIViewController
                 let toolbarDisposable = DisposeBag()
                 
                 let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
-                let delete = UIBarButtonItem(title: "Delete", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
+                let delete = UIBarButtonItem(title: "Delete", style: UIBarButtonItem.Style.done, target: nil, action: nil)
                 
                 delete.rx.tap.subscribe(
                 onNext: { [weak self] event in
                     
                     self?.viewModel.deleteCurrentlySelectedRows()
+                    
+                    DispatchQueue.main.async
+                    {
+                        self?.setEditing(false, animated: true)
+                    }
                         
                 }).disposed(by: toolbarDisposable)
                 
