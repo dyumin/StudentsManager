@@ -81,7 +81,25 @@ extension CurrentSessionModel
 {
     func getItem(at indexPath: IndexPath) -> CurrentSessionModelItemBox?
     {
-        return dataSource?[indexPath]
+        let item = dataSource?[indexPath]
+
+        assert(item != nil)
+
+        return item
+    }
+    
+    func getCurrentSessionSnapshot() -> DocumentSnapshot?
+    {
+        guard let currentSessionModelEventItems = dataSource?.sectionModels.first(where:
+        {
+            $0.model == .Event
+        })?.items else { assertionFailure(); return nil }
+
+        assert(currentSessionModelEventItems.count == 1)
+
+        guard let currentSessionModelEventItem = currentSessionModelEventItems.first as? CurrentSessionModelEventItem else { assertionFailure(); return nil }
+
+        return currentSessionModelEventItem.item
     }
 }
 
@@ -269,29 +287,46 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
         
         switch item.type
         {
-        case .Tutor, .Participant:
-            let delete = UITableViewRowAction(style: .destructive, title: "Delete")
-            { (action, indexPath) in
-                
-                let actionSheet = UIAlertController(title: "Are you sure?", message: "You can add him back later", preferredStyle: UIAlertController.Style.actionSheet)
-                
-                let delete = UIAlertAction(title: "Delete", style: UIAlertAction.Style.destructive, handler: nil)
-                let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
-                
-                actionSheet.addAction(delete)
-                actionSheet.addAction(cancel)
-
-                // hacky I know :)
-                if let rootViewController = UIApplication.shared.delegate?.window??.rootViewController
-                {
-                    rootViewController.present(actionSheet, animated: true, completion: nil)
-                }
-            }
-            return [ delete ]
+        case .Tutor:
+            guard let item = item as? CurrentSessionModelTutorItem else { return nil }
+            return [ getDeleteActionFor(item.host) ]
+        case .Participant:
+            guard let item = item as? CurrentSessionModelParticipantItem else { return nil }
+            return [ getDeleteActionFor(item.item) ]
         
         default:
             return nil
         }
+    }
+        
+    private func getDeleteActionFor(_ participant: DocumentReference) -> UITableViewRowAction
+    {
+        let delete = UITableViewRowAction(style: .destructive, title: "Delete")
+        { (action, indexPath) in
+            
+            let actionSheet = UIAlertController(title: "Are you sure?", message: "You can add him back later", preferredStyle: UIAlertController.Style.actionSheet)
+            
+            let delete = UIAlertAction(title: "Delete", style: UIAlertAction.Style.destructive)
+            { [weak self] _ in
+                
+                if let currentSessionSnapshot = self?.getCurrentSessionSnapshot()
+                {
+                    let _ = Api.sharedApi.remove(participants: [ participant ], from: currentSessionSnapshot)
+                }
+            }
+            let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
+            
+            actionSheet.addAction(delete)
+            actionSheet.addAction(cancel)
+            
+            // hacky I know :)
+            if let rootViewController = UIApplication.shared.delegate?.window??.rootViewController
+            {
+                rootViewController.present(actionSheet, animated: true, completion: nil)
+            }
+        }
+        
+        return delete
     }
     
     // https://stackoverflow.com/questions/849926/how-to-limit-uitableview-row-reordering-to-a-section

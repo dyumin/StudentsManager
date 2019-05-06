@@ -23,6 +23,7 @@ class Api
     {
         case LifeTimeError
         case DataCorrupted
+        case NotFound
     }
     
     
@@ -463,4 +464,18 @@ class Api
     
     private var serverRequestsCount: Int64 = 0
     private var serverBytesReadCount: Int64 = 0
+    
+    // MARK: data manipulation
+    
+    func remove(participants: [DocumentReference], from session: DocumentSnapshot) -> Observable<Void>
+    {
+        guard let sessionParticipants = session.get(Session.participants) as? Array<DocumentReference> else { assertionFailure("How did this happen?))"); return Observable.error(Errors.NotFound) }
+        
+        let updatedSessionParticipants = sessionParticipants.filter
+        { (participant) -> Bool in
+            return !participants.contains(participant)
+        }
+        
+        return session.reference.rx.updateData([Session.participants : updatedSessionParticipants])
+    }
 }
