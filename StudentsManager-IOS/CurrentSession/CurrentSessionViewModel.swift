@@ -20,6 +20,41 @@ import RxDataSources
 
 import PINCache
 
+class RxTableViewSectionedAnimatedDataSourceDynamicWrapper<S: AnimatableSectionModelType> : RxTableViewSectionedAnimatedDataSource<S>
+{
+    public typealias DidMoveRowAtSourceIndexPathToDestinationIndexPath = (TableViewSectionedDataSource<S>, IndexPath, IndexPath) -> Void
+    
+    open var didMoveRowAtSourceIndexPathToDestinationIndexPath: DidMoveRowAtSourceIndexPathToDestinationIndexPath
+    
+    open override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath)
+    {
+        super.tableView(tableView, moveRowAt: sourceIndexPath, to: destinationIndexPath)
+        didMoveRowAtSourceIndexPathToDestinationIndexPath(self, sourceIndexPath, destinationIndexPath)
+    }
+    
+    public init(
+        configureCell: @escaping ConfigureCell,
+        titleForHeaderInSection: @escaping  TitleForHeaderInSection = { _, _ in nil },
+        titleForFooterInSection: @escaping TitleForFooterInSection = { _, _ in nil },
+        canEditRowAtIndexPath: @escaping CanEditRowAtIndexPath = { _, _ in false },
+        canMoveRowAtIndexPath: @escaping CanMoveRowAtIndexPath = { _, _ in false },
+        sectionIndexTitles: @escaping SectionIndexTitles = { _ in nil },
+        sectionForSectionIndexTitle: @escaping SectionForSectionIndexTitle = { _, _, index in index },
+        didMoveRowAtSourceIndexPathToDestinationIndexPath: @escaping DidMoveRowAtSourceIndexPathToDestinationIndexPath = { _, _, _ in }
+        ) {
+        self.didMoveRowAtSourceIndexPathToDestinationIndexPath = didMoveRowAtSourceIndexPathToDestinationIndexPath
+        super.init(
+            configureCell: configureCell,
+            titleForHeaderInSection: titleForHeaderInSection,
+            titleForFooterInSection: titleForFooterInSection,
+            canEditRowAtIndexPath: canEditRowAtIndexPath,
+            canMoveRowAtIndexPath: canMoveRowAtIndexPath,
+            sectionIndexTitles: sectionIndexTitles,
+            sectionForSectionIndexTitle: sectionForSectionIndexTitle
+        )
+    }
+}
+
 // MARK: - UITableViewDataSourcePrefetching
 extension CurrentSessionModel: UITableViewDataSourcePrefetching
 {
@@ -42,9 +77,19 @@ extension CurrentSessionModel: UITableViewDataSourcePrefetching
     }
 }
 
-class CurrentSessionModel: NSObject
+extension CurrentSessionModel
 {
-    weak var dataSource: RxTableViewSectionedAnimatedDataSource<Section>?
+    func getItem(at indexPath: IndexPath) -> CurrentSessionModelItemBox?
+    {
+        return dataSource?[indexPath]
+    }
+}
+
+class CurrentSessionModel: NSObject, UITableViewDelegate
+{
+    public typealias DataSource = RxTableViewSectionedAnimatedDataSourceDynamicWrapper<Section>
+    
+    weak var dataSource: DataSource?
     
     weak var partialUpdatesTableViewOutlet: UITableView!
     {
@@ -100,15 +145,18 @@ class CurrentSessionModel: NSObject
                 let titleForSection : TableViewSectionedDataSource<Section>.TitleForHeaderInSection =
                 { (ds, section) -> String? in
                     
-                    if ds[section].model == .Participant
+                    switch ds[section].model
                     {
+                    case .Participant:
                         return String("Participants")
+                    case .Event:
+                        return nil
+                    case .Tutor:
+                        return ds[section].model.rawValue
                     }
-                    
-                    return ds[section].model.rawValue
                 }
                 
-                let dataSource = RxTableViewSectionedAnimatedDataSource<Section>(configureCell:configureCell,
+                let dataSource = DataSource(configureCell:configureCell,
                                                                                  titleForHeaderInSection: titleForSection)
                 
                 #if DEBUG
@@ -123,28 +171,84 @@ class CurrentSessionModel: NSObject
                 
                 dataSource.animationConfiguration = animationConfiguration
                 
+                let canEditRowAtIndexPath: TableViewSectionedDataSource<Section>.CanEditRowAtIndexPath =
+                { [weak self] (ds, ip) in
+                    
+                    guard let item = self?.getItem(at: ip) else
+                    {
+                        return false
+                    }
+                    
+                    if !Api.sharedApi.editingAllowed.value
+                    {
+                        return false
+                    }
+                    
+                    switch item.type
+                    {
+                    case .Participant, .Tutor:
+                        return true
+                    default:
+                        return false
+                    }
+                    
+                }
+                let canMoveRowAtIndexPath: TableViewSectionedDataSource<Section>.CanMoveRowAtIndexPath =
+                { [weak self] (ds, ip) in
+                    
+                    guard let item = self?.getItem(at: ip) else
+                    {
+                        return false
+                    }
+                    
+                    switch item.type
+                    {
+                    case .Participant:
+                        return true
+                    default:
+                        return false
+                    }
+                }
+                
+                let didMoveRowAtSourceIndexPathToDestinationIndexPath: DataSource.DidMoveRowAtSourceIndexPathToDestinationIndexPath =
+                { [weak self] (ds, sIp, dIp) in
+                    
+                    if !(ds[sIp].type == .Participant && ds[dIp].type == .Participant)
+                    {
+                        assertionFailure("Not implemented (You can reorder only inside Participants section)")
+                        return
+                    }
+                    
+                    guard let currentSession = self?.currentSession else { return }
+                    
+                    guard let participantsModel = ds.sectionModels.first(where:
+                    { model -> Bool in
+                        model.model == .Participant
+                    }) else { return }
+                    
+                    let participantsWithOrderFromTableView = participantsModel.items.map(
+                    { (currentSessionModelItemBox) -> DocumentReference in
+                        let participantItem = currentSessionModelItemBox as! CurrentSessionModelParticipantItem
+                        return participantItem.item
+                    })
+                    
+                    currentSession.updateData([Session.participants : participantsWithOrderFromTableView])
+                }
+                
+                dataSource.canEditRowAtIndexPath = canEditRowAtIndexPath
+                dataSource.canMoveRowAtIndexPath = canMoveRowAtIndexPath
+                dataSource.didMoveRowAtSourceIndexPathToDestinationIndexPath = didMoveRowAtSourceIndexPathToDestinationIndexPath
+
+                self.partialUpdatesTableViewOutlet.rx.setDelegate(self).disposed(by: dataSourceDisposeBag)
+                
                 if #available(iOS 10.0, *)
                 {
-                    partialUpdatesTableViewOutlet.prefetchDataSource = self
+                    self.partialUpdatesTableViewOutlet.rx.setPrefetchDataSource(self).disposed(by: dataSourceDisposeBag)
                 }
                 
                 sections.asObservable()/*.debug("sections_to_table")*/.bind(to: partialUpdatesTableViewOutlet.rx.items(dataSource: dataSource)).disposed(by: dataSourceDisposeBag)
                 
                 self.dataSource = dataSource
-                
-                // well, maybe it not the best solution, will see
-//                partialUpdatesTableViewOutlet.rx.didEndDisplayingCell
-//                    .asObservable().debug("didEndDisplayingCell").subscribe(
-//                        onNext: { event in
-//
-//                            let selector = Selector("dispose")
-//                            
-//                            if event.cell.responds(to: selector)
-//                            {
-//                                event.cell.perform(selector)
-//                            }
-//
-//                        }).disposed(by: dataSourceDisposeBag)
                 
                 self.dataSourceDisposeBag = dataSourceDisposeBag
             }
@@ -157,6 +261,50 @@ class CurrentSessionModel: NSObject
     
     private let sections: BehaviorRelay<[Section]> = BehaviorRelay(value: [])
     
+    // https://www.hackingwithswift.com/example-code/uikit/how-to-customize-swipe-edit-buttons-in-a-uitableview
+    // https://medium.com/ios-os-x-development/enable-slide-to-delete-in-uitableview-9311653dfe2
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
+    {
+        guard let item = getItem(at: indexPath) else { return nil }
+        
+        switch item.type
+        {
+        case .Tutor, .Participant:
+            let delete = UITableViewRowAction(style: .destructive, title: "Delete")
+            { (action, indexPath) in
+                
+                let actionSheet = UIAlertController(title: "Are you sure?", message: "You can add him back later", preferredStyle: UIAlertController.Style.actionSheet)
+                
+                let delete = UIAlertAction(title: "Delete", style: UIAlertAction.Style.destructive, handler: nil)
+                let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
+                
+                actionSheet.addAction(delete)
+                actionSheet.addAction(cancel)
+
+                // hacky I know :)
+                if let rootViewController = UIApplication.shared.delegate?.window??.rootViewController
+                {
+                    rootViewController.present(actionSheet, animated: true, completion: nil)
+                }
+            }
+            return [ delete ]
+        
+        default:
+            return nil
+        }
+    }
+    
+    // https://stackoverflow.com/questions/849926/how-to-limit-uitableview-row-reordering-to-a-section
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath
+    {
+        if (sourceIndexPath.section != proposedDestinationIndexPath.section)
+        {
+            return sourceIndexPath
+        }
+        
+        return proposedDestinationIndexPath
+    }
+
     deinit
     {
         pretty_function()
@@ -332,6 +480,19 @@ class CurrentSessionModelParticipantItem: CurrentSessionModelItemBox
     }
     
     let item: DocumentReference
+    
+    // TODO: reference is bad for you...
+//    var displayName: String
+//    {
+//        if let displayName = item.get(ApiUser.displayName) as? String
+//        {
+//            return displayName
+//        }
+//        else
+//        {
+//            return String()
+//        }
+//    }
     
     init(_ item: DocumentReference)
     {

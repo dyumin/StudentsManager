@@ -12,6 +12,8 @@ import RxSwift
 
 import Firebase
 
+
+
 class CurrentSession: UIViewController
 {
     @IBOutlet weak var tableView: UITableView!
@@ -19,6 +21,22 @@ class CurrentSession: UIViewController
         didSet
         {
             self.viewModel.partialUpdatesTableViewOutlet = tableView
+        }
+    }
+
+    // viewDidLoad is called twice, be aware...
+    override func viewDidLoad()
+    {
+        super.viewDidLoad()
+        
+        tableView.allowsMultipleSelectionDuringEditing = true
+        
+        navigationItem.title = "Current Event"
+        
+        if #available(iOS 11.0, *)
+        {
+            let searchController = UISearchController(searchResultsController: nil)
+            navigationItem.searchController = searchController
         }
     }
     
@@ -43,6 +61,94 @@ class CurrentSession: UIViewController
             self?.viewModel.currentSession = selectedSession
             
         }).disposed(by: disposeBag)
+        
+        let newButton = UIBarButtonItem()
+        newButton.title = "New"
+        
+        Api.sharedApi.editingAllowed.distinctUntilChanged().map
+        { [weak self] (editingAllowed) -> (UIBarButtonItem?, UIBarButtonItem?, Bool) in
+            
+            if editingAllowed
+            {
+                return (self?.editButtonItem, newButton, editingAllowed)
+            }
+            
+            return (nil, nil, editingAllowed)
+        }
+        .observeOn(MainScheduler.instance).subscribe(
+        onNext: { [weak self] (leftBarButtonItem, rightBarButtonItem, editingAllowed) in
+            
+            guard let self = self else { return }
+            
+            self.navigationItem.leftBarButtonItem = leftBarButtonItem
+            self.navigationItem.rightBarButtonItem = rightBarButtonItem
+            
+            if self.isEditing && !editingAllowed
+            {
+                self.setEditing(false, animated: true)
+            }
+                
+        }).disposed(by: disposeBag)
+    }
+    
+    private weak var toolbar: UIToolbar?
+    
+    override func setEditing(_ editing: Bool, animated: Bool)
+    {
+        super.setEditing(editing, animated: animated)
+        self.tableView.setEditing(editing, animated: animated)
+        
+        if editing
+        {
+            if toolbar != nil
+            {
+                assertionFailure("setEditing: true called multiply times")
+            }
+            else if let tabBarController = self.tabBarController
+            {
+                let toolbar = UIToolbar(frame: tabBarController.tabBar.frame)
+                
+                let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
+                let delete = UIBarButtonItem(title: "Delete", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
+                
+                toolbar.items = [flexibleSpace, flexibleSpace, delete]
+                
+                tabBarController.view.addSubview(toolbar)
+                
+                self.toolbar = toolbar
+                
+                if animated
+                {
+                    toolbar.alpha = 0
+                    UIView.animate(withDuration: 0.3)
+                    {
+                        toolbar.alpha = 1
+                    }
+                }
+            }
+        }
+        else
+        {
+            if let toolbar = self.toolbar
+            {
+                self.toolbar = nil
+                
+                if animated
+                {
+                    UIView.animate(withDuration: 0.3, animations:
+                    {
+                        toolbar.alpha = 0
+                    })
+                    { _ in
+                        toolbar.removeFromSuperview()
+                    }
+                }
+                else
+                {
+                    toolbar.removeFromSuperview()
+                }
+            }
+        }
     }
     
     deinit
