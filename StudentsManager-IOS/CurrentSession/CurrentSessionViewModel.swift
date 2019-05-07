@@ -256,7 +256,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                     let participantsWithOrderFromTableView = participantsModel.items.map(
                     { (currentSessionModelItemBox) -> DocumentReference in
                         let participantItem = currentSessionModelItemBox as! CurrentSessionModelParticipantItem
-                        return participantItem.item
+                        return participantItem.item.reference
                     })
                     
                     currentSession.updateData([Session.participants : participantsWithOrderFromTableView])
@@ -321,7 +321,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             switch item.type
             {
             case .Participant:
-                return (item as? CurrentSessionModelParticipantItem)?.item
+                return (item as? CurrentSessionModelParticipantItem)?.item.reference
             default:
                 return nil
             }
@@ -367,7 +367,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                     case .Participant:
                         guard let participant = participant as? CurrentSessionModelParticipantItem else { return }
                         // it is ok, remove sequences will terminate in finite time
-                        let _ = Api.sharedApi.remove(participants: [ participant.item ], from: currentSessionSnapshot).debug("delete participant \(participant.item.documentID) from UITableViewRowAction").subscribe()
+                        let _ = Api.sharedApi.remove(participants: [ participant.item.reference ], from: currentSessionSnapshot).debug("delete participant \(participant.item.documentID) from UITableViewRowAction").subscribe()
                         return
                         
                     default:
@@ -441,33 +441,119 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
     
     private let mode: Mode
     
+    let subjectOfParticipantSnapshots = PublishSubject<DocumentSnapshot>()
+    
     var currentSession: DocumentReference?
     {
         didSet
         {
             disposeBag = nil
+            allSnapshotListeners = [:]
             
             if let currentSession = currentSession
             {
                 let disposeBag = DisposeBag()
                 
-                currentSession.rx.listen().asObservable().debug("currentSession").subscribe(
+                let sharedCurrentSession = currentSession.rx.listen().asObservable().share(replay: 1)
+                sharedCurrentSession.subscribe(
+                onNext: { [weak self] event in
+                    
+                    guard let self = self else { return }
+                    
+                    
+                    // some kind of self implemented FlatMap
+                    if let participants = event.get(Session.participants) as? Array<DocumentReference>
+                    {
+                        self.allSnapshotListeners = self.allSnapshotListeners.filter(
+                        { (arg0) -> Bool in
+                            let (key, _) = arg0
+                            
+                            return participants.contains(key)
+                        })
+                        
+                        participants.forEach(
+                        { (participant) in
+                            
+                            if !self.allSnapshotListeners.keys.contains(participant)
+                            {
+                                let _bag = DisposeBag()
+                                participant.rx.listen()/*.debug("___participant.\(participant.documentID)")*/
+                                .bind(to:self.subjectOfParticipantSnapshots).disposed(by: _bag)
+                                self.allSnapshotListeners[participant] = _bag
+                            }
+                        })
+                    }
+                        
+                }).disposed(by: disposeBag)
+                
+                
+                // there is prob a logic race between sharedCurrentSession subscribers, because of sharedCurrentSession and filtration inside scan
+                // will see
+                let allSnapshotsOfCurrentParticipants = Observable.combineLatest(
+                    sharedCurrentSession/*.debug("___currentSession")*/,
+                    subjectOfParticipantSnapshots/*.debug("___subject")*/)
+                .scan(into: allSnapshots)
+                { (allSnapshots, arg1) in
+                    let (currentSession, participantSnapshot) = arg1
+                    
+                    if let participants = currentSession.get(Session.participants) as? Array<DocumentReference>
+                    {
+                        allSnapshots = allSnapshots.filter(
+                        { (arg0) -> Bool in
+                            let (key, _) = arg0
+                            
+                            // "key != participantSnapshot.reference" because tuple is a value type...
+                            return participants.contains(key) && key != participantSnapshot.reference
+                        })
+                        
+                        allSnapshots.append((participantSnapshot.reference, participantSnapshot))
+                        
+                        // not optimal at all :)
+                        allSnapshots.sort(by:
+                        { lhs, rhs in
+                            
+                            let one = participants.firstIndex(where:
+                            {
+                                $0.documentID == lhs.0.documentID
+                            })!
+                            
+                            let two = participants.firstIndex(where:
+                            {
+                                $0.documentID == rhs.0.documentID
+                            })!
+                            
+                            return one - two < 0
+                        })
+                    }
+                    else
+                    {
+                        allSnapshots.removeAll()
+                    }
+                }/*.debug("___scan")*/
+                
+                Observable.combineLatest(
+                    sharedCurrentSession,
+                    allSnapshotsOfCurrentParticipants).subscribe(
                     onNext: { [weak self] event in
                         
-                        self?.buildItems(for: event)
+                        self?.allSnapshots = event.1
+                        self?.buildItems(currentSession: event.0, participants: event.1.map({ $0.1 }))
                         
                     }).disposed(by: disposeBag)
-                
+
                 self.disposeBag = disposeBag
             }
             else
             {
-                buildItems(for: nil)
+                buildItems(currentSession: nil, participants: [])
             }
         }
     }
     
-    func buildItems(for currentSession: DocumentSnapshot?)
+    var allSnapshots: [(DocumentReference, DocumentSnapshot)] = []
+    var allSnapshotListeners: [DocumentReference : DisposeBag] = [:]
+    
+    func buildItems(currentSession: DocumentSnapshot?, participants: Array<DocumentSnapshot>)
     {
         var _sections = Array<Section>()
         
@@ -489,7 +575,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                 _sections.append(Section(model: .AddNewParticipant, items: [CurrentSessionModelAddNewParticipantItem()]))
             }
             
-            if let participants = currentSession.get(Session.participants) as? Array<DocumentReference>
+            if participants.count > 0
             {
                 print("Session.participants.count: \(participants.count)")
                 _sections.append(Section(model: .Participant, items: participants.map({ CurrentSessionModelParticipantItem($0) })))
@@ -605,7 +691,7 @@ class CurrentSessionModelParticipantItem: CurrentSessionModelItemBox
         return self.item == other.item
     }
     
-    let item: DocumentReference
+    let item: DocumentSnapshot
     
     // TODO: reference is bad for you...
 //    var displayName: String
@@ -620,7 +706,7 @@ class CurrentSessionModelParticipantItem: CurrentSessionModelItemBox
 //        }
 //    }
     
-    init(_ item: DocumentReference)
+    init(_ item: DocumentSnapshot)
     {
         self.item = item
     }

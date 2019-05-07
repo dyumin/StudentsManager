@@ -28,69 +28,69 @@ class CurrentSessionParticipantCell: UITableViewCell
     
     @IBOutlet weak var avatarView: AvatarView!
     
-    var item: DocumentReference?
+    var item: DocumentSnapshot?
     {
         didSet
         {
+            disposeBag = nil
+            
             guard let item = item else
             {
                 return
             }
+            
+            DispatchQueue.main.async
+            { [weak self] in
+                
+                guard let self = self else { return }
+                
+                let disposeBag = DisposeBag()
 
-            let disposeBag = DisposeBag()
-            
-            // todo: use more stable hash
-            avatarView.parameters = (item.documentID.hashValue, [])
-            avatarView.image = nil
-            
-            item.rx.listen().distinctUntilChanged()
-                /*.debug("CurrentSessionParticipantCell.item")*/
-                .observeOn(MainScheduler.instance).subscribe(
-                onNext: { [weak self] event in
+                self.avatarView.parameters = (item.documentID.hashValue, [])
+                self.avatarView.image = nil
+
+                if let name = item.get(ApiUser.displayName) as? String
+                {
+                    self.name.isHidden = false
+                    self.name.text = name
                     
-                    if let name = event.get(ApiUser.displayName) as? String
-                    {
-                        self?.name.isHidden = false
-                        self?.name.text = name
+                    let letters = name.components(separatedBy: " ").map({ $0.first != nil ? String($0.first!) : String() })
+                    self.avatarView.parameters.letters = letters
+                }
+                else
+                {
+                    self.name.isHidden = true
+                }
+                
+                if let email = item.get(ApiUser.email) as? String
+                {
+                    self.email.isHidden = false
+                    self.email.text = email
+                }
+                else
+                {
+                    self.email.isHidden = true
+                }
+                
+                if let phone = item.get(ApiUser.phone) as? String
+                {
+                    self.phone.isHidden = false
+                    self.phone.text = phone
+                }
+                else
+                {
+                    self.phone.isHidden = true
+                }
+                
+                self.api.userProfilePhoto(for: item.documentID).observeOn(MainScheduler.instance).subscribe(
+                    onNext: { [weak self] image in
                         
-                        let letters = name.components(separatedBy: " ").map({ $0.first != nil ? String($0.first!) : String() })
-                        self?.avatarView.parameters.letters = letters
-                    }
-                    else
-                    {
-                        self?.name.isHidden = true
-                    }
-                    
-                    if let email = event.get(ApiUser.email) as? String
-                    {
-                        self?.email.isHidden = false
-                        self?.email.text = email
-                    }
-                    else
-                    {
-                        self?.email.isHidden = true
-                    }
-                    
-                    if let phone = event.get(ApiUser.phone) as? String
-                    {
-                        self?.phone.isHidden = false
-                        self?.phone.text = phone
-                    }
-                    else
-                    {
-                        self?.phone.isHidden = true
-                    }
-                    
-            }).disposed(by: disposeBag)
-            
-            api.userProfilePhoto(for: item.documentID).observeOn(MainScheduler.instance).subscribe(
-                onNext: { [weak self] image in
-                    
-                    self?.avatarView.image = image
-                    
+                        self?.avatarView.image = image
+                        
                 }).disposed(by: disposeBag)
-            
-            self.disposeBag = disposeBag
+        
+                self.disposeBag = disposeBag
+            }
         }
     }
     
