@@ -21,6 +21,7 @@
 		CC5BB22321F5177F0069B076 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB22221F5177F0069B076 /* GoogleService-Info.plist */; };
 		CC778E21227C709700C51EED /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC778E20227C709700C51EED /* AvatarView.swift */; };
 		CC9BE03422874AEE00479F7D /* EditingRequirementsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9BE03322874AEE00479F7D /* EditingRequirementsProvider.swift */; };
+		CC9BE03922874FAD00479F7D /* SessionPhotos.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC9BE03822874FAD00479F7D /* SessionPhotos.storyboard */; };
 		CCA4272E2238DC8600CF2260 /* CurrentSession.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCA4272C2238DC8500CF2260 /* CurrentSession.storyboard */; };
 		CCB522D122423D0500737C7D /* CurrentSessionTutorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB522CF22423D0500737C7D /* CurrentSessionTutorCell.swift */; };
 		CCB522D222423D0500737C7D /* CurrentSessionTutorCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCB522D022423D0500737C7D /* CurrentSessionTutorCell.xib */; };
@@ -82,6 +83,7 @@
 		CC5BB22221F5177F0069B076 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CC778E20227C709700C51EED /* AvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		CC9BE03322874AEE00479F7D /* EditingRequirementsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingRequirementsProvider.swift; sourceTree = "<group>"; };
+		CC9BE03822874FAD00479F7D /* SessionPhotos.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SessionPhotos.storyboard; sourceTree = "<group>"; };
 		CCA4272D2238DC8500CF2260 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "StudentsManager-IOS/Base.lproj/CurrentSession.storyboard"; sourceTree = "<group>"; };
 		CCB522CF22423D0500737C7D /* CurrentSessionTutorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionTutorCell.swift; sourceTree = "<group>"; };
 		CCB522D022423D0500737C7D /* CurrentSessionTutorCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentSessionTutorCell.xib; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 		CC5BB20A21F502220069B076 /* StudentsManager-IOS */ = {
 			isa = PBXGroup;
 			children = (
+				CC9BE03722874F8700479F7D /* SessionPhotos */,
 				CCDA3F09227B6080000B2CFA /* UIKitExt */,
 				CCBC489C2248CBEB0074D559 /* Services */,
 				CC33CFB822403CB400FB000F /* CurrentSession */,
@@ -189,6 +192,14 @@
 				CC9BE03322874AEE00479F7D /* EditingRequirementsProvider.swift */,
 			);
 			path = "StudentsManager-IOS";
+			sourceTree = "<group>";
+		};
+		CC9BE03722874F8700479F7D /* SessionPhotos */ = {
+			isa = PBXGroup;
+			children = (
+				CC9BE03822874FAD00479F7D /* SessionPhotos.storyboard */,
+			);
+			path = SessionPhotos;
 			sourceTree = "<group>";
 		};
 		CCBC489C2248CBEB0074D559 /* Services */ = {
@@ -309,6 +320,7 @@
 				CCA4272E2238DC8600CF2260 /* CurrentSession.storyboard in Resources */,
 				CC5BB22321F5177F0069B076 /* GoogleService-Info.plist in Resources */,
 				CCB522D222423D0500737C7D /* CurrentSessionTutorCell.xib in Resources */,
+				CC9BE03922874FAD00479F7D /* SessionPhotos.storyboard in Resources */,
 				CC5BB21321F502250069B076 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
