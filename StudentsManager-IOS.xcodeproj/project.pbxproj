@@ -20,6 +20,7 @@
 		CC5BB21621F502250069B076 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB21421F502250069B076 /* LaunchScreen.storyboard */; };
 		CC5BB22321F5177F0069B076 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB22221F5177F0069B076 /* GoogleService-Info.plist */; };
 		CC778E21227C709700C51EED /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC778E20227C709700C51EED /* AvatarView.swift */; };
+		CC9BE03422874AEE00479F7D /* EditingRequirementsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9BE03322874AEE00479F7D /* EditingRequirementsProvider.swift */; };
 		CCA4272E2238DC8600CF2260 /* CurrentSession.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCA4272C2238DC8500CF2260 /* CurrentSession.storyboard */; };
 		CCB522D122423D0500737C7D /* CurrentSessionTutorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB522CF22423D0500737C7D /* CurrentSessionTutorCell.swift */; };
 		CCB522D222423D0500737C7D /* CurrentSessionTutorCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCB522D022423D0500737C7D /* CurrentSessionTutorCell.xib */; };
@@ -80,6 +81,7 @@
 		CC5BB21721F502250069B076 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC5BB22221F5177F0069B076 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CC778E20227C709700C51EED /* AvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
+		CC9BE03322874AEE00479F7D /* EditingRequirementsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingRequirementsProvider.swift; sourceTree = "<group>"; };
 		CCA4272D2238DC8500CF2260 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "StudentsManager-IOS/Base.lproj/CurrentSession.storyboard"; sourceTree = "<group>"; };
 		CCB522CF22423D0500737C7D /* CurrentSessionTutorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionTutorCell.swift; sourceTree = "<group>"; };
 		CCB522D022423D0500737C7D /* CurrentSessionTutorCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentSessionTutorCell.xib; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 				CCD0266922672B3400A19E47 /* TabBarController.swift */,
 				CCD0268E226CE1BD00A19E47 /* AdminAprovalStub.swift */,
 				CCD0268F226CE1BD00A19E47 /* AdminAprovalStub.xib */,
+				CC9BE03322874AEE00479F7D /* EditingRequirementsProvider.swift */,
 			);
 			path = "StudentsManager-IOS";
 			sourceTree = "<group>";
@@ -431,6 +434,7 @@
 				CC33CFBA2240FD7300FB000F /* CurrentSessionViewModel.swift in Sources */,
 				CCBC48AB2248CBEB0074D559 /* PseudoRandomGenerator.swift in Sources */,
 				CCBC48B62248CC940074D559 /* Example.swift in Sources */,
+				CC9BE03422874AEE00479F7D /* EditingRequirementsProvider.swift in Sources */,
 				CC33CFB7224034B000FB000F /* CurrentSession.swift in Sources */,
 				CCBC48B42248CBEB0074D559 /* DownloadableImage.swift in Sources */,
 				CC5BB20E21F502220069B076 /* ViewController.swift in Sources */,

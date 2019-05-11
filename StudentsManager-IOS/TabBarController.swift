@@ -8,14 +8,52 @@
 
 import UIKit
 
+import RxSwift
 
 class TabBarController: UITabBarController
 {
+//    var initialViewControllers: [UIViewController]?
+    
+//    var disposeBag: DisposeBag?
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
         
-//        let _ = Api.sharedApi.editingAllowed.value
+//        if initialViewControllers == nil {
+//            initialViewControllers = viewControllers
+//        }
+//
+//        let disposeBag = DisposeBag()
+//
+//        Api.sharedApi.editingAllowed.distinctUntilChanged().subscribe(
+//        onNext:{ [weak self] (editingAllowed) in
+//
+//            guard let self = self else { return }
+//
+//            if editingAllowed
+//            {
+//                self.setViewControllers(self.initialViewControllers, animated: true)
+//            }
+//            else
+//            {
+//                let viewControllers = self.initialViewControllers?.filter(
+//                { (viewController) -> Bool in
+//
+//                    if let viewController = viewController as? EditingRequirementsProvider
+//                    {
+//                        return !viewController.isEditingRightsNeeded()
+//                    }
+//
+//                    return true
+//                })
+//
+//               self.setViewControllers(viewControllers, animated: true)
+//            }
+//
+//        }).disposed(by: disposeBag)
+//
+//        self.disposeBag = disposeBag
     }
     
     deinit
