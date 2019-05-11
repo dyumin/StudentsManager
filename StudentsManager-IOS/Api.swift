@@ -451,7 +451,7 @@ class Api
         
     private static func serverPhotoPath(for id: String) -> String
     {
-        return "/users/\(id)/datasetPhotos/1.JPG"
+        return "/users/\(id)/datasetPhotos/\(id).JPG"
     }
     
     private static func cachePhotoKey(for id: String) -> String

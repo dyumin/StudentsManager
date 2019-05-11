@@ -81,16 +81,7 @@ extension CurrentSessionModel
 {
     func getCurrentSessionSnapshot() -> DocumentSnapshot?
     {
-        guard let currentSessionModelEventItems = dataSource?.sectionModels.first(where:
-        {
-            $0.model == .Event
-        })?.items else { assertionFailure(); return nil }
-
-        assert(currentSessionModelEventItems.count == 1)
-
-        guard let currentSessionModelEventItem = currentSessionModelEventItems.first as? CurrentSessionModelEventItem else { assertionFailure(); return nil }
-
-        return currentSessionModelEventItem.item
+        return currentSessionSnapshot.value
     }
 }
 
@@ -166,9 +157,9 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                 }
                 
                 let titleForSection : TableViewSectionedDataSource<Section>.TitleForHeaderInSection =
-                { (ds, section) -> String? in
+                { [weak self] (ds, section) -> String? in
                     
-                    let shouldAdjustTitleToIncludeAddNewButton = Api.sharedApi.editingAllowed.value
+                    let shouldAdjustTitleToIncludeAddNewButton = Api.sharedApi.editingAllowed.value && self?.searchQuery == nil
                     
                     switch ds[section].model
                     {
@@ -417,7 +408,12 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
         case .AddNewParticipant:
             return isEditing ? false : true
         case .Event:
-            return isEditing ? false : true
+            let shouldHighlight = isEditing ? false : true
+            if shouldHighlight
+            {
+                return Api.sharedApi.editingAllowed.value
+            }
+            return shouldHighlight
         }
     }
 
@@ -486,6 +482,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                         
                 }).disposed(by: disposeBag)
                 
+                sharedCurrentSession.bind(to: currentSessionSnapshot).disposed(by: disposeBag)
                 
                 // there is prob a logic race between sharedCurrentSession subscribers, because of sharedCurrentSession and filtration inside scan
                 // will see
@@ -535,9 +532,10 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                     sharedCurrentSession,
                     allSnapshotsOfCurrentParticipants).subscribe(
                     onNext: { [weak self] event in
-                        
+
+                        self?.currentSessionSnapshot.accept(event.0)
                         self?.allSnapshots = event.1
-                        self?.buildItems(currentSession: event.0, participants: event.1.map({ $0.1 }))
+                        self?.buildItems()
                         
                     }).disposed(by: disposeBag)
 
@@ -545,7 +543,9 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             }
             else
             {
-                buildItems(currentSession: nil, participants: [])
+                currentSessionSnapshot.accept(nil)
+                allSnapshots = []
+                buildItems()
             }
         }
     }
@@ -553,11 +553,45 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
     var allSnapshots: [(DocumentReference, DocumentSnapshot)] = []
     var allSnapshotListeners: [DocumentReference : DisposeBag] = [:]
     
-    func buildItems(currentSession: DocumentSnapshot?, participants: Array<DocumentSnapshot>)
+    var searchQuery: String?
+    
+    let currentSessionSnapshot: BehaviorRelay<DocumentSnapshot?> = BehaviorRelay(value: nil)
+    
+    func buildItems(/*participants: Array<DocumentSnapshot>*/)
     {
+        let _currentSession = currentSessionSnapshot.value
+        let participants = allSnapshots.map({ $0.1 })
+    
+        guard let currentSession = _currentSession, currentSession.exists else
+        {
+            sections.accept(Array<Section>())
+            return
+        }
+        
         var _sections = Array<Section>()
         
-        if let currentSession = currentSession, currentSession.exists
+        if let searchQuery = searchQuery
+        {
+            if searchQuery.isEmpty
+            {
+                if let host = currentSession.get(Session.host) as? DocumentReference
+                {
+                    _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
+                }
+                if participants.count > 0
+                {
+                    print("Session.participants.count: \(participants.count)")
+                    _sections.append(Section(model: .Participant, items: participants.map({ CurrentSessionModelParticipantItem($0) })))
+                }
+            }
+            else
+            {
+                let par = participants.map({ CurrentSessionModelParticipantItem($0)}).filter({ $0.isRelevantForSearchQuery(searchQuery) })
+                
+                _sections.append(Section(model: .Participant, items: par))
+            }
+        }
+        else
         {
             _sections.append(Section(model: .Event, items: [CurrentSessionModelEventItem(item: currentSession)]))
             
@@ -689,6 +723,23 @@ class CurrentSessionModelParticipantItem: CurrentSessionModelItemBox
         }
         
         return self.item == other.item
+    }
+    
+    func isRelevantForSearchQuery(_ query: String?) -> Bool
+    {
+        guard let query = query else {
+            return false
+        }
+        
+        if let name = item.get(ApiUser.displayName) as? String
+        {
+            let _name = name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+            let _query = query.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            return _name.contains(_query)
+        }
+        
+        return false
     }
     
     let item: DocumentSnapshot

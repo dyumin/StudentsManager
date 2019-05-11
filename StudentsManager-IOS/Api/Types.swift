@@ -20,7 +20,7 @@ final class Session
     static let participants = String("attendees")
 }
 
-// class representing data structure under sessions collection entity
+// class representing data structure under users collection entity
 final class ApiUser
 {
     static let displayName = String("displayName")
