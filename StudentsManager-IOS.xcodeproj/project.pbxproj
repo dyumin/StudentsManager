@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		715C3F0C1A146474727EFC8F /* Pods_StudentsManager_IOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3407E9EA48D7E97FC12F55F7 /* Pods_StudentsManager_IOS.framework */; };
 		CC2F29362207A0C100D83E12 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC2F29342207A0C100D83E12 /* Main.storyboard */; };
-		CC2F29382207A1CC00D83E12 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2F29372207A1CC00D83E12 /* Main.swift */; };
 		CC33CFB52240347800FB000F /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC33CFB42240347800FB000F /* History.swift */; };
 		CC33CFB7224034B000FB000F /* CurrentSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC33CFB6224034B000FB000F /* CurrentSession.swift */; };
 		CC33CFBA2240FD7300FB000F /* CurrentSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC33CFB92240FD7300FB000F /* CurrentSessionViewModel.swift */; };
@@ -68,7 +67,6 @@
 		78F853A129F066A8B9238275 /* Pods-StudentsManager-IOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StudentsManager-IOS.release.xcconfig"; path = "Target Support Files/Pods-StudentsManager-IOS/Pods-StudentsManager-IOS.release.xcconfig"; sourceTree = "<group>"; };
 		CC2C69C522598A0800F6E58E /* StudentsManager-IOS-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "StudentsManager-IOS-Bridging-Header.h"; sourceTree = "<group>"; };
 		CC2F29352207A0C100D83E12 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "StudentsManager-IOS/Base.lproj/Main.storyboard"; sourceTree = "<group>"; };
-		CC2F29372207A1CC00D83E12 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		CC33CFB42240347800FB000F /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		CC33CFB6224034B000FB000F /* CurrentSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSession.swift; sourceTree = "<group>"; };
 		CC33CFB92240FD7300FB000F /* CurrentSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionViewModel.swift; sourceTree = "<group>"; };
@@ -174,7 +172,6 @@
 				CCBC489C2248CBEB0074D559 /* Services */,
 				CC33CFB822403CB400FB000F /* CurrentSession */,
 				CCD0269F226F341700A19E47 /* Api */,
-				CC2F29372207A1CC00D83E12 /* Main.swift */,
 				CC2F29342207A0C100D83E12 /* Main.storyboard */,
 				CC5BB20B21F502220069B076 /* AppDelegate.swift */,
 				CC5BB20D21F502220069B076 /* ViewController.swift */,
@@ -424,7 +421,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCBC48AA2248CBEB0074D559 /* ReachabilityService.swift in Sources */,
-				CC2F29382207A1CC00D83E12 /* Main.swift in Sources */,
 				CC33CFBF2242194900FB000F /* CurrentSessionEventCell.swift in Sources */,
 				CCBC48AE2248CBEB0074D559 /* HtmlParsing.swift in Sources */,
 				CCD0266E226B5FD000A19E47 /* UserAccountType.swift in Sources */,
