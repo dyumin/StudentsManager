@@ -20,7 +20,6 @@ import RxDataSources
 
 import PINCache
 
-typealias Section = AnimatableSectionModel<CurrentSessionModelItemType, CurrentSessionModelItemBox>
 
 // MARK: - UITableViewDataSourcePrefetching
 extension CurrentSessionModel: UITableViewDataSourcePrefetching
@@ -54,9 +53,13 @@ extension CurrentSessionModel
 
 class CurrentSessionModel: NSObject, UITableViewDelegate
 {
-    public typealias DataSource = RxTableViewSectionedAnimatedDataSourceDynamicWrapper<Section>
+    private typealias DataSource = RxTableViewSectionedAnimatedDataSourceDynamicWrapper<Section>
     
-    weak var dataSource: DataSource?
+    private typealias DataSourceInternalType = TableViewSectionedDataSource<Section>
+    
+    private typealias Section = AnimatableSectionModel<CurrentSessionModelItemType, CurrentSessionModelItemBox>
+    
+    private weak var dataSource: DataSource?
     
     private static let DefaulfCellReuseIdentifier = "Cell"
     
@@ -84,7 +87,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                 
                 let dataSourceDisposeBag = DisposeBag()
                 
-                let configureCell: TableViewSectionedDataSource<Section>.ConfigureCell =
+                let configureCell: DataSourceInternalType.ConfigureCell =
                 { dataSource, tableView, indexPath, item in
                     
                     switch item.type
@@ -123,7 +126,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                     return UITableViewCell()
                 }
                 
-                let titleForSection : TableViewSectionedDataSource<Section>.TitleForHeaderInSection =
+                let titleForSection : DataSourceInternalType.TitleForHeaderInSection =
                 { [weak self] (ds, section) -> String? in
                     
                     let shouldAdjustTitleToIncludeAddNewButton = Api.sharedApi.editingAllowed.value && self?.searchQuery == nil
@@ -156,7 +159,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                 
                 dataSource.animationConfiguration = animationConfiguration
                 
-                let canEditRowAtIndexPath: TableViewSectionedDataSource<Section>.CanEditRowAtIndexPath =
+                let canEditRowAtIndexPath: DataSourceInternalType.CanEditRowAtIndexPath =
                 { [weak self] (ds, ip) in
                     
                     guard let item = self?.dataSource?[ip] else
@@ -178,7 +181,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                     }
                     
                 }
-                let canMoveRowAtIndexPath: TableViewSectionedDataSource<Section>.CanMoveRowAtIndexPath =
+                let canMoveRowAtIndexPath: DataSourceInternalType.CanMoveRowAtIndexPath =
                 { [weak self] (ds, ip) in
                     
                     guard let item = self?.dataSource?[ip] else
