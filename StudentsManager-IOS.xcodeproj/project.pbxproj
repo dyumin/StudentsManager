@@ -22,6 +22,10 @@
 		CC778E21227C709700C51EED /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC778E20227C709700C51EED /* AvatarView.swift */; };
 		CC9BE03422874AEE00479F7D /* EditingRequirementsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9BE03322874AEE00479F7D /* EditingRequirementsProvider.swift */; };
 		CC9BE03922874FAD00479F7D /* SessionPhotos.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC9BE03822874FAD00479F7D /* SessionPhotos.storyboard */; };
+		CC9BE03B2287536300479F7D /* SessionPhotos.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9BE03A2287536300479F7D /* SessionPhotos.swift */; };
+		CC9BE0472287847E00479F7D /* UIImagePickerController+RxCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9BE0462287847D00479F7D /* UIImagePickerController+RxCreate.swift */; };
+		CC9BE0492287854900479F7D /* UIImagePickerController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9BE0482287854900479F7D /* UIImagePickerController+Rx.swift */; };
+		CC9BE04B2287855200479F7D /* RxImagePickerDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9BE04A2287855200479F7D /* RxImagePickerDelegateProxy.swift */; };
 		CCA4272E2238DC8600CF2260 /* CurrentSession.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCA4272C2238DC8500CF2260 /* CurrentSession.storyboard */; };
 		CCB522D122423D0500737C7D /* CurrentSessionTutorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB522CF22423D0500737C7D /* CurrentSessionTutorCell.swift */; };
 		CCB522D222423D0500737C7D /* CurrentSessionTutorCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCB522D022423D0500737C7D /* CurrentSessionTutorCell.xib */; };
@@ -84,6 +88,10 @@
 		CC778E20227C709700C51EED /* AvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		CC9BE03322874AEE00479F7D /* EditingRequirementsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingRequirementsProvider.swift; sourceTree = "<group>"; };
 		CC9BE03822874FAD00479F7D /* SessionPhotos.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SessionPhotos.storyboard; sourceTree = "<group>"; };
+		CC9BE03A2287536300479F7D /* SessionPhotos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPhotos.swift; sourceTree = "<group>"; };
+		CC9BE0462287847D00479F7D /* UIImagePickerController+RxCreate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImagePickerController+RxCreate.swift"; sourceTree = "<group>"; };
+		CC9BE0482287854900479F7D /* UIImagePickerController+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImagePickerController+Rx.swift"; sourceTree = "<group>"; };
+		CC9BE04A2287855200479F7D /* RxImagePickerDelegateProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxImagePickerDelegateProxy.swift; sourceTree = "<group>"; };
 		CCA4272D2238DC8500CF2260 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "StudentsManager-IOS/Base.lproj/CurrentSession.storyboard"; sourceTree = "<group>"; };
 		CCB522CF22423D0500737C7D /* CurrentSessionTutorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionTutorCell.swift; sourceTree = "<group>"; };
 		CCB522D022423D0500737C7D /* CurrentSessionTutorCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentSessionTutorCell.xib; sourceTree = "<group>"; };
@@ -197,9 +205,21 @@
 		CC9BE03722874F8700479F7D /* SessionPhotos */ = {
 			isa = PBXGroup;
 			children = (
+				CC9BE03F2287588B00479F7D /* Extensions */,
 				CC9BE03822874FAD00479F7D /* SessionPhotos.storyboard */,
+				CC9BE03A2287536300479F7D /* SessionPhotos.swift */,
 			);
 			path = SessionPhotos;
+			sourceTree = "<group>";
+		};
+		CC9BE03F2287588B00479F7D /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				CC9BE04A2287855200479F7D /* RxImagePickerDelegateProxy.swift */,
+				CC9BE0482287854900479F7D /* UIImagePickerController+Rx.swift */,
+				CC9BE0462287847D00479F7D /* UIImagePickerController+RxCreate.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		CCBC489C2248CBEB0074D559 /* Services */ = {
@@ -441,8 +461,11 @@
 				CCD0266E226B5FD000A19E47 /* UserAccountType.swift in Sources */,
 				CCDA3F07227A5F12000B2CFA /* CurrentSessionParticipantCell.swift in Sources */,
 				CCBC48A92248CBEB0074D559 /* ImageService.swift in Sources */,
+				CC9BE0492287854900479F7D /* UIImagePickerController+Rx.swift in Sources */,
 				CCD0269E226F340A00A19E47 /* Api.swift in Sources */,
 				CCBC48B82248CD4A0074D559 /* Dependencies.swift in Sources */,
+				CC9BE04B2287855200479F7D /* RxImagePickerDelegateProxy.swift in Sources */,
+				CC9BE0472287847E00479F7D /* UIImagePickerController+RxCreate.swift in Sources */,
 				CC33CFBA2240FD7300FB000F /* CurrentSessionViewModel.swift in Sources */,
 				CCBC48AB2248CBEB0074D559 /* PseudoRandomGenerator.swift in Sources */,
 				CCBC48B62248CC940074D559 /* Example.swift in Sources */,
@@ -458,6 +481,7 @@
 				CCD026A4226F46F400A19E47 /* CurrentSessionNewEventCell.swift in Sources */,
 				CC5BB20C21F502220069B076 /* AppDelegate.swift in Sources */,
 				CCDA3F0E227B6147000B2CFA /* String+UUUUUIKit.swift in Sources */,
+				CC9BE03B2287536300479F7D /* SessionPhotos.swift in Sources */,
 				CCDA3F042278BA99000B2CFA /* Types.swift in Sources */,
 				CCD0266A22672B3400A19E47 /* TabBarController.swift in Sources */,
 				CCBC48B02248CBEB0074D559 /* UIImage+Extensions.swift in Sources */,

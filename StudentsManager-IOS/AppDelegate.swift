@@ -137,6 +137,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FUIAuthDelegate
             }
         ).disposed(by: disposeBag)
         
+        RxImagePickerDelegateProxy.register { RxImagePickerDelegateProxy(imagePicker: $0) }
+        
         return true
     }
     

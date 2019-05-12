@@ -10,10 +10,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Session Photos-->
         <scene sceneID="LfG-OY-CkA">
             <objects>
-                <viewController id="S13-2v-che" sceneMemberID="viewController">
+                <viewController id="S13-2v-che" customClass="SessionPhotos" customModule="StudentsManager_IOS" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Bf5-u2-Eu1">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

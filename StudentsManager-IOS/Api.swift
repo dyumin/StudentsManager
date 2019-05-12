@@ -352,7 +352,7 @@ class Api
             {
                 let message = "Api.Error Caches synchronisation failure occurred"
                 print(message)
-                assertionFailure(message) // occured once
+                assertionFailure(message) // occured 3
                 
                 observer.onNext((image as! UIImage)) // force because of check in condition
                 observer.onCompleted()
