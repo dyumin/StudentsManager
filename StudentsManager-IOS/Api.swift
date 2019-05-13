@@ -53,6 +53,8 @@ class Api
     let userObservable: Observable<DocumentSnapshot>
     
     let user: BehaviorRelay<DocumentSnapshot?> = BehaviorRelay(value: nil)
+
+    let selectedSession: BehaviorRelay<DocumentReference?> = BehaviorRelay(value: nil)
     
     let ready = BehaviorRelay<Bool>(value: false)
     
@@ -149,6 +151,13 @@ class Api
                 }
             }
         ).disposed(by: disposeBag)
+        
+        user.debug("CurrentSession.selectedSession").map
+        { user -> DocumentReference? in
+            return user?.get(ApiUser.selectedSession) as? DocumentReference
+        }
+        .bind(to: selectedSession)
+        .disposed(by: disposeBag)
         
         // TODO add or host back in whereField
         db.collection("sessions").whereField(Session.createdBy, isEqualTo: user.value!.reference).whereField(Session.active, isEqualTo: true).rx.listen()/*.debug("sessions -> currentSessions")*/.subscribe(

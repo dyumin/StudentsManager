@@ -66,13 +66,11 @@ class CurrentSession: UIViewController
     {
         super.init(coder: aDecoder)
         
-        Api.sharedApi.user.debug("CurrentSession.selectedSession").subscribe(
-            onNext: { [weak self] event in
+        Api.sharedApi.selectedSession.subscribe(
+        onNext: { [weak self] event in
             
-            let selectedSession = event?.get(ApiUser.selectedSession) as? DocumentReference
-            
-            self?.viewModel.currentSession = selectedSession
-            
+            self?.viewModel.currentSession = event
+                
         }).disposed(by: disposeBag)
         
         let newButton = UIBarButtonItem()
