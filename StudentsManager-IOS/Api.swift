@@ -517,8 +517,10 @@ class Api
             
             guard let jpegData = photo.jpegData(compressionQuality: 1) else { return }
             
+            let storageMetadata = StorageMetadata()
+            storageMetadata.contentType = "image/jpeg"
             // TODO: think about disposable
-            storage.reference(withPath: path).rx.putData(jpegData).subscribe(
+            storage.reference(withPath: path).rx.putData(jpegData, metadata: storageMetadata).subscribe(
             onNext:
                 { metadata in
                     print(metadata)
@@ -527,7 +529,7 @@ class Api
                     
                     let batch = db.batch()
                     
-                    let resourceRecordData = [ ResourceRecord.name : imageName,
+                    let resourceRecordData = [ ResourceRecord.imagePath : path,
                                                ResourceRecord.processed : false] as [String : Any]
                     let resourceRecordRef = session.collection(Session.resources).document()
                     

@@ -41,7 +41,7 @@ final class Room
 // class representing data structure under Session/resources collection entity
 final class ResourceRecord
 {
-    static let name = "name" // String
+    static let imagePath = "imagePath" // String
     static let processed = "processed" // Bool
 }
 
