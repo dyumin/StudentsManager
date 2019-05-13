@@ -44,6 +44,11 @@
             </constraints>
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <size key="customSize" width="221" height="191"/>
+            <connections>
+                <outlet property="cameraButton" destination="H3V-u3-U3K" id="aIE-qV-4On"/>
+                <outlet property="cropButton" destination="R4L-xd-fNo" id="kMh-9v-rmT"/>
+                <outlet property="galleryButton" destination="rvF-RI-pnL" id="HbW-D2-neE"/>
+            </connections>
             <point key="canvasLocation" x="122.8125" y="206.51408450704227"/>
         </collectionViewCell>
     </objects>

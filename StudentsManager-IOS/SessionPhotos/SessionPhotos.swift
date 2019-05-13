@@ -69,8 +69,8 @@ class SessionPhotos: UIViewController
             .map { info in
                 return info[UIImagePickerController.InfoKey.originalImage.rawValue] as? UIImage
             }
-            .debug().subscribe(
-            onNext: { [weak self] image in
+            .debug().subscribe(onNext:
+            { [weak self] image in
                 
                 if let image = image
                 {
