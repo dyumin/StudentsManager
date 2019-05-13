@@ -498,4 +498,60 @@ class Api
         
         return session.reference.rx.updateData([Session.host : FieldValue.delete()])
     }
+    
+    func AddSessionPhoto(_ photo: UIImage, for session: DocumentReference)
+    {
+        // TODO: think about disposable
+        _ = session.rx.getDocument().subscribe(
+        onNext:
+        { selectedSessionSnapshot in
+                
+            guard selectedSessionSnapshot.exists else { assertionFailure(); return }
+            
+            let storage = Storage.storage()
+            
+            let name = "\(UUID().uuidString)"
+            let imageName = "\(name).jpg"
+            
+            let path = "/sessions/\(session.documentID)/media/\(imageName)"
+            
+            guard let jpegData = photo.jpegData(compressionQuality: 1) else { return }
+            
+            // TODO: think about disposable
+            storage.reference(withPath: path).rx.putData(jpegData).subscribe(
+            onNext:
+                { metadata in
+                    print(metadata)
+                    
+                    let db = Firestore.firestore()
+                    
+                    let batch = db.batch()
+                    
+                    let resourceRecordData = [ ResourceRecord.name : imageName,
+                                               ResourceRecord.processed : false] as [String : Any]
+                    let resourceRecordRef = session.collection(Session.resources).document()
+                    
+                    let processingQueueRecordData = [ ProcessingQueue.imageMeta : resourceRecordRef,
+                                                      ProcessingQueue.imagePath : path,
+                                                      ProcessingQueue.session : session,
+                                                      ProcessingQueue.active : false,
+                                                      ProcessingQueue.lastUpdateTime : Timestamp.init() ] as [String : Any]
+                    let processingQueueRecordRef = db.collection("processingQueue").document()
+                    
+                    batch.setData(resourceRecordData, forDocument: resourceRecordRef)
+                    batch.setData(processingQueueRecordData, forDocument: processingQueueRecordRef)
+                    
+                    // TODO: think about disposable
+                    _ = batch.rx.commit().subscribe(
+                        onNext: { error in
+                            print(error)
+                            assertionFailure()
+                    })
+            },
+            onError: { error in
+                    print(error)
+                    assertionFailure()
+            })
+        })
+    }
 }
