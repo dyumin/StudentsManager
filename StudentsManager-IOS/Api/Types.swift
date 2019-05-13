@@ -11,26 +11,48 @@ import Foundation
 // class representing data structure under sessions collection entity
 final class Session
 {
-    static let active = String("active")
-    static let host = String("host")
-    static let createdBy = String("createdBy")
-    static let name = String("name")
-    static let room = String("room")
-    static let startTime = String("startTime")
-    static let participants = String("attendees")
+    static let active = "active"
+    static let host = "host"
+    static let createdBy = "createdBy"
+    static let name = "name"
+    static let room = "room"
+    static let startTime = "startTime"
+    static let participants = "attendees"
+    
+    // Collection
+    static let resources = "resources"
 }
 
 // class representing data structure under users collection entity
 final class ApiUser
 {
-    static let displayName = String("displayName")
-    static let email = String("email")
-    static let phone = String("phone")
-    static let selectedSession = String("selectedSession")
+    static let displayName = "displayName"
+    static let email = "email"
+    static let phone = "phone"
+    static let selectedSession = "selectedSession"
 }
 
 // class representing data structure under rooms collection entity
 final class Room
 {
-    static let name = String("name")
+    static let name = "name"
+}
+
+// class representing data structure under Session/resources collection entity
+final class ResourceRecord
+{
+    static let name = "name" // String
+    static let processed = "processed" // Bool
+}
+
+// TODO: share with server sources
+// class representing data structure under processingQueue collection entity
+final class ProcessingQueue
+{
+    static let imagePath = "imagePath" // String
+    static let session = "session" // DocumentReference
+    static let imageMeta = "imageMeta" // DocumentReference
+    
+    static let active = "processing" // Bool
+    static let lastUpdateTime = "lastUpdateTime" // Timestamp
 }
