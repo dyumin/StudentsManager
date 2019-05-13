@@ -51,7 +51,7 @@ class CurrentSession: UIViewController
         super.viewDidLoad()
     }
     
-    var viewModel = CurrentSessionModel(CurrentSessionModel.Mode.CurrentSession)
+    let viewModel = CurrentSessionModel(CurrentSessionModel.Mode.CurrentSession)
     
     private var disposeBag = DisposeBag()
     

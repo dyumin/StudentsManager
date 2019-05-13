@@ -40,6 +40,9 @@
                         <viewLayoutGuide key="safeArea" id="oRY-oW-8PW"/>
                     </view>
                     <navigationItem key="navigationItem" id="aMC-WH-Cru"/>
+                    <connections>
+                        <outlet property="collectionView" destination="YhP-gW-HXQ" id="pui-kt-5XV"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5gH-Z6-4II" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

@@ -23,6 +23,16 @@ class SessionPhotos: UIViewController
     
     private let DefaultNavItemTitle = "Photos"
     
+    private let viewModel = SessionPhotosViewModel()
+    
+    @IBOutlet weak var collectionView: UICollectionView!
+    {
+        didSet
+        {
+            self.viewModel.partialUpdatesCollectionViewOutlet = collectionView
+        }
+    }
+    
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?)
     {
         fatalError("\(#function) has not been implemented")
@@ -86,6 +96,11 @@ class SessionPhotos: UIViewController
 
         // Do any additional setup after loading the view.
     }
+    
+//    func photoTaken(photo: UIImage)
+//    {
+//        <#function body#>
+//    }
     
 
     /*
