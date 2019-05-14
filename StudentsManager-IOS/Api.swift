@@ -508,10 +508,11 @@ class Api
                 
             guard selectedSessionSnapshot.exists else { assertionFailure(); return }
             
+            let resourceRecordRef = session.collection(Session.resources).document()
+            
             let storage = Storage.storage()
             
-            let name = "\(UUID().uuidString)"
-            let imageName = "\(name).jpg"
+            let imageName = "\(resourceRecordRef.documentID).jpg"
             
             let path = "/sessions/\(session.documentID)/media/\(imageName)"
             
@@ -520,7 +521,7 @@ class Api
             let storageMetadata = StorageMetadata()
             storageMetadata.contentType = "image/jpeg"
             // TODO: think about disposable
-            storage.reference(withPath: path).rx.putData(jpegData, metadata: storageMetadata).subscribe(
+            _ = storage.reference(withPath: path).rx.putData(jpegData, metadata: storageMetadata).subscribe(
             onNext:
                 { metadata in
                     print(metadata)
@@ -531,7 +532,6 @@ class Api
                     
                     let resourceRecordData = [ ResourceRecord.imagePath : path,
                                                ResourceRecord.processed : false] as [String : Any]
-                    let resourceRecordRef = session.collection(Session.resources).document()
                     
                     let processingQueueRecordData = [ ProcessingQueue.imageMeta : resourceRecordRef,
                                                       ProcessingQueue.imagePath : path,
