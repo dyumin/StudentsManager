@@ -53,6 +53,6 @@ final class ProcessingQueue
     static let session = "session" // DocumentReference
     static let imageMeta = "imageMeta" // DocumentReference
     
-    static let active = "processing" // Bool
+    static let active = "active" // Bool
     static let lastUpdateTime = "lastUpdateTime" // Timestamp
 }
