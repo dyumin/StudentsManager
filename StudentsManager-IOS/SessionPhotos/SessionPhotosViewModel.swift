@@ -90,6 +90,18 @@ class SessionPhotosViewModel: NSObject, UICollectionViewDelegateFlowLayout
                 
                 let dataSource = DataSource(configureCell: configureCell)
                 
+                #if DEBUG
+                let animationConfiguration = AnimationConfiguration(insertAnimation: .right,
+                                                                    reloadAnimation: .middle,
+                                                                    deleteAnimation: .left)
+                #else
+                let animationConfiguration = AnimationConfiguration(insertAnimation: .fade,
+                                                                    reloadAnimation: .none,
+                                                                    deleteAnimation: .fade)
+                #endif
+                
+                dataSource.animationConfiguration = animationConfiguration
+                
                 partialUpdatesCollectionViewOutlet.rx.setDelegate(self).disposed(by: dataSourceDisposeBag)
                 
                 self.dataSource = dataSource

@@ -529,6 +529,8 @@ class Api
             {
                 serverRequestDisposeBag = DisposeBag() // drop server request if exists
             })
+            
+            UIApplication.shared.isNetworkActivityIndicatorVisible = true
         
             session.rx.getDocument().subscribe(
             onNext: { [weak self] selectedSessionSnapshot in
@@ -599,10 +601,16 @@ class Api
                         onError: { error in
                             print(error)
                             assertionFailure()
+                        },
+                        onDisposed:
+                        {
+                            UIApplication.shared.isNetworkActivityIndicatorVisible = false
                         })
                 },
                 onError: { error in
                     observer.onError(error)
+                    
+                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
                     
                     print(error)
                     assertionFailure()
@@ -612,6 +620,13 @@ class Api
                     observer.onCompleted()
                 })
                 .disposed(by: serverRequestDisposeBag)
+            },
+            onError:
+            { error in
+                UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                
+                print(error)
+                assertionFailure()
             })
             .disposed(by: serverRequestDisposeBag)
             
