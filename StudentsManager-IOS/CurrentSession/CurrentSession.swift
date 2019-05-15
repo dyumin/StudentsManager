@@ -15,7 +15,6 @@ import RxCocoa
 import Firebase
 
 
-
 class CurrentSession: UIViewController
 {
     // I do expect that at least  this setter will be called once (viewDidLoad called twice)

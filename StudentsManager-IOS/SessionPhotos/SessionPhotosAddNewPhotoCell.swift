@@ -106,11 +106,11 @@ class SessionPhotosAddNewPhotoCell: UICollectionViewCell {
             })
             .disposed(by: disposeBag)
     }
-
+    
     func photoTaken(photo: UIImage)
     {
         guard let selectedSession = Api.sharedApi.selectedSession.value else { return }
         
-        Api.sharedApi.AddSessionPhoto(photo, for: selectedSession)
+        _ = Api.sharedApi.AddSessionPhoto(photo, for: selectedSession).subscribe()
     }
 }

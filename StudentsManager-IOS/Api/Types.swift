@@ -45,6 +45,7 @@ final class ResourceRecord
 {
     static let imagePath = "imagePath" // String
     static let processed = "processed" // Bool
+    static let createdTime = "createdTime" // Timestamp
 }
 
 // TODO: share with server sources

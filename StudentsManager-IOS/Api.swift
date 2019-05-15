@@ -58,6 +58,8 @@ class Api
     
     let ready = BehaviorRelay<Bool>(value: false)
     
+    let lastUploadedItemMeta: PublishSubject<StorageMetadata> = PublishSubject()
+    
     private init()
     {
         assert(Auth.auth().currentUser != nil, "Api called before auth completed")
@@ -356,19 +358,18 @@ class Api
             }
             
             // TODO: do we need weak self below?
-#if DEBUG
+            // it happens from time to time
             if let image = self.mediaCache.object(forKey: cachePhotoKey), image is UIImage
             {
                 let message = "Api.Error Caches synchronisation failure occurred"
                 print(message)
-                assertionFailure(message) // occured 3
+//                assertionFailure(message)
                 
                 observer.onNext((image as! UIImage)) // force because of check in condition
                 observer.onCompleted()
                 
                 return disposable
             }
-#endif
 
             self.diskRequestsCount += 1
             self.persistentCache.loadData(forKey: cachePhotoKey, withCallback:
@@ -392,8 +393,8 @@ class Api
                     let reference = Storage.storage().reference(withPath: serverPhotoPath).rx
                     serverRequestDisposeBag = DisposeBag()
                     
-                    // Download in memory with a maximum allowed size of 1MB (1 * 1024 * 1024 bytes)
-                    reference.getData(maxSize: 1 * 1024 * 1024).debug("Api.userProfilePhoto: \(serverPhotoPath)")
+                    // Download in memory with a maximum allowed size of 100MB (100 * 1024 * 1024 bytes)
+                    reference.getData(maxSize: 100 * 1024 * 1024).debug("Api.userProfilePhoto: \(serverPhotoPath)")
                     .subscribe(
                         onNext: { [weak self] data in
                             
@@ -494,31 +495,42 @@ class Api
         return session.reference.rx.updateData([Session.host : FieldValue.delete()])
     }
     
-    func AddSessionPhoto(_ photo: UIImage, for session: DocumentReference)
+    func AddSessionPhoto(_ photo: UIImage, for session: DocumentReference) -> Observable<StorageMetadata>
     {
-        // TODO: think about disposable
-        _ = session.rx.getDocument().subscribe(
-        onNext:
-        { selectedSessionSnapshot in
+        return (Observable.create
+        { [weak self] observer -> Disposable in
+            
+            var serverRequestDisposeBag = DisposeBag()
+            let disposable = Disposables.create(with:
+            {
+                serverRequestDisposeBag = DisposeBag() // drop server request if exists
+            })
+        
+            session.rx.getDocument().subscribe(
+            onNext: { [weak self] selectedSessionSnapshot in
                 
-            guard selectedSessionSnapshot.exists else { assertionFailure(); return }
-            
-            let resourceRecordRef = session.collection(Session.resources).document()
-            
-            let storage = Storage.storage()
-            
-            let imageName = "\(resourceRecordRef.documentID).jpg"
-            
-            let path = "/sessions/\(session.documentID)/media/\(imageName)"
-            
-            guard let jpegData = photo.jpegData(compressionQuality: 1) else { return }
-            
-            let storageMetadata = StorageMetadata()
-            storageMetadata.contentType = "image/jpeg"
-            // TODO: think about disposable
-            _ = storage.reference(withPath: path).rx.putData(jpegData, metadata: storageMetadata).subscribe(
-            onNext:
-                { metadata in
+                guard selectedSessionSnapshot.exists else { assertionFailure(); return }
+                
+                let resourceRecordRef = session.collection(Session.resources).document()
+                
+                let storage = Storage.storage()
+                
+                let imageName = "\(resourceRecordRef.documentID).jpg"
+                
+                let path = "/sessions/\(session.documentID)/media/\(imageName)"
+                
+                guard let jpegData = photo.jpegData(compressionQuality: 1) else { return }
+                
+                let storageMetadata = StorageMetadata()
+                storageMetadata.contentType = "image/jpeg"
+                
+                storage.reference(withPath: path).rx.putData(jpegData, metadata: storageMetadata).subscribe(
+                onNext: { [weak self] metadata in
+                    
+                    self?.lastUploadedItemMeta.onNext(metadata)
+                    
+                    observer.onNext(metadata)
+                    
                     print(metadata)
                     
                     let db = Firestore.firestore()
@@ -526,7 +538,8 @@ class Api
                     let batch = db.batch()
                     
                     let resourceRecordData = [ ResourceRecord.imagePath : path,
-                                               ResourceRecord.processed : false] as [String : Any]
+                                               ResourceRecord.processed : false,
+                                               ResourceRecord.createdTime : Timestamp.init() ] as [String : Any]
                     
                     let processingQueueRecordData = [ ProcessingQueue.imageMeta : resourceRecordRef,
                                                       ProcessingQueue.imagePath : path,
@@ -544,11 +557,22 @@ class Api
                             print(error)
                             assertionFailure()
                     })
-            },
-            onError: { error in
+                },
+                onError: { error in
+                    observer.onError(error)
+                    
                     print(error)
                     assertionFailure()
+                },
+                onCompleted:
+                {
+                    observer.onCompleted()
+                })
+                .disposed(by: serverRequestDisposeBag)
             })
+            .disposed(by: serverRequestDisposeBag)
+            
+            return disposable
         })
     }
 }

@@ -46,10 +46,10 @@ class SessionPhotos: UIViewController
         
         navigationItem.title = DefaultNavItemTitle
         
-        Api.sharedApi.user.debug("CurrentSession.selectedSession").subscribe(
+        Api.sharedApi.selectedSession.subscribe(
         onNext: { [weak self] event in
-                
-                // TODO: leave view if no session
+            
+            self?.viewModel.currentSession = event
                 
         }).disposed(by: disposeBag)
         
@@ -111,7 +111,7 @@ class SessionPhotos: UIViewController
     {
         guard let selectedSession = Api.sharedApi.selectedSession.value else { return }
         
-        Api.sharedApi.AddSessionPhoto(photo, for: selectedSession)
+        _ = Api.sharedApi.AddSessionPhoto(photo, for: selectedSession).subscribe()
     }
     
 

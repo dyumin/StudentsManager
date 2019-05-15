@@ -50,23 +50,23 @@ class SessionPhotosModelItemBox: NSObject, SessionPhotosModelItem
 class SessionPhotosModelPhotoItem: SessionPhotosModelItemBox
 {
     override var type: SessionPhotosModelItemType { return .Photo }
-    override var identity: String { return "d" }//item.documentID }
+    override var identity: String { return item.documentID }
     
-//    override func isEqual(_ object: Any?) -> Bool
-//    {
-//        guard let other = object as? SessionPhotosModelPhotoItem else {
-//            return false
-//        }
-//
-//        return self.item == other.item
-//    }
-//
-//    let item: DocumentSnapshot
-//
-//    init(_ item: DocumentSnapshot)
-//    {
-//        self.item = item
-//    }
+    override func isEqual(_ object: Any?) -> Bool
+    {
+        guard let other = object as? SessionPhotosModelPhotoItem else {
+            return false
+        }
+
+        return self.item == other.item
+    }
+
+    let item: DocumentSnapshot
+
+    init(_ item: DocumentSnapshot)
+    {
+        self.item = item
+    }
 }
 
 class SessionPhotosModelAddNewPhotoItem: SessionPhotosModelItemBox
