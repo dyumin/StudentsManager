@@ -302,7 +302,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             }
         }.filter { $0 != nil }.map { $0! }
         
-        let _ = Api.sharedApi.remove(participants: participants, from: currentSessionSnapshot).debug("delete participants \(participants) from editing mode").subscribe()
+        let _ = Api.sharedApi.remove(participants: participants, from: currentSessionSnapshot.reference).debug("delete participants \(participants) from editing mode").subscribe()
         let _ = Api.sharedApi.remove(hosts: hosts, from: currentSessionSnapshot).debug("delete hosts \(hosts) from editing mode").subscribe()
     }
         
@@ -328,7 +328,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                     case .Participant:
                         guard let participant = participant as? CurrentSessionModelParticipantItem else { return }
                         // it is ok, remove sequences will terminate in finite time
-                        let _ = Api.sharedApi.remove(participants: [ participant.item.reference ], from: currentSessionSnapshot).debug("delete participant \(participant.item.documentID) from UITableViewRowAction").subscribe()
+                        let _ = Api.sharedApi.remove(participants: [ participant.item.reference ], from: currentSessionSnapshot.reference).debug("delete participant \(participant.item.documentID) from UITableViewRowAction").subscribe()
                         return
                         
                     default:
@@ -459,21 +459,37 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                 let allSnapshotsOfCurrentParticipants = Observable.combineLatest(
                     sharedCurrentSession/*.debug("___currentSession")*/,
                     subjectOfParticipantSnapshots/*.debug("___subject")*/)
-                .scan(into: allSnapshots)
+                .scan(into: _allSnapshots)
                 { (allSnapshots, arg1) in
                     let (currentSession, participantSnapshot) = arg1
                     
                     if let participants = currentSession.get(Session.participants) as? Array<DocumentReference>
                     {
-                        allSnapshots = allSnapshots.filter(
-                        { (arg0) -> Bool in
-                            let (key, _) = arg0
-                            
-                            // "key != participantSnapshot.reference" because tuple is a value type...
-                            return participants.contains(key) && key != participantSnapshot.reference
+                        if let index = allSnapshots.firstIndex(where:
+                        {
+                            $0.documentID == participantSnapshot.documentID
                         })
+                        {
+                            allSnapshots[index] = participantSnapshot
+                        }
+                        else
+                        {
+                            allSnapshots.append(participantSnapshot)
+                        }
                         
-                        allSnapshots.append((participantSnapshot.reference, participantSnapshot))
+                        allSnapshots = allSnapshots.filter(
+                        { _participantSnapshot -> Bool in
+                            
+                            if let _ = participants.firstIndex(where:
+                            {
+                                $0.documentID == _participantSnapshot.documentID
+                            })
+                            {
+                                return true
+                            }
+                            
+                            return false
+                        })
                         
                         // not optimal at all :)
                         allSnapshots.sort(by:
@@ -481,12 +497,12 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                             
                             let one = participants.firstIndex(where:
                             {
-                                $0.documentID == lhs.0.documentID
+                                $0.documentID == lhs.documentID
                             })!
                             
                             let two = participants.firstIndex(where:
                             {
-                                $0.documentID == rhs.0.documentID
+                                $0.documentID == rhs.documentID
                             })!
                             
                             return one - two < 0
@@ -496,15 +512,15 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                     {
                         allSnapshots.removeAll()
                     }
-                }/*.debug("___scan")*/
-                
+                }.startWith([])/*.debug("___scan")*/ // startWith([]) because if there are no participants, then there are no snapshots
+
                 Observable.combineLatest(
                     sharedCurrentSession,
                     allSnapshotsOfCurrentParticipants).subscribe(
                     onNext: { [weak self] event in
 
                         self?.currentSessionSnapshot.accept(event.0)
-                        self?.allSnapshots = event.1
+                        self?._allSnapshots = event.1
                         self?.buildItems()
                         
                     }).disposed(by: disposeBag)
@@ -514,13 +530,13 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             else
             {
                 currentSessionSnapshot.accept(nil)
-                allSnapshots = []
+                _allSnapshots = []
                 buildItems()
             }
         }
     }
     
-    var allSnapshots: [(DocumentReference, DocumentSnapshot)] = []
+    var _allSnapshots: [DocumentSnapshot] = []
     var allSnapshotListeners: [DocumentReference : DisposeBag] = [:]
     
     var searchQuery: String?
@@ -530,7 +546,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
     func buildItems(/*participants: Array<DocumentSnapshot>*/)
     {
         let _currentSession = currentSessionSnapshot.value
-        let participants = allSnapshots.map({ $0.1 })
+        let participants = _allSnapshots // .map({ $0.1 })
     
         guard let currentSession = _currentSession, currentSession.exists else
         {

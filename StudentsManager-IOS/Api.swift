@@ -460,7 +460,7 @@ class Api
         
     private static func serverPhotoPath(for id: String) -> String
     {
-        return "/users/\(id)/datasetPhotos/\(id).JPG"
+        return "/users/\(id)/datasetPhotos/\(id).jpg"
     }
     
     private static func cachePhotoKey(for id: String) -> String
@@ -476,18 +476,13 @@ class Api
     
     // MARK: data manipulation
     
-    func remove(participants: [DocumentReference], from session: DocumentSnapshot) -> Observable<Void>
+    func remove(participants: [DocumentReference], from session: DocumentReference) -> Observable<Void>
     {
         guard participants.count != 0 else { return Observable.empty() }
         
-        guard let sessionParticipants = session.get(Session.participants) as? Array<DocumentReference> else { assertionFailure("How did this happen?))"); return Observable.error(Errors.NotFound) }
-        
-        let updatedSessionParticipants = sessionParticipants.filter
-        { (participant) -> Bool in
-            return !participants.contains(participant)
-        }
-        
-        return session.reference.rx.updateData([Session.participants : updatedSessionParticipants])
+        let sessionData = [ Session.participants : FieldValue.arrayRemove(participants) ]
+                
+        return session.rx.updateData(sessionData)
     }
     
     func remove(hosts: [DocumentReference], from session: DocumentSnapshot) -> Observable<Void>
@@ -545,7 +540,7 @@ class Api
                     
                     // TODO: think about disposable
                     _ = batch.rx.commit().subscribe(
-                        onNext: { error in
+                        onError: { error in
                             print(error)
                             assertionFailure()
                     })

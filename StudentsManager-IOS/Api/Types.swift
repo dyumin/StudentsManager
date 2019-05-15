@@ -8,6 +8,7 @@
 
 import Foundation
 
+// TODO: share with server sources
 // class representing data structure under sessions collection entity
 final class Session
 {
@@ -38,6 +39,7 @@ final class Room
     static let name = "name"
 }
 
+// TODO: share with server sources
 // class representing data structure under Session/resources collection entity
 final class ResourceRecord
 {
