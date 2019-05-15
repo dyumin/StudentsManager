@@ -578,7 +578,7 @@ class Api
                     let cachePhotoKey = Api.cachePhotoKey(for: resourceRecordRef.documentID, .SessionMediaItem)
                     self?.mediaCache.setObject(photo, forKey: cachePhotoKey)
                     
-                    // TODO: think about disposable
+                    // TODO: think about disposable, for know there is no way to get result of commit
                     _ = batch.rx.commit().subscribe(
                         onNext: { [weak self] _ in
      
