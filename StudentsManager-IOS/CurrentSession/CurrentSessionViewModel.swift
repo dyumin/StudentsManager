@@ -37,7 +37,7 @@ extension CurrentSessionModel: UITableViewDataSourcePrefetching
 
             if item.type == .Participant, let item = item as? CurrentSessionModelParticipantItem
             {
-                api.prefetchUserProfilePhoto(for: item.item.documentID, .UserProfilePhoto)
+                api.prefetchImage(for: item.item.documentID, .UserProfilePhoto)
             }
         }
     }
@@ -229,14 +229,14 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
 
                 self.partialUpdatesTableViewOutlet.rx.setDelegate(self).disposed(by: dataSourceDisposeBag)
                 
+                self.dataSource = dataSource
+                
                 if #available(iOS 10.0, *)
                 {
                     self.partialUpdatesTableViewOutlet.rx.setPrefetchDataSource(self).disposed(by: dataSourceDisposeBag)
                 }
                 
                 sections.asObservable()/*.debug("sections_to_table")*/.bind(to: partialUpdatesTableViewOutlet.rx.items(dataSource: dataSource)).disposed(by: dataSourceDisposeBag)
-                
-                self.dataSource = dataSource
                 
                 self.dataSourceDisposeBag = dataSourceDisposeBag
             }

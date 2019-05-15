@@ -20,7 +20,9 @@ class SessionPhotosPhotoCell: UICollectionViewCell
     
     @IBOutlet weak var image: UIImageView!
     
-    var disposeBag: DisposeBag?
+    private var disposeBag: DisposeBag?
+    
+    private let api = Api.sharedApi
     
     var item: DocumentSnapshot?
     {
@@ -35,24 +37,14 @@ class SessionPhotosPhotoCell: UICollectionViewCell
             
             let disposeBag = DisposeBag()
             
-            if let imagePath = item.get(ResourceRecord.imagePath) as? String
-            {
-                let storage = Storage.storage()
-                // Download in memory with a maximum allowed size of 100MB (100 * 1024 * 1024 bytes) (why not)
-                storage.reference(withPath: imagePath).rx
-                    .getData(maxSize: 100 * 1024 * 1024)
-                    .debug("downloading \(imagePath)")
-                    .subscribe(
-                    onNext: { [weak self] event in
-                        
-                        DispatchQueue.main.async
-                        { [weak self] in
-                            
-                            self?.image.image = UIImage(data: event)
-                        }
-                        
-                    }).disposed(by: disposeBag)
-            }
+            self.api.getImage(for: item.documentID, .SessionMediaItem)
+                .observeOn(MainScheduler.instance)
+                .subscribe(
+                onNext: { [weak self] image in
+                    
+                    self?.image.image = image
+                    
+                }).disposed(by: disposeBag)
             
             self.disposeBag = disposeBag
         }

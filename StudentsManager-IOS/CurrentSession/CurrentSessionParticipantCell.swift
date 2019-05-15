@@ -82,7 +82,7 @@ class CurrentSessionParticipantCell: UITableViewCell
                     self.phone.isHidden = true
                 }
                 
-                self.api.userProfilePhoto(for: item.documentID, .UserProfilePhoto).observeOn(MainScheduler.instance).subscribe(
+                self.api.getImage(for: item.documentID, .UserProfilePhoto).observeOn(MainScheduler.instance).subscribe(
                     onNext: { [weak self] image in
                         
                         self?.avatarView.image = image

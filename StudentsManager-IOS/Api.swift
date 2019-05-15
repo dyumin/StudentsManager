@@ -248,7 +248,7 @@ class Api
     private let testSync = PINMemoryCache()
 #endif
     // NOTE: keep if let checks in sync with userProfilePhoto func
-    func prefetchUserProfilePhoto(for id: String, _ type: MediaType)
+    func prefetchImage(for id: String, _ type: MediaType)
     {
         let cachePhotoKey = Api.cachePhotoKey(for: id, type)
         
@@ -278,7 +278,7 @@ class Api
     }
 
     // NOTE: keep if let checks in sync with prefetchUserProfilePhoto func
-    func userProfilePhoto(for id: String, _ type: MediaType) -> Observable<UIImage?>
+    func getImage(for id: String, _ type: MediaType) -> Observable<UIImage?>
     {
         let cachePhotoKey = Api.cachePhotoKey(for: id, type)
         
@@ -389,7 +389,7 @@ class Api
                 {
                     self.serverRequestsCount += 1
                     
-                    let serverPhotoPath = Api.serverPhotoPath(for: id, type)
+                    let serverPhotoPath = self.serverPhotoPath(for: id, type)
                     let reference = Storage.storage().reference(withPath: serverPhotoPath).rx
                     serverRequestDisposeBag = DisposeBag()
                     
@@ -465,14 +465,32 @@ class Api
         case SessionMediaItem
     }
         
-    private static func serverPhotoPath(for id: String, _ type: MediaType) -> String
+    private func serverPhotoPath(for id: String, _ type: MediaType) -> String
     {
-        return "/users/\(id)/datasetPhotos/\(id).jpg"
+        switch type
+        {
+        case .UserProfilePhoto:
+            return "/users/\(id)/datasetPhotos/\(id).jpg"
+        case .SessionMediaItem:
+            if let selectedSession = selectedSession.value
+            {
+                return "/sessions/\(selectedSession.documentID)/media/\(id).jpg"
+            }
+            
+            assertionFailure()
+            return ""
+        }
     }
     
     private static func cachePhotoKey(for id: String, _ type: MediaType) -> String
     {
-        return "\(id)_profilePhoto"
+        switch type
+        {
+        case .UserProfilePhoto:
+            return "\(id)_profilePhoto"
+        case .SessionMediaItem:
+            return "\(id)_sessionPhoto"
+        }
     }
     
     private var diskRequestsCount: Int64 = 0

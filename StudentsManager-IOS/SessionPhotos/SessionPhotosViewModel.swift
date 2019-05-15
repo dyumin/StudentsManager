@@ -15,6 +15,27 @@ import Firebase
 
 import RxDataSources
 
+// MARK: - UICollectionViewDataSourcePrefetching
+extension SessionPhotosViewModel: UICollectionViewDataSourcePrefetching
+{
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath])
+    {
+        guard let dataSource = self.dataSource else { return }
+        
+        let _cachedValues = dataSource.sectionModels
+        let api = Api.sharedApi
+        
+        for indexPath in indexPaths
+        {
+            let item = _cachedValues[indexPath.section].items[indexPath.item]
+            
+            if item.type == .Photo, let item = item as? SessionPhotosModelPhotoItem
+            {
+                api.prefetchImage(for: item.item.documentID, .SessionMediaItem)
+            }
+        }
+    }
+}
 
 class SessionPhotosViewModel: NSObject, UICollectionViewDelegateFlowLayout
 {
@@ -71,9 +92,13 @@ class SessionPhotosViewModel: NSObject, UICollectionViewDelegateFlowLayout
                 
                 partialUpdatesCollectionViewOutlet.rx.setDelegate(self).disposed(by: dataSourceDisposeBag)
                 
-                sections.asObservable().debug("sections_to_collection").bind(to: partialUpdatesCollectionViewOutlet.rx.items(dataSource: dataSource)).disposed(by: dataSourceDisposeBag)
-                
                 self.dataSource = dataSource
+                
+                if #available(iOS 10.0, *)
+                {
+                    partialUpdatesCollectionViewOutlet.rx.setPrefetchDataSource(self).disposed(by: dataSourceDisposeBag)
+                }
+                sections.asObservable().debug("sections_to_collection").bind(to: partialUpdatesCollectionViewOutlet.rx.items(dataSource: dataSource)).disposed(by: dataSourceDisposeBag)
                 
                 self.dataSourceDisposeBag = dataSourceDisposeBag
             }
