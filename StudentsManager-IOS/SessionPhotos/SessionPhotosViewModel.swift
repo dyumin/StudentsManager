@@ -120,11 +120,8 @@ class SessionPhotosViewModel: NSObject, UICollectionViewDelegateFlowLayout
                 let sharedCurrentSession = currentSession.rx.listen().asObservable().share(replay: 1)
                 sharedCurrentSession.debug("SessionPhotosViewModel currentSession").subscribe(
                 onNext: { [weak self] event in
-                    
-                    let db = Firestore.firestore()
-                    
-                    let path = event.reference.path.appending("/" + Session.resources)
-                    let resources = db.collection(path)
+
+                    let resources = event.reference.collection(Session.resources)
                     
                     // literally all records
                     Observable.combineLatest(

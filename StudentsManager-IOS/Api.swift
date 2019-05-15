@@ -575,12 +575,31 @@ class Api
                     batch.setData(resourceRecordData, forDocument: resourceRecordRef)
                     batch.setData(processingQueueRecordData, forDocument: processingQueueRecordRef)
                     
+                    let cachePhotoKey = Api.cachePhotoKey(for: resourceRecordRef.documentID, .SessionMediaItem)
+                    self?.mediaCache.setObject(photo, forKey: cachePhotoKey)
+                    
                     // TODO: think about disposable
                     _ = batch.rx.commit().subscribe(
+                        onNext: { [weak self] _ in
+     
+                            self?.persistentCache.store(jpegData, forKey: cachePhotoKey, locked: false, withCallback:
+                                { (persistentCacheResponse) in
+                                    
+                                    print("Api.persistentCache.store got result: \(persistentCacheResponse.result.rawValue) for \(cachePhotoKey)")
+                                    if persistentCacheResponse.result == .operationError
+                                    {
+                                        print("Api.persistentCache.store error: \(persistentCacheResponse.error)")
+                                    }
+                                    
+                                    assert(persistentCacheResponse.result == .operationSucceeded, "Failed to store server request result")
+                                    
+                            }, on: DispatchQueue.global())
+                            
+                        },
                         onError: { error in
                             print(error)
                             assertionFailure()
-                    })
+                        })
                 },
                 onError: { error in
                     observer.onError(error)
