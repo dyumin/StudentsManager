@@ -248,9 +248,9 @@ class Api
     private let testSync = PINMemoryCache()
 #endif
     // NOTE: keep if let checks in sync with userProfilePhoto func
-    func prefetchUserProfilePhoto(for id: String)
+    func prefetchUserProfilePhoto(for id: String, _ type: MediaType)
     {
-        let cachePhotoKey = Api.cachePhotoKey(for: id)
+        let cachePhotoKey = Api.cachePhotoKey(for: id, type)
         
         // what if something inserts object in question just after?? (one more additional memory/disk (depends on observable implementation) read will occur below, or worse, network request)
         // hashtag: #2
@@ -274,13 +274,13 @@ class Api
             return
         }
         
-        _ = serverMediaRequest(for: id)
+        _ = serverMediaRequest(for: id, type)
     }
 
     // NOTE: keep if let checks in sync with prefetchUserProfilePhoto func
-    func userProfilePhoto(for id: String) -> Observable<UIImage?>
+    func userProfilePhoto(for id: String, _ type: MediaType) -> Observable<UIImage?>
     {
-        let cachePhotoKey = Api.cachePhotoKey(for: id)
+        let cachePhotoKey = Api.cachePhotoKey(for: id, type)
         
         // what if something inserts object in question just after?? (one more additional memory/disk (depends on observable implementation) read will occur below, or worse, network request)
         // hashtag: #2
@@ -305,17 +305,17 @@ class Api
             return imageObservable as! Observable<UIImage?>
         }
 
-        return serverMediaRequest(for: id)
+        return serverMediaRequest(for: id, type)
     }
     
-    private func serverMediaRequest(for id: String) -> Observable<UIImage?>
+    private func serverMediaRequest(for id: String, _ type: MediaType) -> Observable<UIImage?>
     {
-        let cachePhotoKey = Api.cachePhotoKey(for: id)
+        let cachePhotoKey = Api.cachePhotoKey(for: id, type)
 #if DEBUG
         assert(!self.testSync.containsObject(forKey: cachePhotoKey))
         self.testSync.setObject(cachePhotoKey, forKey: cachePhotoKey, block: nil)
 #endif
-        let workingObservable = _serverMediaRequest(for: id)
+        let workingObservable = _serverMediaRequest(for: id, type)
         
         // subscribe immediately to keep observable "connected" to avoid creation of duplicate internal resources that compute sequence elements
         // since underlying sequence terminates in finite time, subscription will be completed automatically
@@ -332,10 +332,10 @@ class Api
         return workingObservable
     }
     
-    private func _serverMediaRequest(for id: String) -> Observable<UIImage?>
+    private func _serverMediaRequest(for id: String, _ type: MediaType) -> Observable<UIImage?>
     {
-        let cachePhotoKey = Api.cachePhotoKey(for: id)
-        
+        let cachePhotoKey = Api.cachePhotoKey(for: id, type)
+
         let workingObservable: Observable<UIImage?> = (Observable.create
         { [weak self] observer -> Disposable in
             
@@ -389,7 +389,7 @@ class Api
                 {
                     self.serverRequestsCount += 1
                     
-                    let serverPhotoPath = Api.serverPhotoPath(for: id)
+                    let serverPhotoPath = Api.serverPhotoPath(for: id, type)
                     let reference = Storage.storage().reference(withPath: serverPhotoPath).rx
                     serverRequestDisposeBag = DisposeBag()
                     
@@ -458,13 +458,19 @@ class Api
         
         return workingObservable
     }
+    
+    enum MediaType
+    {
+        case UserProfilePhoto
+        case SessionMediaItem
+    }
         
-    private static func serverPhotoPath(for id: String) -> String
+    private static func serverPhotoPath(for id: String, _ type: MediaType) -> String
     {
         return "/users/\(id)/datasetPhotos/\(id).jpg"
     }
     
-    private static func cachePhotoKey(for id: String) -> String
+    private static func cachePhotoKey(for id: String, _ type: MediaType) -> String
     {
         return "\(id)_profilePhoto"
     }

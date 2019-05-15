@@ -37,7 +37,7 @@ extension CurrentSessionModel: UITableViewDataSourcePrefetching
 
             if item.type == .Participant, let item = item as? CurrentSessionModelParticipantItem
             {
-                api.prefetchUserProfilePhoto(for: item.item.documentID)
+                api.prefetchUserProfilePhoto(for: item.item.documentID, .UserProfilePhoto)
             }
         }
     }
