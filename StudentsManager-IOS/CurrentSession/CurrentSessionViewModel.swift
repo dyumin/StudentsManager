@@ -520,7 +520,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                     onNext: { [weak self] event in
 
                         self?.currentSessionSnapshot.accept(event.0)
-                        self?._allSnapshots = event.1
+                        self?._allSnapshots = event.1.reversed()
                         self?.buildItems()
                         
                     }).disposed(by: disposeBag)
@@ -546,7 +546,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
     func buildItems(/*participants: Array<DocumentSnapshot>*/)
     {
         let _currentSession = currentSessionSnapshot.value
-        let participants = _allSnapshots // .map({ $0.1 })
+        let participants = _allSnapshots
     
         guard let currentSession = _currentSession, currentSession.exists else
         {
