@@ -43,14 +43,6 @@ extension CurrentSessionModel: UITableViewDataSourcePrefetching
     }
 }
 
-extension CurrentSessionModel
-{
-    func getCurrentSessionSnapshot() -> DocumentSnapshot?
-    {
-        return currentSessionSnapshot.value
-    }
-}
-
 class CurrentSessionModel: NSObject, UITableViewDelegate
 {
     private typealias DataSource = RxTableViewSectionedAnimatedDataSourceDynamicWrapper<Section>
@@ -291,9 +283,15 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
         switch item.type
         {
         case .Event:
-            guard let sessionDetails = UIStoryboard(name: "SessionDetails", bundle: Bundle.main).instantiateInitialViewController() as? SessionDetails else { return }
+            guard let sessionDetails = UIStoryboard(name: "SessionDetails", bundle: Bundle.main).instantiateInitialViewController() as? SessionDetails else { break }
             
             sessionDetails.currentSessionSnapshot = currentSessionSnapshot.value
+            
+            self.owner?.navigationController?.pushViewController(sessionDetails, animated: true)
+            
+            break
+        case .AddNewParticipant:
+            guard let sessionDetails = UIStoryboard(name: "PeopleSearch", bundle: Bundle.main).instantiateInitialViewController() as? PeopleSearch else { break }
             
             self.owner?.navigationController?.pushViewController(sessionDetails, animated: true)
             
@@ -308,7 +306,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
     
     func deleteCurrentlySelectedRows()
     {
-        guard let indexPathsForSelectedRows = partialUpdatesTableViewOutlet.indexPathsForSelectedRows, let dataSource = dataSource, let currentSessionSnapshot = self.getCurrentSessionSnapshot() else
+        guard let indexPathsForSelectedRows = partialUpdatesTableViewOutlet.indexPathsForSelectedRows, let dataSource = dataSource, let currentSessionSnapshot = currentTutorSnapshot.value else
         {
             assertionFailure(); return
         }
@@ -355,7 +353,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             let delete = UIAlertAction(title: "Delete", style: UIAlertAction.Style.destructive)
             { [weak self] _ in
                 
-                if let currentSessionSnapshot = self?.getCurrentSessionSnapshot()
+                if let currentSessionSnapshot = self?.currentSessionSnapshot.value
                 {
                     switch participant.type
                     {
@@ -432,21 +430,90 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
     {
         pretty_function()
     }
-
-    enum Mode
-    {
-        case CurrentSession
-        case History
-    }
     
-    private let mode: Mode
     weak var owner: UIViewController?
     
-    init(_ mode: Mode)
+    override init()
     {
-        self.mode = mode
-        
         super.init()
+        
+        let dataObservable = Observable.combineLatest(
+            currentSessionSnapshot.asObservable(),
+            currentTutorSnapshot.asObservable(),
+            allSnapshots.asObservable())
+        
+        Observable.combineLatest(dataObservable, searchQuery.asObservable())
+            .throttle(0.3, scheduler: MainScheduler.instance)
+        .map
+        { arg0, searchQuery -> Array<Section> in
+            
+            let (_currentSession, currentTutorSnapshot, participants) = arg0
+
+            guard let currentSession = _currentSession, currentSession.exists else
+            {
+                return Array<Section>()
+            }
+            
+            var _sections = Array<Section>()
+            
+            if let searchQuery = searchQuery
+            {
+                if searchQuery.isEmpty
+                {
+                    if let host = currentTutorSnapshot
+                    {
+                        _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
+                    }
+                    if participants.count > 0
+                    {
+                        print("Session.participants.count: \(participants.count)")
+                        _sections.append(Section(model: .Participant, items: participants.map({ CurrentSessionModelParticipantItem($0) })))
+                    }
+                }
+                else
+                {
+                    if let host = currentTutorSnapshot
+                    {
+                        let model = CurrentSessionModelTutorItem(host)
+                        
+                        if model.isRelevantForSearchQuery(searchQuery)
+                        {
+                            _sections.append(Section(model: .Tutor, items: [model]))
+                        }
+                    }
+                    
+                    let par = participants.map({ CurrentSessionModelParticipantItem($0)}).filter({ $0.isRelevantForSearchQuery(searchQuery) })
+                    
+                    _sections.append(Section(model: .Participant, items: par))
+                }
+            }
+            else
+            {
+                _sections.append(Section(model: .Event, items: [CurrentSessionModelEventItem(item: currentSession)]))
+                
+                if let host = currentTutorSnapshot
+                {
+                    _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
+                }
+                else if Api.sharedApi.editingAllowed.value
+                {
+                    _sections.append(Section(model: .AddNewTutor, items: [CurrentSessionModelAddNewTutorItem()]))
+                }
+                
+                if Api.sharedApi.editingAllowed.value
+                {
+                    _sections.append(Section(model: .AddNewParticipant, items: [CurrentSessionModelAddNewParticipantItem()]))
+                }
+                
+                if participants.count > 0
+                {
+                    print("Session.participants.count: \(participants.count)")
+                    _sections.append(Section(model: .Participant, items: participants.map({ CurrentSessionModelParticipantItem($0) })))
+                }
+            }
+            
+            return _sections
+        }.bind(to: sections)
     }
     
     let subjectOfParticipantSnapshots = PublishSubject<DocumentSnapshot>()
@@ -487,9 +554,12 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                                 self.allHostsSnapshotListeners[host] = _bag
                             }
                         }
+                        else
+                        {
+                            self.allHostsSnapshotListeners = [:]
+                            self.currentTutorSnapshot.accept(nil)
+                        }
                 }).disposed(by: disposeBag)
-                
-                
                 
                 sharedCurrentSession.subscribe(
                 onNext: { [weak self] event in
@@ -524,9 +594,10 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                 
                 sharedCurrentSession.bind(to: currentSessionSnapshot).disposed(by: disposeBag)
                 
+                let _allSnapshots: [DocumentSnapshot] = []
                 // there is prob a logic race between sharedCurrentSession subscribers, because of sharedCurrentSession and filtration inside scan
                 // will see
-                let allSnapshotsOfCurrentParticipants = Observable.combineLatest(
+                Observable.combineLatest(
                     sharedCurrentSession/*.debug("___currentSession")*/,
                     subjectOfParticipantSnapshots/*.debug("___subject")*/)
                 .scan(into: _allSnapshots)
@@ -582,19 +653,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                     {
                         allSnapshots.removeAll()
                     }
-                }.startWith([])/*.debug("___scan")*/ // startWith([]) because if there are no participants, then there are no snapshots
-
-                Observable.combineLatest(
-                    sharedCurrentSession,
-                    allSnapshotsOfCurrentParticipants,
-                    currentTutorSnapshot).subscribe(
-                    onNext: { [weak self] event in
-
-                        self?.currentSessionSnapshot.accept(event.0)
-                        self?._allSnapshots = event.1.reversed()
-                        self?.buildItems()
-                        
-                    }).disposed(by: disposeBag)
+                }.startWith([]).bind(to: allSnapshots)/*.debug("___scan")*/.disposed(by: disposeBag) // startWith([]) because if there are no participants, then there are no snapshots
 
                 self.disposeBag = disposeBag
             }
@@ -602,91 +661,17 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             {
                 currentSessionSnapshot.accept(nil)
                 currentTutorSnapshot.accept(nil)
-                _allSnapshots = []
-                buildItems()
+                allSnapshots.accept([])
             }
         }
     }
-    
-    var _allSnapshots: [DocumentSnapshot] = []
-    var allSnapshotListeners: [DocumentReference : DisposeBag] = [:]
-    
-    var allHostsSnapshotListeners: [DocumentReference : DisposeBag] = [:]
-    
-    var searchQuery: String?
     
     let currentSessionSnapshot: BehaviorRelay<DocumentSnapshot?> = BehaviorRelay(value: nil)
     let currentTutorSnapshot: BehaviorRelay<DocumentSnapshot?> = BehaviorRelay(value: nil)
+    var allSnapshots: BehaviorRelay<[DocumentSnapshot]> = BehaviorRelay(value: [])
     
-    func buildItems(/*participants: Array<DocumentSnapshot>*/)
-    {
-        let _currentSession = currentSessionSnapshot.value
-        let participants = _allSnapshots
+    var allHostsSnapshotListeners: [DocumentReference : DisposeBag] = [:]
+    var allSnapshotListeners: [DocumentReference : DisposeBag] = [:]
     
-        guard let currentSession = _currentSession, currentSession.exists else
-        {
-            sections.accept(Array<Section>())
-            return
-        }
-        
-        var _sections = Array<Section>()
-        
-        if let searchQuery = searchQuery
-        {
-            if searchQuery.isEmpty
-            {
-                if let host = currentTutorSnapshot.value
-                {
-                    _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
-                }
-                if participants.count > 0
-                {
-                    print("Session.participants.count: \(participants.count)")
-                    _sections.append(Section(model: .Participant, items: participants.map({ CurrentSessionModelParticipantItem($0) })))
-                }
-            }
-            else
-            {
-                if let host = currentTutorSnapshot.value
-                {
-                    let model = CurrentSessionModelTutorItem(host)
-                    
-                    if model.isRelevantForSearchQuery(searchQuery)
-                    {
-                        _sections.append(Section(model: .Tutor, items: [model]))
-                    }
-                }
-                
-                let par = participants.map({ CurrentSessionModelParticipantItem($0)}).filter({ $0.isRelevantForSearchQuery(searchQuery) })
-                
-                _sections.append(Section(model: .Participant, items: par))
-            }
-        }
-        else
-        {
-            _sections.append(Section(model: .Event, items: [CurrentSessionModelEventItem(item: currentSession)]))
-            
-            if let host = currentTutorSnapshot.value
-            {
-                _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
-            }
-            else if Api.sharedApi.editingAllowed.value
-            {
-                _sections.append(Section(model: .AddNewTutor, items: [CurrentSessionModelAddNewTutorItem()]))
-            }
-            
-            if Api.sharedApi.editingAllowed.value
-            {
-                _sections.append(Section(model: .AddNewParticipant, items: [CurrentSessionModelAddNewParticipantItem()]))
-            }
-            
-            if participants.count > 0
-            {
-                print("Session.participants.count: \(participants.count)")
-                _sections.append(Section(model: .Participant, items: participants.map({ CurrentSessionModelParticipantItem($0) })))
-            }
-        }
-        
-        sections.accept(_sections)
-    }
+    var searchQuery: BehaviorRelay<String?> = BehaviorRelay(value: nil)
 }

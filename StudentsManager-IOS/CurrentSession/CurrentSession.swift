@@ -50,7 +50,7 @@ class CurrentSession: UIViewController
         super.viewDidLoad()
     }
     
-    let viewModel = CurrentSessionModel(CurrentSessionModel.Mode.CurrentSession)
+    let viewModel = CurrentSessionModel()
     
     private var disposeBag = DisposeBag()
     
@@ -151,8 +151,7 @@ class CurrentSession: UIViewController
                 {
                     finalQuery = event.0
                 }
-                self?.viewModel.searchQuery = finalQuery
-                self?.viewModel.buildItems()
+                self?.viewModel.searchQuery.accept(finalQuery)
                 
             }).disposed(by: disposeBag)
             
