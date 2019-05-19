@@ -128,7 +128,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                 let titleForSection : DataSourceInternalType.TitleForHeaderInSection =
                 { [weak self] (ds, section) -> String? in
                     
-                    let shouldAdjustTitleToIncludeAddNewButton = Api.sharedApi.editingAllowed.value && self?.searchQuery == nil
+                    let shouldAdjustTitleToIncludeAddNewButton = Api.sharedApi.editingAllowed.value && self?.searchQuery.value == nil
                     
                     switch ds[section].model
                     {
@@ -482,9 +482,13 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                         }
                     }
                     
+                    
                     let par = participants.map({ CurrentSessionModelParticipantItem($0)}).filter({ $0.isRelevantForSearchQuery(searchQuery) })
                     
-                    _sections.append(Section(model: .Participant, items: par))
+                    if par.count > 0
+                    {
+                        _sections.append(Section(model: .Participant, items: par))
+                    }
                 }
             }
             else
