@@ -60,30 +60,18 @@ class CurrentSessionEventCell: UITableViewCell
                 
                 if let startTime = item.get(Session.startTime) as? Timestamp
                 {
-                    self.eventTimeLabel.isHidden = false
-                    self.eventTimeLabel.text = startTime.dateValue().description
+                    self.eventTimeLabel.isHidden = false  
+                    self.eventTimeLabel.text = (startTime.dateValue() as NSDate).toLocalDate()
                 }
                 else
                 {
                     self.eventTimeLabel.isHidden = true
                 }
                 
-                if let room = item.get(Session.room) as? DocumentReference
+                if let room = item.get(Session.room) as? String
                 {
-                room.rx.listen().debug("CurrentSessionEventCell.room").observeOn(MainScheduler.instance)
-                        .subscribe( onNext: { [weak self] event in
-                        
-                        if let roomName = event.get(Room.name) as? String, !roomName.isEmpty
-                        {
-                            self?.eventPlaceLabel.isHidden = false
-                            self?.eventPlaceLabel.text = roomName
-                        }
-                        else
-                        {
-                            self?.eventPlaceLabel.isHidden = true
-                        }
-                        
-                    }).disposed(by: disposeBag)
+                    self.eventPlaceLabel.isHidden = false
+                    self.eventPlaceLabel.text = room
                 }
                 else
                 {

@@ -76,6 +76,14 @@ class CurrentSession: UIViewController
         
         let newButton = UIBarButtonItem()
         newButton.title = "New"
+        newButton.rx.tap.subscribe(onNext:
+        { [weak self] in
+            
+            guard let sessionDetails = UIStoryboard(name: "SessionDetails", bundle: Bundle.main).instantiateInitialViewController() as? SessionDetails else { return }
+            
+            self?.navigationController?.pushViewController(sessionDetails, animated: true)
+                
+        }).disposed(by: disposeBag)
         
         Api.sharedApi.editingAllowed.distinctUntilChanged().map
         { [weak self] (editingAllowed) -> (UIBarButtonItem?, UIBarButtonItem?, Bool) in

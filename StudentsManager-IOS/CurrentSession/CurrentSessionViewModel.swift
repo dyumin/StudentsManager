@@ -106,6 +106,13 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                                 return cell
                             }
                             break
+                        case .AddNewTutor:
+                            let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionModel.DefaulfCellReuseIdentifier, for: indexPath)
+                            
+                            cell.textLabel?.text = "Add Tutor"
+                            cell.accessoryType = .disclosureIndicator
+                            
+                            return cell
                         case .Participant:
                             if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionParticipantCell.identifier, for: indexPath) as? CurrentSessionParticipantCell, let item = item as? CurrentSessionModelParticipantItem
                             {
@@ -116,7 +123,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                         case .AddNewParticipant:
                             let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionModel.DefaulfCellReuseIdentifier, for: indexPath)
                             
-                            cell.textLabel?.text = "Add new Participant"
+                            cell.textLabel?.text = "Add Participant"
                             cell.accessoryType = .disclosureIndicator
                             
                             return cell
@@ -139,8 +146,10 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                         return shouldAdjustTitleToIncludeAddNewButton ? "Participants" : nil
                     case .Event:
                         return nil
+                    case .AddNewTutor:
+                        return "Tutor"
                     case .Tutor:
-                        return ds[section].model.rawValue
+                        return "Tutor"
                     }
                 }
                 
@@ -269,6 +278,14 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
+        if let owner = owner, !owner.isEditing
+        {
+        }
+        else
+        {
+            return
+        }
+        
         guard let item = dataSource?[indexPath] else { return }
         
         switch item.type
@@ -395,6 +412,8 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
         {
         case .Tutor:
             return isEditing ? true : false
+        case .AddNewTutor:
+            return isEditing ? false : true
         case .Participant:
             return isEditing ? true : false
         case .AddNewParticipant:
@@ -651,9 +670,9 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             {
                 _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
             }
-            else
+            else if Api.sharedApi.editingAllowed.value
             {
-                // todo: Add
+                _sections.append(Section(model: .AddNewTutor, items: [CurrentSessionModelAddNewTutorItem()]))
             }
             
             if Api.sharedApi.editingAllowed.value

@@ -56,6 +56,18 @@ class Api
 
     let selectedSession: BehaviorRelay<DocumentReference?> = BehaviorRelay(value: nil)
     
+    func setSelectedSession(_ session: DocumentReference) -> Observable<Void>
+    {
+        guard let user = user.value?.reference else
+        {
+            return Observable.error(Errors.NotFound)
+        }
+        
+        selectedSession.accept(session)
+        
+        return user.rx.updateData([ApiUser.selectedSession : session])
+    }
+    
     let ready = BehaviorRelay<Bool>(value: false)
     
     let lastUploadedItemMeta: PublishSubject<StorageMetadata> = PublishSubject()

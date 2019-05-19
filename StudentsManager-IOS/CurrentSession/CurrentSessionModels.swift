@@ -14,6 +14,7 @@ import RxDataSources
 enum CurrentSessionModelItemType: String
 {
     case Event
+    case AddNewTutor
     case Tutor
     case AddNewParticipant
     case Participant
@@ -119,6 +120,21 @@ class CurrentSessionModelTutorItem: CurrentSessionModelItemBox
     }
 }
 
+class CurrentSessionModelAddNewTutorItem: CurrentSessionModelItemBox
+{
+    override var type: CurrentSessionModelItemType { return .AddNewTutor }
+    override var identity: String { return type.rawValue }
+    
+    override func isEqual(_ object: Any?) -> Bool
+    {
+        guard let other = object as? CurrentSessionModelAddNewTutorItem else {
+            return false
+        }
+        
+        return self.identity == other.identity
+    }
+}
+
 class CurrentSessionModelParticipantItem: CurrentSessionModelItemBox
 {
     override var type: CurrentSessionModelItemType { return .Participant }
@@ -172,3 +188,5 @@ class CurrentSessionModelAddNewParticipantItem: CurrentSessionModelItemBox
         return self.identity == other.identity
     }
 }
+
+

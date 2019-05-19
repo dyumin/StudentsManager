@@ -174,7 +174,10 @@ class SessionPhotosViewModel: NSObject, UICollectionViewDelegateFlowLayout
     {
         var _sections = Array<Section>()
         
-        _sections.append(Section(model: .AddNewPhoto, items: [SessionPhotosModelAddNewPhotoItem()]))
+        if Api.sharedApi.editingAllowed.value
+        {
+            _sections.append(Section(model: .AddNewPhoto, items: [SessionPhotosModelAddNewPhotoItem()]))
+        }
         
         if allSnapshots.count > 0
         {

@@ -58,6 +58,7 @@
 		CCD026A5226F46F400A19E47 /* CurrentSessionNewEventCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCD026A3226F46F400A19E47 /* CurrentSessionNewEventCell.xib */; };
 		CCD36D6F2290777C00CDCBE9 /* SessionDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD36D6E2290777B00CDCBE9 /* SessionDetails.swift */; };
 		CCD36D712290778B00CDCBE9 /* SessionDetails.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCD36D702290778B00CDCBE9 /* SessionDetails.storyboard */; };
+		CCD36D792291B7FA00CDCBE9 /* NSDate+LocalString.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD36D782291B7F900CDCBE9 /* NSDate+LocalString.m */; };
 		CCDA3F042278BA99000B2CFA /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA3F032278BA99000B2CFA /* Types.swift */; };
 		CCDA3F07227A5F12000B2CFA /* CurrentSessionParticipantCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA3F05227A5F0D000B2CFA /* CurrentSessionParticipantCell.swift */; };
 		CCDA3F08227A5F12000B2CFA /* CurrentSessionParticipantCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA3F06227A5F0E000B2CFA /* CurrentSessionParticipantCell.xib */; };
@@ -134,6 +135,8 @@
 		CCD026A3226F46F400A19E47 /* CurrentSessionNewEventCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentSessionNewEventCell.xib; sourceTree = "<group>"; };
 		CCD36D6E2290777B00CDCBE9 /* SessionDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDetails.swift; sourceTree = "<group>"; };
 		CCD36D702290778B00CDCBE9 /* SessionDetails.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SessionDetails.storyboard; sourceTree = "<group>"; };
+		CCD36D772291B7F900CDCBE9 /* NSDate+LocalString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSDate+LocalString.h"; sourceTree = "<group>"; };
+		CCD36D782291B7F900CDCBE9 /* NSDate+LocalString.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSDate+LocalString.m"; sourceTree = "<group>"; };
 		CCDA3F032278BA99000B2CFA /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		CCDA3F05227A5F0D000B2CFA /* CurrentSessionParticipantCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionParticipantCell.swift; sourceTree = "<group>"; };
 		CCDA3F06227A5F0E000B2CFA /* CurrentSessionParticipantCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentSessionParticipantCell.xib; sourceTree = "<group>"; };
@@ -222,6 +225,8 @@
 				CCD0268E226CE1BD00A19E47 /* AdminAprovalStub.swift */,
 				CCD0268F226CE1BD00A19E47 /* AdminAprovalStub.xib */,
 				CC9BE03322874AEE00479F7D /* EditingRequirementsProvider.swift */,
+				CCD36D772291B7F900CDCBE9 /* NSDate+LocalString.h */,
+				CCD36D782291B7F900CDCBE9 /* NSDate+LocalString.m */,
 			);
 			path = "StudentsManager-IOS";
 			sourceTree = "<group>";
@@ -522,6 +527,7 @@
 				CC9BE03B2287536300479F7D /* SessionPhotos.swift in Sources */,
 				CCDA3F042278BA99000B2CFA /* Types.swift in Sources */,
 				CC9BE063228872A200479F7D /* SessionPhotosModels.swift in Sources */,
+				CCD36D792291B7FA00CDCBE9 /* NSDate+LocalString.m in Sources */,
 				CCD0266A22672B3400A19E47 /* TabBarController.swift in Sources */,
 				CCBC48B02248CBEB0074D559 /* UIImage+Extensions.swift in Sources */,
 				CC9BE05F228866DC00479F7D /* CurrentSessionModels.swift in Sources */,

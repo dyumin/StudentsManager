@@ -15,9 +15,9 @@ final class Session
     static let active = "active"
     static let host = "host"
     static let createdBy = "createdBy"
-    static let name = "name"
-    static let room = "room"
-    static let startTime = "startTime"
+    static let name = "name" // String
+    static let room = "room" // String
+    static let startTime = "startTime" // Timestamp
     static let participants = "attendees"
     
     // Collection
