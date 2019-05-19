@@ -63,7 +63,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Enter session name." textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1wt-Sc-KRe">
-                                                    <rect key="frame" x="20" y="0.0" width="280" height="79.5"/>
+                                                    <rect key="frame" x="15" y="0.0" width="290" height="79.5"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="79" id="Qzd-oq-XJx"/>
@@ -75,8 +75,8 @@
                                             </subviews>
                                             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                             <constraints>
-                                                <constraint firstItem="1wt-Sc-KRe" firstAttribute="leading" secondItem="7uQ-RI-Toz" secondAttribute="leading" constant="20" symbolic="YES" id="B0b-10-Gyx"/>
-                                                <constraint firstAttribute="trailing" secondItem="1wt-Sc-KRe" secondAttribute="trailing" constant="20" symbolic="YES" id="HaZ-HK-Wu2"/>
+                                                <constraint firstItem="1wt-Sc-KRe" firstAttribute="leading" secondItem="7uQ-RI-Toz" secondAttribute="leading" constant="15" id="B0b-10-Gyx"/>
+                                                <constraint firstAttribute="trailing" secondItem="1wt-Sc-KRe" secondAttribute="trailing" constant="15" id="HaZ-HK-Wu2"/>
                                                 <constraint firstItem="1wt-Sc-KRe" firstAttribute="top" secondItem="7uQ-RI-Toz" secondAttribute="top" id="WPS-hk-wsH"/>
                                                 <constraint firstAttribute="bottom" secondItem="1wt-Sc-KRe" secondAttribute="bottom" id="uXc-r0-wRm"/>
                                             </constraints>
@@ -118,7 +118,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Enter session start time." textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ap7-ap-KrA">
-                                                    <rect key="frame" x="20" y="0.0" width="280" height="79.5"/>
+                                                    <rect key="frame" x="15" y="0.0" width="290" height="79.5"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="79" id="9I2-Kb-CL6"/>
@@ -131,8 +131,8 @@
                                             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                             <constraints>
                                                 <constraint firstItem="Ap7-ap-KrA" firstAttribute="top" secondItem="Edc-1m-E65" secondAttribute="top" id="0bv-rC-6A9"/>
-                                                <constraint firstItem="Ap7-ap-KrA" firstAttribute="leading" secondItem="Edc-1m-E65" secondAttribute="leading" constant="20" symbolic="YES" id="50X-6J-pSG"/>
-                                                <constraint firstAttribute="trailing" secondItem="Ap7-ap-KrA" secondAttribute="trailing" constant="20" symbolic="YES" id="OCL-Xp-f81"/>
+                                                <constraint firstItem="Ap7-ap-KrA" firstAttribute="leading" secondItem="Edc-1m-E65" secondAttribute="leading" constant="15" id="50X-6J-pSG"/>
+                                                <constraint firstAttribute="trailing" secondItem="Ap7-ap-KrA" secondAttribute="trailing" constant="15" id="OCL-Xp-f81"/>
                                                 <constraint firstAttribute="bottom" secondItem="Ap7-ap-KrA" secondAttribute="bottom" id="lpy-rt-ej6"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -185,7 +185,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Session place." textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TFO-U5-pgx">
-                                                    <rect key="frame" x="20" y="0.0" width="280" height="79.5"/>
+                                                    <rect key="frame" x="15" y="0.0" width="290" height="79.5"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="79" id="GDj-Ta-3wa"/>
@@ -198,9 +198,9 @@
                                             <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="bottom" secondItem="TFO-U5-pgx" secondAttribute="bottom" id="B4Y-OO-IbV"/>
-                                                <constraint firstItem="TFO-U5-pgx" firstAttribute="leading" secondItem="ppE-oN-u1Z" secondAttribute="leading" constant="20" symbolic="YES" id="G7E-3T-e3O"/>
+                                                <constraint firstItem="TFO-U5-pgx" firstAttribute="leading" secondItem="ppE-oN-u1Z" secondAttribute="leading" constant="15" id="G7E-3T-e3O"/>
                                                 <constraint firstItem="TFO-U5-pgx" firstAttribute="top" secondItem="ppE-oN-u1Z" secondAttribute="top" id="H1R-Xq-oUi"/>
-                                                <constraint firstAttribute="trailing" secondItem="TFO-U5-pgx" secondAttribute="trailing" constant="20" symbolic="YES" id="s7g-zL-VBb"/>
+                                                <constraint firstAttribute="trailing" secondItem="TFO-U5-pgx" secondAttribute="trailing" constant="15" id="s7g-zL-VBb"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
