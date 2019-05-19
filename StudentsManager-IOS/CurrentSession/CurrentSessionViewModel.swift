@@ -267,6 +267,24 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
         }
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        guard let item = dataSource?[indexPath] else { return }
+        
+        switch item.type
+        {
+        case .Event:
+            guard let sessionDetails = UIStoryboard(name: "SessionDetails", bundle: Bundle.main).instantiateInitialViewController() else { return }
+            
+            self.owner?.navigationController?.pushViewController(sessionDetails, animated: true)
+            
+            break
+            
+        default:
+            return
+        }
+    }
+    
     func deleteCurrentlySelectedRows()
     {
         guard let indexPathsForSelectedRows = partialUpdatesTableViewOutlet.indexPathsForSelectedRows, let dataSource = dataSource, let currentSessionSnapshot = self.getCurrentSessionSnapshot() else
@@ -397,15 +415,16 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
         case CurrentSession
         case History
     }
-
+    
+    private let mode: Mode
+    weak var owner: UIViewController?
+    
     init(_ mode: Mode)
     {
         self.mode = mode
         
         super.init()
     }
-    
-    private let mode: Mode
     
     let subjectOfParticipantSnapshots = PublishSubject<DocumentSnapshot>()
     

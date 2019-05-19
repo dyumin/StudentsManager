@@ -65,6 +65,8 @@ class CurrentSession: UIViewController
     {
         super.init(coder: aDecoder)
         
+        viewModel.owner = self
+        
         Api.sharedApi.selectedSession.subscribe(
         onNext: { [weak self] event in
             
