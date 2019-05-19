@@ -274,15 +274,19 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
         switch item.type
         {
         case .Event:
-            guard let sessionDetails = UIStoryboard(name: "SessionDetails", bundle: Bundle.main).instantiateInitialViewController() else { return }
+            guard let sessionDetails = UIStoryboard(name: "SessionDetails", bundle: Bundle.main).instantiateInitialViewController() as? SessionDetails else { return }
+            
+            sessionDetails.currentSessionSnapshot = currentSessionSnapshot.value
             
             self.owner?.navigationController?.pushViewController(sessionDetails, animated: true)
             
             break
             
         default:
-            return
+            break
         }
+        
+        self.partialUpdatesTableViewOutlet.deselectRow(at: indexPath, animated: true)
     }
     
     func deleteCurrentlySelectedRows()
@@ -314,7 +318,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             switch item.type
             {
             case .Tutor:
-                return (item as? CurrentSessionModelTutorItem)?.host
+                return (item as? CurrentSessionModelTutorItem)?.host.reference
             default:
                 return nil
             }
@@ -340,7 +344,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                     {
                     case .Tutor:
                         guard let participant = participant as? CurrentSessionModelTutorItem else { return }
-                        let _ = Api.sharedApi.remove(hosts: [ participant.host ], from: currentSessionSnapshot).debug("delete host \(participant.host.documentID) from UITableViewRowAction").subscribe()
+                        let _ = Api.sharedApi.remove(hosts: [ participant.host.reference ], from: currentSessionSnapshot).debug("delete host \(participant.host.documentID) from UITableViewRowAction").subscribe()
                         return
                         
                     case .Participant:
@@ -434,12 +438,40 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
         {
             disposeBag = nil
             allSnapshotListeners = [:]
+            allHostsSnapshotListeners = [:]
             
             if let currentSession = currentSession
             {
                 let disposeBag = DisposeBag()
                 
                 let sharedCurrentSession = currentSession.rx.listen().asObservable().share(replay: 1)
+                
+                sharedCurrentSession.subscribe(
+                    onNext: { [weak self] event in
+                        
+                        guard let self = self else { return }
+                        
+                        if let host = event.get(Session.host) as? DocumentReference
+                        {
+                            self.allHostsSnapshotListeners = self.allHostsSnapshotListeners.filter(
+                                { (arg0) -> Bool in
+                                    let (key, _) = arg0
+                                    
+                                    return key == host
+                            })
+                            
+                            if !self.allHostsSnapshotListeners.keys.contains(host)
+                            {
+                                let _bag = DisposeBag()
+                                host.rx.listen()/*.debug("___participant.\(participant.documentID)")*/
+                                    .bind(to:self.currentTutorSnapshot).disposed(by: _bag)
+                                self.allHostsSnapshotListeners[host] = _bag
+                            }
+                        }
+                }).disposed(by: disposeBag)
+                
+                
+                
                 sharedCurrentSession.subscribe(
                 onNext: { [weak self] event in
                     
@@ -535,7 +567,8 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
 
                 Observable.combineLatest(
                     sharedCurrentSession,
-                    allSnapshotsOfCurrentParticipants).subscribe(
+                    allSnapshotsOfCurrentParticipants,
+                    currentTutorSnapshot).subscribe(
                     onNext: { [weak self] event in
 
                         self?.currentSessionSnapshot.accept(event.0)
@@ -549,6 +582,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             else
             {
                 currentSessionSnapshot.accept(nil)
+                currentTutorSnapshot.accept(nil)
                 _allSnapshots = []
                 buildItems()
             }
@@ -558,9 +592,12 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
     var _allSnapshots: [DocumentSnapshot] = []
     var allSnapshotListeners: [DocumentReference : DisposeBag] = [:]
     
+    var allHostsSnapshotListeners: [DocumentReference : DisposeBag] = [:]
+    
     var searchQuery: String?
     
     let currentSessionSnapshot: BehaviorRelay<DocumentSnapshot?> = BehaviorRelay(value: nil)
+    let currentTutorSnapshot: BehaviorRelay<DocumentSnapshot?> = BehaviorRelay(value: nil)
     
     func buildItems(/*participants: Array<DocumentSnapshot>*/)
     {
@@ -579,7 +616,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
         {
             if searchQuery.isEmpty
             {
-                if let host = currentSession.get(Session.host) as? DocumentReference
+                if let host = currentTutorSnapshot.value
                 {
                     _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
                 }
@@ -591,6 +628,16 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             }
             else
             {
+                if let host = currentTutorSnapshot.value
+                {
+                    let model = CurrentSessionModelTutorItem(host)
+                    
+                    if model.isRelevantForSearchQuery(searchQuery)
+                    {
+                        _sections.append(Section(model: .Tutor, items: [model]))
+                    }
+                }
+                
                 let par = participants.map({ CurrentSessionModelParticipantItem($0)}).filter({ $0.isRelevantForSearchQuery(searchQuery) })
                 
                 _sections.append(Section(model: .Participant, items: par))
@@ -600,7 +647,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
         {
             _sections.append(Section(model: .Event, items: [CurrentSessionModelEventItem(item: currentSession)]))
             
-            if let host = currentSession.get(Session.host) as? DocumentReference
+            if let host = currentTutorSnapshot.value
             {
                 _sections.append(Section(model: .Tutor, items: [CurrentSessionModelTutorItem(host)]))
             }

@@ -94,9 +94,26 @@ class CurrentSessionModelTutorItem: CurrentSessionModelItemBox
         return self.host == other.host
     }
     
-    var host: DocumentReference
+    func isRelevantForSearchQuery(_ query: String?) -> Bool
+    {
+        guard let query = query else {
+            return false
+        }
+        
+        if let name = host.get(ApiUser.displayName) as? String
+        {
+            let _name = name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+            let _query = query.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            return _name.contains(_query)
+        }
+        
+        return false
+    }
     
-    init(_ host: DocumentReference)
+    var host: DocumentSnapshot
+    
+    init(_ host: DocumentSnapshot)
     {
         self.host = host
     }
@@ -134,19 +151,6 @@ class CurrentSessionModelParticipantItem: CurrentSessionModelItemBox
     }
     
     let item: DocumentSnapshot
-    
-    // TODO: reference is bad for you...
-    //    var displayName: String
-    //    {
-    //        if let displayName = item.get(ApiUser.displayName) as? String
-    //        {
-    //            return displayName
-    //        }
-    //        else
-    //        {
-    //            return String()
-    //        }
-    //    }
     
     init(_ item: DocumentSnapshot)
     {
