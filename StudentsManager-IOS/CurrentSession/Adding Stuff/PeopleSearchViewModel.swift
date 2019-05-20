@@ -159,8 +159,10 @@ class PeopleSearchViewModel: NSObject, UITableViewDelegate
         
         let db = Firestore.firestore()
         
+        let allUsers = db.collection("users").order(by: ApiUser.displayName, descending: false).rx.listen()
+        
         Observable.combineLatest(
-            db.collection("users").rx.getDocuments().asObservable(),
+            allUsers,
             searchQuery)
             .map
             {
