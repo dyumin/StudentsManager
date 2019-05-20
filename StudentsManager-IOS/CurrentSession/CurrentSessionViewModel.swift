@@ -366,7 +366,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             }
         }.filter { $0 != nil }.map { $0! }
         
-        let _ = Api.sharedApi.remove(participants: participants, from: currentSession).debug("delete participants \(participants) from editing mode").subscribe()
+        let _ = Api.sharedApi.remove(participants: participants, from: currentSession).debug("delete participants \(participants) from \(currentSession.documentID) via editing mode").subscribe()
         let _ = Api.sharedApi.remove(hosts: hosts, from: currentSession).debug("delete hosts \(hosts) from editing mode").subscribe()
     }
         
@@ -392,7 +392,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
                     case .Participant:
                         guard let participant = participant as? CurrentSessionModelParticipantItem else { return }
                         // it is ok, remove sequences will terminate in finite time
-                        let _ = Api.sharedApi.remove(participants: [ participant.item.reference ], from: currentSession).debug("delete participant \(participant.item.documentID) from UITableViewRowAction").subscribe()
+                        let _ = Api.sharedApi.remove(participants: [ participant.item.reference ], from: currentSession).debug("delete participant \(participant.item.documentID) from \(currentSession.documentID) via UITableViewRowAction").subscribe()
                         return
                         
                     default:
