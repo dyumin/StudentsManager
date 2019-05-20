@@ -24,6 +24,7 @@ final class Session
     static let resources = "resources"
 }
 
+// TODO: share with server sources
 // class representing data structure under users collection entity
 final class ApiUser
 {
