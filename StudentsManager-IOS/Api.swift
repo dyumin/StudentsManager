@@ -513,6 +513,20 @@ class Api
     
     // MARK: data manipulation
     
+    func add(participants: [DocumentReference], _ session: DocumentReference) -> Observable<Void>
+    {
+        let sessionData = [ Session.participants : FieldValue.arrayUnion(participants) ]
+        
+        return session.rx.updateData(sessionData)
+    }
+    
+    func addOrUpdate(host: DocumentReference, _ session: DocumentReference) -> Observable<Void>
+    {
+        let sessionData = [ Session.host : host ]
+        
+        return session.rx.updateData(sessionData)
+    }
+    
     func remove(participants: [DocumentReference], from session: DocumentReference) -> Observable<Void>
     {
         guard participants.count != 0 else { return Observable.empty() }
@@ -522,13 +536,13 @@ class Api
         return session.rx.updateData(sessionData)
     }
     
-    func remove(hosts: [DocumentReference], from session: DocumentSnapshot) -> Observable<Void>
+    func remove(hosts: [DocumentReference], from session: DocumentReference) -> Observable<Void>
     {
         guard hosts.count != 0 else { return Observable.empty() }
         
         assert(hosts.count < 2, "Multiple hosts not yet implemented")
         
-        return session.reference.rx.updateData([Session.host : FieldValue.delete()])
+        return session.rx.updateData([Session.host : FieldValue.delete()])
     }
     
     func AddSessionPhoto(_ photo: UIImage, for session: DocumentReference) -> Observable<StorageMetadata>

@@ -270,9 +270,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        if let owner = owner, !owner.isEditing
-        {
-        }
+        guard let owner = owner, !owner.isEditing
         else
         {
             return
@@ -290,10 +288,39 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             self.owner?.navigationController?.pushViewController(sessionDetails, animated: true)
             
             break
+        case .AddNewTutor:
+            fallthrough
         case .AddNewParticipant:
-            guard let sessionDetails = UIStoryboard(name: "PeopleSearch", bundle: Bundle.main).instantiateInitialViewController() as? PeopleSearch else { break }
             
-            self.owner?.navigationController?.pushViewController(sessionDetails, animated: true)
+            guard let peopleSearch = UIStoryboard(name: "PeopleSearch", bundle: Bundle.main).instantiateInitialViewController() as? PeopleSearch else { break }
+            
+            peopleSearch.callback.debug("PeopleSearch_AddNewParticipant")
+            .subscribe(
+            onNext: { [weak self] participant in
+                
+                if let currentSession = self?.currentSession
+                {
+                    switch item.type
+                    {
+                    case .AddNewTutor:
+                        _ = Api.sharedApi.addOrUpdate(host: participant, currentSession).subscribe()
+                        break
+                    case .AddNewParticipant:
+                        _ = Api.sharedApi.add(participants: [participant], currentSession).subscribe()
+                        break
+                    default:
+                        break
+                    }
+                }
+                
+                if let owner = self?.owner
+                {
+                    owner.navigationController?.popToViewController(owner, animated: true)
+                }
+                
+            }).disposed(by: peopleSearch.disposeBag)
+            
+            self.owner?.navigationController?.pushViewController(peopleSearch, animated: true)
             
             break
             
@@ -306,7 +333,7 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
     
     func deleteCurrentlySelectedRows()
     {
-        guard let indexPathsForSelectedRows = partialUpdatesTableViewOutlet.indexPathsForSelectedRows, let dataSource = dataSource, let currentSessionSnapshot = currentTutorSnapshot.value else
+        guard let indexPathsForSelectedRows = partialUpdatesTableViewOutlet.indexPathsForSelectedRows, let dataSource = dataSource, let currentSession = currentSession else
         {
             assertionFailure(); return
         }
@@ -339,8 +366,8 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             }
         }.filter { $0 != nil }.map { $0! }
         
-        let _ = Api.sharedApi.remove(participants: participants, from: currentSessionSnapshot.reference).debug("delete participants \(participants) from editing mode").subscribe()
-        let _ = Api.sharedApi.remove(hosts: hosts, from: currentSessionSnapshot).debug("delete hosts \(hosts) from editing mode").subscribe()
+        let _ = Api.sharedApi.remove(participants: participants, from: currentSession).debug("delete participants \(participants) from editing mode").subscribe()
+        let _ = Api.sharedApi.remove(hosts: hosts, from: currentSession).debug("delete hosts \(hosts) from editing mode").subscribe()
     }
         
     private func getDeleteActionFor(_ participant: CurrentSessionModelItemBox) -> UITableViewRowAction
@@ -353,19 +380,19 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
             let delete = UIAlertAction(title: "Delete", style: UIAlertAction.Style.destructive)
             { [weak self] _ in
                 
-                if let currentSessionSnapshot = self?.currentSessionSnapshot.value
+                if let currentSession = self?.currentSession
                 {
                     switch participant.type
                     {
                     case .Tutor:
                         guard let participant = participant as? CurrentSessionModelTutorItem else { return }
-                        let _ = Api.sharedApi.remove(hosts: [ participant.host.reference ], from: currentSessionSnapshot).debug("delete host \(participant.host.documentID) from UITableViewRowAction").subscribe()
+                        let _ = Api.sharedApi.remove(hosts: [ participant.host.reference ], from: currentSession).debug("delete host \(participant.host.documentID) from UITableViewRowAction").subscribe()
                         return
                         
                     case .Participant:
                         guard let participant = participant as? CurrentSessionModelParticipantItem else { return }
                         // it is ok, remove sequences will terminate in finite time
-                        let _ = Api.sharedApi.remove(participants: [ participant.item.reference ], from: currentSessionSnapshot.reference).debug("delete participant \(participant.item.documentID) from UITableViewRowAction").subscribe()
+                        let _ = Api.sharedApi.remove(participants: [ participant.item.reference ], from: currentSession).debug("delete participant \(participant.item.documentID) from UITableViewRowAction").subscribe()
                         return
                         
                     default:
@@ -447,7 +474,9 @@ class CurrentSessionModel: NSObject, UITableViewDelegate
         .map
         { arg0, searchQuery -> Array<Section> in
             
-            let (_currentSession, currentTutorSnapshot, participants) = arg0
+            let (_currentSession, currentTutorSnapshot, _) = arg0
+            
+            let participants = arg0.2.reversed()
 
             guard let currentSession = _currentSession, currentSession.exists else
             {

@@ -160,7 +160,7 @@ class CurrentSession: UIViewController
             .subscribe(
             onNext: { [weak self] _ in
                     
-                if let searchQuery = self?.viewModel.searchQuery
+                if let searchQuery = self?.viewModel.searchQuery.value
                 {
                     searchQueryRetranslator.accept(nil)
                 }
