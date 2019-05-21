@@ -73,7 +73,9 @@ class HistoryViewModel: NSObject, UITableViewDelegate
                     case .Event:
                         if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionEventCell.identifier, for: indexPath) as? CurrentSessionEventCell, let item = item as? CurrentSessionModelEventItem
                         {
+                            cell.mode = .History
                             cell.item = item.item
+                            
                             return cell
                         }
                         break

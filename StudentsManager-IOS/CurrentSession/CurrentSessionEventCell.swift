@@ -13,6 +13,12 @@ import Firebase
 
 class CurrentSessionEventCell: UITableViewCell
 {
+    enum Mode
+    {
+        case CurrentSession
+        case History
+    }
+    
     static let identifier: String = "CurrentSessionEventCell"
     
     private var disposeBag: DisposeBag?
@@ -24,6 +30,8 @@ class CurrentSessionEventCell: UITableViewCell
     @IBOutlet weak var eventPlaceLabel: UILabel!
     
     @IBOutlet weak var eventImage: UIImageView!
+    
+    var mode: Mode = .CurrentSession
     
     var item: DocumentSnapshot?
     {
@@ -38,12 +46,21 @@ class CurrentSessionEventCell: UITableViewCell
             if item == oldValue { return }
             
             let disposeBag = DisposeBag()
-            Api.sharedApi.editingAllowed.distinctUntilChanged().debug("CurrentSessionEventCell.editingAllowed").observeOn(MainScheduler.instance).subscribe(
+            
+            if mode == .CurrentSession
+            {
+                Api.sharedApi.editingAllowed.distinctUntilChanged()
+                .debug("CurrentSessionEventCell.editingAllowed").observeOn(MainScheduler.instance).subscribe(
                 onNext: { [weak self] event in
                     
                     self?.accessoryType = event ? UITableViewCell.AccessoryType.disclosureIndicator : UITableViewCell.AccessoryType.none
                     
-            }).disposed(by: disposeBag)
+                }).disposed(by: disposeBag)
+            }
+            else
+            {
+                self.accessoryType = .detailButton
+            }
             
             DispatchQueue.main.async
             {
