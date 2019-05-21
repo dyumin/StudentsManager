@@ -69,7 +69,6 @@ class Api
     
     let editingAllowed: BehaviorRelay<Bool> = BehaviorRelay(value: false)
     
-    // TODO: change to ReplaySubject(1) (no initial value) or use connect()
     let userPastSessions: BehaviorRelay<[DocumentSnapshot]> = BehaviorRelay(value: [])
     
     let userObservable: Observable<DocumentSnapshot>

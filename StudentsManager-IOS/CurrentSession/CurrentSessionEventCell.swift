@@ -59,6 +59,7 @@ class CurrentSessionEventCell: UITableViewCell
             }
             else
             {
+                // there is no action for now...
                 self.accessoryType = .detailButton
             }
             

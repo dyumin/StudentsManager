@@ -21,13 +21,13 @@ class CurrentSessionTutorCell: UITableViewCell
     
     var disposeBag: DisposeBag?
     
-    @IBOutlet weak var profileImage: UIImageView!
-    
     @IBOutlet weak var name: UILabel!
     
     @IBOutlet weak var phone: UILabel!
     
     @IBOutlet weak var email: UILabel!
+    
+    @IBOutlet weak var avatarView: AvatarView!
     
     var item: DocumentSnapshot?
     {
@@ -43,10 +43,16 @@ class CurrentSessionTutorCell: UITableViewCell
             
             let disposeBag = DisposeBag()
             
+            self.avatarView.parameters = (item.documentID.hashValue, [])
+            self.avatarView.image = nil
+            
             if let name = item.get(ApiUser.displayName) as? String
             {
                 self.name.isHidden = false
                 self.name.text = name
+                
+                let letters = name.components(separatedBy: " ").map({ $0.first != nil ? String($0.first!) : String() })
+                self.avatarView.parameters.letters = letters
             }
             else
             {
@@ -76,7 +82,7 @@ class CurrentSessionTutorCell: UITableViewCell
             self.api.getImage(for: item.documentID, .UserProfilePhoto).observeOn(MainScheduler.instance).subscribe(
                 onNext: { [weak self] image in
                     
-                    self?.profileImage.image = image
+                    self?.avatarView.image = image
                     
             }).disposed(by: disposeBag)
             
