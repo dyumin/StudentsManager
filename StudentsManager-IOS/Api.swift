@@ -203,7 +203,7 @@ class Api
             }
             
             return nil
-        }
+        }.distinctUntilChanged()
         .bind(to: selectedSession)
         .disposed(by: disposeBag)
         
