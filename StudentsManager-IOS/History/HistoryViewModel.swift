@@ -1,8 +1,8 @@
 //
-//  PeopleSearchViewModel.swift
+//  HistoryViewModel.swift
 //  StudentsManager-IOS
 //
-//  Created by Дюмин Алексей on 19/05/2019.
+//  Created by Дюмин Алексей on 20/05/2019.
 //  Copyright © 2019 TeamUUUU. All rights reserved.
 //
 
@@ -20,7 +20,7 @@ import PINCache
 
 
 // MARK: - UITableViewDataSourcePrefetching
-extension PeopleSearchViewModel: UITableViewDataSourcePrefetching
+extension HistoryViewModel: UITableViewDataSourcePrefetching
 {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath])
     {
@@ -41,7 +41,7 @@ extension PeopleSearchViewModel: UITableViewDataSourcePrefetching
     }
 }
 
-class PeopleSearchViewModel: NSObject, UITableViewDelegate
+class HistoryViewModel: NSObject, UITableViewDelegate
 {
     private typealias DataSource = RxTableViewSectionedAnimatedDataSourceDynamicWrapper<Section>
     
@@ -54,15 +54,15 @@ class PeopleSearchViewModel: NSObject, UITableViewDelegate
     private static let DefaulfCellReuseIdentifier = "Cell"
     
     weak var partialUpdatesTableViewOutlet: UITableView!
-    {
+        {
         didSet
         {
             self.dataSourceDisposeBag = nil
             
             if let partialUpdatesTableViewOutlet = partialUpdatesTableViewOutlet
             {
-                partialUpdatesTableViewOutlet.register(UINib(nibName: CurrentSessionParticipantCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionParticipantCell.identifier)
- 
+                partialUpdatesTableViewOutlet.register(UINib(nibName: CurrentSessionEventCell.identifier, bundle: nil), forCellReuseIdentifier: CurrentSessionEventCell.identifier)
+                
                 let dataSourceDisposeBag = DisposeBag()
                 
                 let configureCell: DataSourceInternalType.ConfigureCell =
@@ -70,8 +70,8 @@ class PeopleSearchViewModel: NSObject, UITableViewDelegate
                     
                     switch item.type
                     {
-                    case .Participant:
-                        if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionParticipantCell.identifier, for: indexPath) as? CurrentSessionParticipantCell, let item = item as? CurrentSessionModelParticipantItem
+                    case .Event:
+                        if let cell = tableView.dequeueReusableCell(withIdentifier: CurrentSessionEventCell.identifier, for: indexPath) as? CurrentSessionEventCell, let item = item as? CurrentSessionModelEventItem
                         {
                             cell.item = item.item
                             return cell
@@ -125,8 +125,8 @@ class PeopleSearchViewModel: NSObject, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        guard let owner = owner as? PeopleSearch
-        else
+        guard let owner = owner as? History
+            else
         {
             assertionFailure()
             return
@@ -136,11 +136,12 @@ class PeopleSearchViewModel: NSObject, UITableViewDelegate
         
         switch item.type
         {
-        case .Participant:
-            if let item = item as? CurrentSessionModelParticipantItem
+        case .Event:
+            if let item = item as? CurrentSessionModelEventItem
             {
-               owner.callback.onNext(item.item.reference)
+                _ = Api.sharedApi.setSelectedSession(item.item.reference).subscribe()
             }
+            owner.tabBarController?.selectedIndex = 1
             
             break
             
@@ -155,24 +156,20 @@ class PeopleSearchViewModel: NSObject, UITableViewDelegate
     {
         super.init()
         
-        let db = Firestore.firestore()
-        
-        let allUsers = db.collection("users").order(by: ApiUser.displayName, descending: false).rx.listen()
-        
         Observable.combineLatest(
-            allUsers,
+            Api.sharedApi.userPastSessions,
             searchQuery)
             .map
             {
-                var items = $0.0.documents.map { return CurrentSessionModelParticipantItem($0) }
-                
+                var items = $0.0.map { return CurrentSessionModelEventItem(item: $0) }
+
                 if let searchQuery = $0.1, searchQuery.count > 0
                 {
                     items = items.filter{ $0.isRelevantForSearchQuery(searchQuery) }
                 }
-                
-                return [Section(model: .Participant, items: items )]
-                
+
+                return [Section(model: .Event, items: items )]
+
             }.bind(to: sections).disposed(by: disposeBag)
     }
     
@@ -183,6 +180,8 @@ class PeopleSearchViewModel: NSObject, UITableViewDelegate
     
     weak var owner: UIViewController?
     
-//    var filteredValues: BehaviorRelay<[DocumentSnapshot]> = BehaviorRelay(value: [])
+    //    var filteredValues: BehaviorRelay<[DocumentSnapshot]> = BehaviorRelay(value: [])
     var searchQuery: BehaviorRelay<String?> = BehaviorRelay(value: nil)
 }
+
+

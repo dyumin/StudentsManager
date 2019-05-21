@@ -17,6 +17,28 @@ import RxFirebase
 import PINCache
 import SPTPersistentCache
 
+// Optional 
+extension Reactive where Base: DocumentReference {
+    
+    /**
+     * Attaches a listener for DocumentSnapshot events.
+     */
+    public func listenOptional() -> Observable<DocumentSnapshot?> {
+        return Observable<DocumentSnapshot?>.create { observer in
+            let listener = self.base.addSnapshotListener() { snapshot, error in
+                if let error = error {
+                    observer.onError(error)
+                } else if let snapshot = snapshot {
+                    observer.onNext(snapshot)
+                }
+            }
+            return Disposables.create {
+                listener.remove()
+            }
+        }
+    }
+}
+
 class Api
 {
     enum Errors: Error
@@ -48,7 +70,7 @@ class Api
     let editingAllowed: BehaviorRelay<Bool> = BehaviorRelay(value: false)
     
     // TODO: change to ReplaySubject(1) (no initial value) or use connect()
-    let currentSessions: BehaviorRelay<[DocumentSnapshot]> = BehaviorRelay(value: [])
+    let userPastSessions: BehaviorRelay<[DocumentSnapshot]> = BehaviorRelay(value: [])
     
     let userObservable: Observable<DocumentSnapshot>
     
@@ -62,8 +84,6 @@ class Api
         {
             return Observable.error(Errors.NotFound)
         }
-        
-        selectedSession.accept(session)
         
         return user.rx.updateData([ApiUser.selectedSession : session])
     }
@@ -166,41 +186,54 @@ class Api
             }
         ).disposed(by: disposeBag)
         
-        user.debug("CurrentSession.selectedSession").map
-        { user -> DocumentReference? in
-            return user?.get(ApiUser.selectedSession) as? DocumentReference
+        user.debug("CurrentSession.selectedSession").flatMapLatest
+        { userSnapshot -> Observable<DocumentSnapshot?> in
+            
+            if let selectedSessionReference = userSnapshot?.get(ApiUser.selectedSession) as? DocumentReference
+            {
+                return selectedSessionReference.rx.listenOptional()
+            }
+            
+            return Observable.just(nil)
+        }.map
+        { selectedSession -> DocumentReference? in
+            
+            if let selectedSession = selectedSession, selectedSession.exists
+            {
+                return selectedSession.reference
+            }
+            
+            return nil
         }
         .bind(to: selectedSession)
         .disposed(by: disposeBag)
         
-        // TODO add or host back in whereField
-        db.collection("sessions").whereField(Session.createdBy, isEqualTo: user.value!.reference).whereField(Session.active, isEqualTo: true).rx.listen()/*.debug("sessions -> currentSessions")*/.subscribe(
-            onNext: { [weak self] event in
-                
-                for i in event.documents
-                {
-                    print(i.data())
-                }
-                
-                self?.currentSessions.accept(event.documents)
-            }
-        ).disposed(by: disposeBag)
+        let sessionsCollection = db.collection("sessions")
         
-        // reference version
         // TODO add or host back in whereField
-//        db.collection("sessions").whereField(Session.createdBy, isEqualTo: user.value!.reference).whereField(Session.active, isEqualTo: true).rx.listen().map(
-//            { (querySnapshot) -> [DocumentReference] in
-//
-//                var currentSessions = Array<DocumentReference>()
-//
-//                querySnapshot.documents.forEach(
-//                    { (queryDocumentSnapshot) in
-//                        currentSessions.append(queryDocumentSnapshot.reference)
-//                })
-//
-//                return currentSessions
-//
-//        }).debug("sessions -> currentSessions").bind(to: currentSessions).disposed(by: disposeBag)
+        Observable.combineLatest(
+        sessionsCollection.whereField(Session.createdBy, isEqualTo: user.value!.reference).rx.listen(),
+        sessionsCollection.whereField(Session.host, isEqualTo: user.value!.reference).rx.listen())
+        .map
+        { (arg) -> [QueryDocumentSnapshot] in
+            
+            let (asCreatedBy, asHost) = arg
+            
+            var result = asCreatedBy.documents
+            
+            asHost.documents.forEach
+            { asHostSnapshot in
+                if let _ = result.first(where: { asCreator -> Bool in
+                    asCreator.documentID == asHostSnapshot.documentID })
+                {}
+                else
+                {
+                    result.append(asHostSnapshot)
+                }
+            }
+            
+            return result
+        }.bind(to: userPastSessions).disposed(by: disposeBag)
     }
     
     deinit

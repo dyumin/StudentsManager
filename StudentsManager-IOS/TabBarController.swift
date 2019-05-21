@@ -36,6 +36,20 @@ class TabBarController: UITabBarController
             
         }).disposed(by: disposeBag)
         
+        Api.sharedApi.selectedSession.observeOn(MainScheduler.instance).subscribe(
+        onNext: { [weak self] event in
+            
+            let eventDoesNotExist = event == nil
+            
+            self?.viewControllers?.first?.tabBarItem.isEnabled = eventDoesNotExist ? false : true
+            
+            if eventDoesNotExist && self?.selectedIndex == 0
+            {
+                self?.selectedIndex = 1
+            }
+                
+        }).disposed(by: disposeBag)
+        
         self.disposeBag = disposeBag
         
 //        if initialViewControllers == nil {

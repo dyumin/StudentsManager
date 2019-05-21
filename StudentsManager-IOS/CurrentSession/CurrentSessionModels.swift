@@ -59,7 +59,7 @@ class CurrentSessionModelItemBox: NSObject, CurrentSessionModelItem
 class CurrentSessionModelEventItem: CurrentSessionModelItemBox
 {
     override var type: CurrentSessionModelItemType { return .Event }
-    override var identity: String { return type.rawValue }
+    override var identity: String { return item.documentID }
     
     override func isEqual(_ object: Any?) -> Bool
     {
@@ -71,6 +71,23 @@ class CurrentSessionModelEventItem: CurrentSessionModelItemBox
         let isEqual = self.item == other.item
         
         return isEqual
+    }
+    
+    func isRelevantForSearchQuery(_ query: String?) -> Bool
+    {
+        guard let query = query else {
+            return false
+        }
+        
+        if let name = item.get(Session.name) as? String
+        {
+            let _name = name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+            let _query = query.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            return _name.contains(_query)
+        }
+        
+        return false
     }
     
     let item: DocumentSnapshot

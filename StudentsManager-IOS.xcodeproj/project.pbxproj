@@ -62,6 +62,8 @@
 		CCD36D7C2291DFFA00CDCBE9 /* PeopleSearch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCD36D7B2291DFF900CDCBE9 /* PeopleSearch.storyboard */; };
 		CCD36D7E2291E01600CDCBE9 /* PeopleSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD36D7D2291E01600CDCBE9 /* PeopleSearch.swift */; };
 		CCD36D802291E48600CDCBE9 /* PeopleSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD36D7F2291E48500CDCBE9 /* PeopleSearchViewModel.swift */; };
+		CCD36D8622930B0800CDCBE9 /* History.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCD36D8522930B0800CDCBE9 /* History.storyboard */; };
+		CCD36D8822930C9E00CDCBE9 /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD36D8722930C9E00CDCBE9 /* HistoryViewModel.swift */; };
 		CCDA3F042278BA99000B2CFA /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA3F032278BA99000B2CFA /* Types.swift */; };
 		CCDA3F07227A5F12000B2CFA /* CurrentSessionParticipantCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA3F05227A5F0D000B2CFA /* CurrentSessionParticipantCell.swift */; };
 		CCDA3F08227A5F12000B2CFA /* CurrentSessionParticipantCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCDA3F06227A5F0E000B2CFA /* CurrentSessionParticipantCell.xib */; };
@@ -87,7 +89,7 @@
 		78F853A129F066A8B9238275 /* Pods-StudentsManager-IOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StudentsManager-IOS.release.xcconfig"; path = "Target Support Files/Pods-StudentsManager-IOS/Pods-StudentsManager-IOS.release.xcconfig"; sourceTree = "<group>"; };
 		CC2C69C522598A0800F6E58E /* StudentsManager-IOS-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "StudentsManager-IOS-Bridging-Header.h"; sourceTree = "<group>"; };
 		CC2F29352207A0C100D83E12 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "StudentsManager-IOS/Base.lproj/Main.storyboard"; sourceTree = "<group>"; };
-		CC33CFB42240347800FB000F /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
+		CC33CFB42240347800FB000F /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = History.swift; path = "StudentsManager-IOS/History.swift"; sourceTree = SOURCE_ROOT; };
 		CC33CFB6224034B000FB000F /* CurrentSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSession.swift; sourceTree = "<group>"; };
 		CC33CFB92240FD7300FB000F /* CurrentSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionViewModel.swift; sourceTree = "<group>"; };
 		CC33CFBD2242194900FB000F /* CurrentSessionEventCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionEventCell.swift; sourceTree = "<group>"; };
@@ -143,6 +145,8 @@
 		CCD36D7B2291DFF900CDCBE9 /* PeopleSearch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = PeopleSearch.storyboard; sourceTree = "<group>"; };
 		CCD36D7D2291E01600CDCBE9 /* PeopleSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleSearch.swift; sourceTree = "<group>"; };
 		CCD36D7F2291E48500CDCBE9 /* PeopleSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleSearchViewModel.swift; sourceTree = "<group>"; };
+		CCD36D8522930B0800CDCBE9 /* History.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = History.storyboard; sourceTree = "<group>"; };
+		CCD36D8722930C9E00CDCBE9 /* HistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModel.swift; sourceTree = "<group>"; };
 		CCDA3F032278BA99000B2CFA /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		CCDA3F05227A5F0D000B2CFA /* CurrentSessionParticipantCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionParticipantCell.swift; sourceTree = "<group>"; };
 		CCDA3F06227A5F0E000B2CFA /* CurrentSessionParticipantCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentSessionParticipantCell.xib; sourceTree = "<group>"; };
@@ -219,6 +223,7 @@
 				CCBC489C2248CBEB0074D559 /* Services */,
 				CC33CFB822403CB400FB000F /* CurrentSession */,
 				CCD0269F226F341700A19E47 /* Api */,
+				CCD36D822293028C00CDCBE9 /* History */,
 				CC2F29342207A0C100D83E12 /* Main.storyboard */,
 				CC5BB20B21F502220069B076 /* AppDelegate.swift */,
 				CC5BB20D21F502220069B076 /* ViewController.swift */,
@@ -226,7 +231,6 @@
 				CC5BB21421F502250069B076 /* LaunchScreen.storyboard */,
 				CC5BB21721F502250069B076 /* Info.plist */,
 				CC5BB22221F5177F0069B076 /* GoogleService-Info.plist */,
-				CC33CFB42240347800FB000F /* History.swift */,
 				CC2C69C522598A0800F6E58E /* StudentsManager-IOS-Bridging-Header.h */,
 				CCD0266922672B3400A19E47 /* TabBarController.swift */,
 				CCD0268E226CE1BD00A19E47 /* AdminAprovalStub.swift */,
@@ -301,6 +305,16 @@
 				CCD36D7F2291E48500CDCBE9 /* PeopleSearchViewModel.swift */,
 			);
 			path = "Adding Stuff";
+			sourceTree = "<group>";
+		};
+		CCD36D822293028C00CDCBE9 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				CCD36D8522930B0800CDCBE9 /* History.storyboard */,
+				CC33CFB42240347800FB000F /* History.swift */,
+				CCD36D8722930C9E00CDCBE9 /* HistoryViewModel.swift */,
+			);
+			path = History;
 			sourceTree = "<group>";
 		};
 		CCDA3F09227B6080000B2CFA /* UIKitExt */ = {
@@ -394,6 +408,7 @@
 				CC5BB22321F5177F0069B076 /* GoogleService-Info.plist in Resources */,
 				CC9BE06B2288787300479F7D /* SessionPhotosAddNewPhotoCell.xib in Resources */,
 				CCD36D712290778B00CDCBE9 /* SessionDetails.storyboard in Resources */,
+				CCD36D8622930B0800CDCBE9 /* History.storyboard in Resources */,
 				CCB522D222423D0500737C7D /* CurrentSessionTutorCell.xib in Resources */,
 				CCD36D7C2291DFFA00CDCBE9 /* PeopleSearch.storyboard in Resources */,
 				CC9BE03922874FAD00479F7D /* SessionPhotos.storyboard in Resources */,
@@ -546,6 +561,7 @@
 				CCDA3F0E227B6147000B2CFA /* String+UUUUUIKit.swift in Sources */,
 				CC9BE03B2287536300479F7D /* SessionPhotos.swift in Sources */,
 				CCDA3F042278BA99000B2CFA /* Types.swift in Sources */,
+				CCD36D8822930C9E00CDCBE9 /* HistoryViewModel.swift in Sources */,
 				CC9BE063228872A200479F7D /* SessionPhotosModels.swift in Sources */,
 				CCD36D792291B7FA00CDCBE9 /* NSDate+LocalString.m in Sources */,
 				CCD0266A22672B3400A19E47 /* TabBarController.swift in Sources */,

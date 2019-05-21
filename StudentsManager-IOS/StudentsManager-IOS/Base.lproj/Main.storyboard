@@ -6,36 +6,9 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
-        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--History-->
-        <scene sceneID="g8X-Pi-Q2u">
-            <objects>
-                <viewController id="ufd-qW-Ysl" customClass="History" customModule="StudentsManager_IOS" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Pal-jr-Qsv">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DcG-3C-ay2">
-                                <rect key="frame" x="112" y="183" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <connections>
-                                    <action selector="onLogout:" destination="ufd-qW-Ysl" eventType="touchUpInside" id="jff-sW-Ibp"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <viewLayoutGuide key="safeArea" id="tMV-8h-3Q5"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" title="History" id="Xfa-2Z-QQl"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Ip1-kg-2xb" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3356" y="-232"/>
-        </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="0iR-dd-Jxb">
             <objects>
@@ -53,7 +26,7 @@
                     <connections>
                         <segue destination="213-bA-shq" kind="relationship" relationship="viewControllers" id="vDF-Yb-R1P"/>
                         <segue destination="h2M-nJ-8gy" kind="relationship" relationship="viewControllers" id="DVE-jw-5R0"/>
-                        <segue destination="ufd-qW-Ysl" kind="relationship" relationship="viewControllers" id="cRp-1E-DGi"/>
+                        <segue destination="ZQo-Gn-2Ky" kind="relationship" relationship="viewControllers" id="cRp-1E-DGi"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5T6-lo-aMj" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -79,6 +52,16 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pdR-Q7-e1R" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2597" y="-867"/>
+        </scene>
+        <!--History-->
+        <scene sceneID="Sln-af-hym">
+            <objects>
+                <viewControllerPlaceholder storyboardName="History" id="ZQo-Gn-2Ky" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="Ph4-nW-DHA"/>
+                </viewControllerPlaceholder>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ZvE-fM-2rX" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3356" y="-232"/>
         </scene>
     </scenes>
 </document>
