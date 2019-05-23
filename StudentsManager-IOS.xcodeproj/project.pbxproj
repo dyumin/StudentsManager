@@ -53,8 +53,6 @@
 		CCD02690226CE1BD00A19E47 /* AdminAprovalStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD0268E226CE1BD00A19E47 /* AdminAprovalStub.swift */; };
 		CCD02691226CE1BD00A19E47 /* AdminAprovalStub.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCD0268F226CE1BD00A19E47 /* AdminAprovalStub.xib */; };
 		CCD0269E226F340A00A19E47 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD0269D226F340900A19E47 /* Api.swift */; };
-		CCD026A4226F46F400A19E47 /* CurrentSessionNewEventCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD026A2226F46F400A19E47 /* CurrentSessionNewEventCell.swift */; };
-		CCD026A5226F46F400A19E47 /* CurrentSessionNewEventCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CCD026A3226F46F400A19E47 /* CurrentSessionNewEventCell.xib */; };
 		CCD36D6F2290777C00CDCBE9 /* SessionDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCD36D6E2290777B00CDCBE9 /* SessionDetails.swift */; };
 		CCD36D712290778B00CDCBE9 /* SessionDetails.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CCD36D702290778B00CDCBE9 /* SessionDetails.storyboard */; };
 		CCD36D792291B7FA00CDCBE9 /* NSDate+LocalString.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD36D782291B7F900CDCBE9 /* NSDate+LocalString.m */; };
@@ -134,8 +132,6 @@
 		CCD0268E226CE1BD00A19E47 /* AdminAprovalStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminAprovalStub.swift; sourceTree = "<group>"; };
 		CCD0268F226CE1BD00A19E47 /* AdminAprovalStub.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AdminAprovalStub.xib; sourceTree = "<group>"; };
 		CCD0269D226F340900A19E47 /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Api.swift; path = ../Api.swift; sourceTree = "<group>"; };
-		CCD026A2226F46F400A19E47 /* CurrentSessionNewEventCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSessionNewEventCell.swift; sourceTree = "<group>"; };
-		CCD026A3226F46F400A19E47 /* CurrentSessionNewEventCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentSessionNewEventCell.xib; sourceTree = "<group>"; };
 		CCD36D6E2290777B00CDCBE9 /* SessionDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDetails.swift; sourceTree = "<group>"; };
 		CCD36D702290778B00CDCBE9 /* SessionDetails.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SessionDetails.storyboard; sourceTree = "<group>"; };
 		CCD36D772291B7F900CDCBE9 /* NSDate+LocalString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSDate+LocalString.h"; sourceTree = "<group>"; };
@@ -183,8 +179,6 @@
 				CC33CFBE2242194900FB000F /* CurrentSessionEventCell.xib */,
 				CCB522CF22423D0500737C7D /* CurrentSessionTutorCell.swift */,
 				CCB522D022423D0500737C7D /* CurrentSessionTutorCell.xib */,
-				CCD026A2226F46F400A19E47 /* CurrentSessionNewEventCell.swift */,
-				CCD026A3226F46F400A19E47 /* CurrentSessionNewEventCell.xib */,
 				CCDA3F05227A5F0D000B2CFA /* CurrentSessionParticipantCell.swift */,
 				CCDA3F06227A5F0E000B2CFA /* CurrentSessionParticipantCell.xib */,
 				CC9BE0602288679900479F7D /* RxTableViewSectionedAnimatedDataSource+DidMoveRowAtSourceIndexPathToDestinationIndexPath.swift */,
@@ -394,7 +388,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCD026A5226F46F400A19E47 /* CurrentSessionNewEventCell.xib in Resources */,
 				CC5BB21621F502250069B076 /* LaunchScreen.storyboard in Resources */,
 				CCDA3F08227A5F12000B2CFA /* CurrentSessionParticipantCell.xib in Resources */,
 				CCD02691226CE1BD00A19E47 /* AdminAprovalStub.xib in Resources */,
@@ -552,7 +545,6 @@
 				CC33CFB52240347800FB000F /* History.swift in Sources */,
 				CCBC48B22248CBEB0074D559 /* Reachability.swift in Sources */,
 				CC9BE06A2288787300479F7D /* SessionPhotosAddNewPhotoCell.swift in Sources */,
-				CCD026A4226F46F400A19E47 /* CurrentSessionNewEventCell.swift in Sources */,
 				CC5BB20C21F502220069B076 /* AppDelegate.swift in Sources */,
 				CCDA3F0E227B6147000B2CFA /* String+UUUUUIKit.swift in Sources */,
 				CC9BE03B2287536300479F7D /* SessionPhotos.swift in Sources */,
