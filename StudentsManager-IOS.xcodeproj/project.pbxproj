@@ -175,7 +175,6 @@
 			isa = PBXGroup;
 			children = (
 				CCD36D7A2291DF5B00CDCBE9 /* Adding Stuff */,
-				CC778E20227C709700C51EED /* AvatarView.swift */,
 				CCA4272C2238DC8500CF2260 /* CurrentSession.storyboard */,
 				CC33CFB6224034B000FB000F /* CurrentSession.swift */,
 				CC33CFB92240FD7300FB000F /* CurrentSessionViewModel.swift */,
@@ -191,6 +190,7 @@
 				CC9BE0602288679900479F7D /* RxTableViewSectionedAnimatedDataSource+DidMoveRowAtSourceIndexPathToDestinationIndexPath.swift */,
 				CCD36D6E2290777B00CDCBE9 /* SessionDetails.swift */,
 				CCD36D702290778B00CDCBE9 /* SessionDetails.storyboard */,
+				CC778E20227C709700C51EED /* AvatarView.swift */,
 			);
 			path = CurrentSession;
 			sourceTree = "<group>";
