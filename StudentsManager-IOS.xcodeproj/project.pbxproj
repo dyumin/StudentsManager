@@ -15,7 +15,6 @@
 		CC33CFBF2242194900FB000F /* CurrentSessionEventCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC33CFBD2242194900FB000F /* CurrentSessionEventCell.swift */; };
 		CC33CFC02242194900FB000F /* CurrentSessionEventCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CC33CFBE2242194900FB000F /* CurrentSessionEventCell.xib */; };
 		CC5BB20C21F502220069B076 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5BB20B21F502220069B076 /* AppDelegate.swift */; };
-		CC5BB20E21F502220069B076 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5BB20D21F502220069B076 /* ViewController.swift */; };
 		CC5BB21321F502250069B076 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB21221F502250069B076 /* Assets.xcassets */; };
 		CC5BB21621F502250069B076 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB21421F502250069B076 /* LaunchScreen.storyboard */; };
 		CC5BB22321F5177F0069B076 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC5BB22221F5177F0069B076 /* GoogleService-Info.plist */; };
@@ -96,7 +95,6 @@
 		CC33CFBE2242194900FB000F /* CurrentSessionEventCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentSessionEventCell.xib; sourceTree = "<group>"; };
 		CC5BB20821F502220069B076 /* StudentsManager-IOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StudentsManager-IOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC5BB20B21F502220069B076 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		CC5BB20D21F502220069B076 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		CC5BB21221F502250069B076 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CC5BB21521F502250069B076 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CC5BB21721F502250069B076 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -226,7 +224,6 @@
 				CCD36D822293028C00CDCBE9 /* History */,
 				CC2F29342207A0C100D83E12 /* Main.storyboard */,
 				CC5BB20B21F502220069B076 /* AppDelegate.swift */,
-				CC5BB20D21F502220069B076 /* ViewController.swift */,
 				CC5BB21221F502250069B076 /* Assets.xcassets */,
 				CC5BB21421F502250069B076 /* LaunchScreen.storyboard */,
 				CC5BB21721F502250069B076 /* Info.plist */,
@@ -549,7 +546,6 @@
 				CC9BE03422874AEE00479F7D /* EditingRequirementsProvider.swift in Sources */,
 				CC33CFB7224034B000FB000F /* CurrentSession.swift in Sources */,
 				CCBC48B42248CBEB0074D559 /* DownloadableImage.swift in Sources */,
-				CC5BB20E21F502220069B076 /* ViewController.swift in Sources */,
 				CCBC48AC2248CBEB0074D559 /* Wireframe.swift in Sources */,
 				CCBC48AD2248CBEB0074D559 /* UIImageView+DownloadableImage.swift in Sources */,
 				CCB522D122423D0500737C7D /* CurrentSessionTutorCell.swift in Sources */,
