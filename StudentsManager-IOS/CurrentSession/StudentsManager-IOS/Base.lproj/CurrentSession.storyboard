@@ -46,7 +46,7 @@
         <scene sceneID="ooI-eo-fsw">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="FN3-TA-wpg" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Current Session" id="B4H-Sy-UiB"/>
+                    <tabBarItem key="tabBarItem" title="Current Session" image="Lecture-32" id="B4H-Sy-UiB"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="seV-dh-s5N">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
@@ -62,4 +62,7 @@
             <point key="canvasLocation" x="1852" y="7.6461769115442282"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Lecture-32" width="32" height="32"/>
+    </resources>
 </document>
