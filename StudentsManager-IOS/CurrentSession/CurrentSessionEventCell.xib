@@ -19,7 +19,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="480" height="109.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Instructress" translatesAutoresizingMaskIntoConstraints="NO" id="ioR-1o-LQf">
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lecture" translatesAutoresizingMaskIntoConstraints="NO" id="ioR-1o-LQf">
                         <rect key="frame" x="20" y="11" width="66" height="66"/>
                         <constraints>
                             <constraint firstAttribute="width" secondItem="ioR-1o-LQf" secondAttribute="height" multiplier="1:1" id="IBO-8A-hbS"/>
@@ -72,6 +72,6 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="Instructress" width="256" height="256"/>
+        <image name="lecture" width="173" height="173"/>
     </resources>
 </document>
