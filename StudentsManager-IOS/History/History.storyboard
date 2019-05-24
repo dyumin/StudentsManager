@@ -45,7 +45,7 @@
         <scene sceneID="U4P-Ym-Pg7">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="uWu-eG-6Fs" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="History" id="Xfa-2Z-QQl"/>
+                    <tabBarItem key="tabBarItem" title="History" image="history_32px_352426" id="Xfa-2Z-QQl"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="1RQ-vP-e3b">
                         <rect key="frame" x="0.0" y="20" width="320" height="44"/>
@@ -61,4 +61,7 @@
             <point key="canvasLocation" x="3354.375" y="-232.3943661971831"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="history_32px_352426" width="32" height="32"/>
+    </resources>
 </document>
