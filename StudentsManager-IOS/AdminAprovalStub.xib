@@ -28,18 +28,20 @@
                         <constraint firstAttribute="width" constant="240" id="nuY-CE-oMh"/>
                     </constraints>
                     <attributedString key="attributedText">
-                        <fragment content="Please ask your admin to aprove your account">
+                        <fragment content="Please ask your admin to aprove your account.">
                             <attributes>
+                                <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                 <font key="NSFont" metaFont="system" size="14"/>
+                                <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                             </attributes>
                         </fragment>
                     </attributedString>
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                 </textView>
                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4CC-d7-TGq">
-                    <rect key="frame" x="136" y="296" width="48" height="30"/>
+                    <rect key="frame" x="133" y="296" width="55" height="30"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <state key="normal" title="Logout"/>
+                    <state key="normal" title="Log Out"/>
                     <connections>
                         <action selector="onLogoutPressed:" destination="-1" eventType="touchUpInside" id="9gL-B4-aMP"/>
                     </connections>
